@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D576F93A-1F51-38F5-8988-2319513C485C}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>MyEngine3D</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+    <VcpkgEnabled>false</VcpkgEnabled>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="do_not_import_user.props" Condition="exists('do_not_import_user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Projects\Biobazard\out\build\x64-Debug\tests\MyEngine3d\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MyEngine3D.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MyEngine3D</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>G:\Projects\Biobazard\tests\MyEngine3d\biohazard3d\include;G:\Projects\Biobazard\biohazard3d\include;G:\Projects\Biobazard\biohazard3d\include\imgui;G:\Projects\Biobazard\biohazard3d\include\cv;G:\Projects\Biobazard\biohazard3d\include\std;G:\Projects\Biobazard\3rd\imgui;H:\vcpkg\installed\x64-windows\include;H:\vcpkg\installed\x64-windows\include\glad;H:\vcpkg\installed\x64-windows\include\SDL2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>G:\Projects\Biobazard\tests\MyEngine3d\biohazard3d\include;G:\Projects\Biobazard\biohazard3d\include;G:\Projects\Biobazard\biohazard3d\include\imgui;G:\Projects\Biobazard\biohazard3d\include\cv;G:\Projects\Biobazard\biohazard3d\include\std;G:\Projects\Biobazard\3rd\imgui;H:\vcpkg\installed\x64-windows\include;H:\vcpkg\installed\x64-windows\include\glad;H:\vcpkg\installed\x64-windows\include\SDL2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Projects\Biobazard\tests\MyEngine3d\biohazard3d\include;G:\Projects\Biobazard\biohazard3d\include;G:\Projects\Biobazard\biohazard3d\include\imgui;G:\Projects\Biobazard\biohazard3d\include\cv;G:\Projects\Biobazard\biohazard3d\include\std;G:\Projects\Biobazard\3rd\imgui;H:\vcpkg\installed\x64-windows\include;H:\vcpkg\installed\x64-windows\include\glad;H:\vcpkg\installed\x64-windows\include\SDL2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file H:/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary G:/Projects/Biobazard/out/build/x64-Debug/tests/MyEngine3d/Debug/MyEngine3D.exe -installedDir H:/vcpkg/installed/x64-windows/debug/bin -OutVariable out
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>..\..\biohazard3d\Debug\bh3d.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_dnnd.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_highguid.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_mld.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_objdetectd.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_photod.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_stitchingd.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_videod.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_calib3dd.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_features2dd.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_flannd.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_videoiod.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_imgcodecsd.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_imgprocd.lib;H:\vcpkg\installed\x64-windows\debug\lib\opencv_cored.lib;H:\vcpkg\installed\x64-windows\debug\lib\glad.lib;H:\vcpkg\installed\x64-windows\debug\lib\SDL2d.lib;user32.lib;gdi32.lib;winmm.lib;imm32.lib;ole32.lib;oleaut32.lib;version.lib;uuid.lib;advapi32.lib;setupapi.lib;shell32.lib;dinput8.lib;H:\vcpkg\installed\x64-windows\debug\lib\manual-link\SDL2maind.lib;opengl32.lib;glu32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>G:/Projects/Biobazard/out/build/x64-Debug/tests/MyEngine3d/Debug/MyEngine3D.lib</ImportLibrary>
+      <ProgramDataBaseFile>G:/Projects/Biobazard/out/build/x64-Debug/tests/MyEngine3d/Debug/MyEngine3D.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="G:\Projects\Biobazard\tests\MyEngine3d\CMakeLists.txt">
+      <StdOutEncoding>UTF-8</StdOutEncoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule G:/Projects/Biobazard/tests/MyEngine3d/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe -SG:/Projects/Biobazard -BG:/Projects/Biobazard/out/build/x64-Debug --check-stamp-file G:/Projects/Biobazard/out/build/x64-Debug/tests/MyEngine3d/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Projects\Biobazard\out\build\x64-Debug\tests\MyEngine3d\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="G:\Projects\Biobazard\tests\MyEngine3d\MyEngine3d.cpp" />
+    <ClCompile Include="G:\Projects\Biobazard\tests\MyEngine3d\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="G:\Projects\Biobazard\out\build\x64-Debug\ZERO_CHECK.vcxproj">
+      <Project>{BFFE827D-7CE6-36E0-9794-C8DA72124715}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="G:\Projects\Biobazard\out\build\x64-Debug\biohazard3d\bh3d.vcxproj">
+      <Project>{3AEE14A4-E852-3E02-9CC7-77407F9117AE}</Project>
+      <Name>bh3d</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

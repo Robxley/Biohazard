@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BFFE827D-7CE6-36E0-9794-C8DA72124715}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>ZERO_CHECK</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="G:\Projects\Biobazard\out\build\x64-Debug\CMakeFiles\8adb71568d136156b6b3c38de67d9cf5\generate.stamp.rule">
+      <StdOutEncoding>UTF-8</StdOutEncoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Checking Build System</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe -SG:/Projects/Biobazard -BG:/Projects/Biobazard/out/build/x64-Debug --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file G:/Projects/Biobazard/out/build/x64-Debug/Biobazard.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Projects\Biobazard\CMakeLists.txt;G:\Projects\Biobazard\biohazard3d\CMakeLists.txt;G:\Projects\Biobazard\out\build\x64-Debug\CMakeFiles\3.18.20081302-MSVC_2\CMakeCCompiler.cmake;G:\Projects\Biobazard\out\build\x64-Debug\CMakeFiles\3.18.20081302-MSVC_2\CMakeCXXCompiler.cmake;G:\Projects\Biobazard\out\build\x64-Debug\CMakeFiles\3.18.20081302-MSVC_2\CMakeRCCompiler.cmake;G:\Projects\Biobazard\out\build\x64-Debug\CMakeFiles\3.18.20081302-MSVC_2\CMakeSystem.cmake;G:\Projects\Biobazard\tests\CMakeLists.txt;G:\Projects\Biobazard\tests\MyEngine3d\CMakeLists.txt;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CMakeCInformation.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CMakeCXXInformation.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CMakeCommonLanguageInclude.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CMakeDependentOption.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CMakeGenericSystem.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CMakeInitializeConfigs.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CMakeLanguageInformation.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CMakeRCInformation.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CMakeSystemSpecificInformation.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CMakeSystemSpecificInitialize.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CheckCSourceCompiles.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CheckIncludeFile.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\CheckLibraryExists.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\Compiler\CMakeCommonCompilerMacros.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\Compiler\MSVC-C.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\Compiler\MSVC-CXX.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\FindOpenGL.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\FindPackageHandleStandardArgs.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\FindPackageMessage.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\FindThreads.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\Platform\Windows-MSVC-C.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\Platform\Windows-MSVC-CXX.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\Platform\Windows-MSVC.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\Platform\Windows.cmake;G:\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.18\Modules\Platform\WindowsPaths.cmake;H:\vcpkg\installed\x64-windows\share\glad\gladConfig.cmake;H:\vcpkg\installed\x64-windows\share\glad\gladConfigVersion.cmake;H:\vcpkg\installed\x64-windows\share\glad\gladTargets-debug.cmake;H:\vcpkg\installed\x64-windows\share\glad\gladTargets-release.cmake;H:\vcpkg\installed\x64-windows\share\glad\gladTargets.cmake;H:\vcpkg\installed\x64-windows\share\glm\glm-config.cmake;H:\vcpkg\installed\x64-windows\share\opencv\OpenCVConfig-version.cmake;H:\vcpkg\installed\x64-windows\share\opencv\OpenCVConfig.cmake;H:\vcpkg\installed\x64-windows\share\opencv\OpenCVModules-debug.cmake;H:\vcpkg\installed\x64-windows\share\opencv\OpenCVModules-release.cmake;H:\vcpkg\installed\x64-windows\share\opencv\OpenCVModules.cmake;H:\vcpkg\installed\x64-windows\share\sdl2\SDL2Config.cmake;H:\vcpkg\installed\x64-windows\share\sdl2\SDL2ConfigVersion.cmake;H:\vcpkg\installed\x64-windows\share\sdl2\SDL2Targets-debug.cmake;H:\vcpkg\installed\x64-windows\share\sdl2\SDL2Targets-release.cmake;H:\vcpkg\installed\x64-windows\share\sdl2\SDL2Targets.cmake;H:\vcpkg\installed\x64-windows\share\sdl2\vcpkg-cmake-wrapper.cmake;H:\vcpkg\scripts\buildsystems\vcpkg.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Projects\Biobazard\out\build\x64-Debug\CMakeFiles\generate.stamp;G:\Projects\Biobazard\out\build\x64-Debug\biohazard3d\CMakeFiles\generate.stamp;G:\Projects\Biobazard\out\build\x64-Debug\tests\CMakeFiles\generate.stamp;G:\Projects\Biobazard\out\build\x64-Debug\tests\MyEngine3d\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

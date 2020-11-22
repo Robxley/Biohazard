@@ -1,0 +1,6 @@
+G:/Projects/Biobazard/out/build/x64-Debug/CMakeFiles/ALL_BUILD.dir
+G:/Projects/Biobazard/out/build/x64-Debug/CMakeFiles/ZERO_CHECK.dir
+G:/Projects/Biobazard/out/build/x64-Debug/biohazard3d/CMakeFiles/bh3d.dir
+G:/Projects/Biobazard/out/build/x64-Debug/biohazard3d/CMakeFiles/ALL_BUILD.dir
+G:/Projects/Biobazard/out/build/x64-Debug/tests/MyEngine3d/CMakeFiles/MyEngine3D.dir
+G:/Projects/Biobazard/out/build/x64-Debug/tests/MyEngine3d/CMakeFiles/ALL_BUILD.dir

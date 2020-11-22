@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALL_BUILD", "ALL_BUILD.vcxproj", "{6063AAE8-0A22-356A-94E8-A0DB26C7B1AC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BFFE827D-7CE6-36E0-9794-C8DA72124715} = {BFFE827D-7CE6-36E0-9794-C8DA72124715}
+		{3AEE14A4-E852-3E02-9CC7-77407F9117AE} = {3AEE14A4-E852-3E02-9CC7-77407F9117AE}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZERO_CHECK", "..\\ZERO_CHECK.vcxproj", "{BFFE827D-7CE6-36E0-9794-C8DA72124715}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bh3d", "bh3d.vcxproj", "{3AEE14A4-E852-3E02-9CC7-77407F9117AE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BFFE827D-7CE6-36E0-9794-C8DA72124715} = {BFFE827D-7CE6-36E0-9794-C8DA72124715}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6063AAE8-0A22-356A-94E8-A0DB26C7B1AC}.Debug|x64.ActiveCfg = Debug|x64
+		{BFFE827D-7CE6-36E0-9794-C8DA72124715}.Debug|x64.ActiveCfg = Debug|x64
+		{BFFE827D-7CE6-36E0-9794-C8DA72124715}.Debug|x64.Build.0 = Debug|x64
+		{3AEE14A4-E852-3E02-9CC7-77407F9117AE}.Debug|x64.ActiveCfg = Debug|x64
+		{3AEE14A4-E852-3E02-9CC7-77407F9117AE}.Debug|x64.Build.0 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {94A309DA-EB96-377B-BDF7-2731460B6A54}
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
