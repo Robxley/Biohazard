@@ -30,11 +30,13 @@ if(NOT GLAD_SRC_DIRS)
 	if (glad_FOUND)
 		   include_directories(${GLAD_INCLUDE_DIRS})
 		   link_libraries(${GLAD_LIBRARIES})
+		   set(XXXX_IMPL_OPENGL_LOADER BH3D_IMPL_OPENGL_LOADER_GLAD IMGUI_IMPL_OPENGL_LOADER_GLAD)
 	else()
 		find_package(GLEW CONFIG REQUIRED)
 		if (GLEW_FOUND)
 			   include_directories(${GLEW_INCLUDE_DIRS})
 			   link_libraries(${GLEW_LIBRARIES})
+			   set(XXXX_IMPL_OPENGL_LOADER BH3D_IMPL_OPENGL_LOADER_GLEW IMGUI_IMPL_OPENGL_LOADER_GLEW)
 		endif()
 	endif()
 endif()
@@ -89,6 +91,9 @@ message(STATUS "DEPENDENCIES_LIBRARIES: ${DEPENDENCIES_LIBRARIES}")
 add_library(bh3d STATIC ${CMAKE_CURRENT_SOURCE_DIR} ${BH3D_SRC})
 
 target_link_libraries(bh3d PUBLIC ${OpenCV_LIBS} ${DEPENDENCIES_LIBRARIES} ${OPENGL_LIBRARIES})
+
+target_compile_definitions(bh3d PRIVATE ${XXXX_IMPL_OPENGL_LOADER})
+message(STATUS "XXXX_IMPL_OPENGL_LOADER: ${XXXX_IMPL_OPENGL_LOADER}")
 
 target_include_directories(bh3d 
 							PUBLIC

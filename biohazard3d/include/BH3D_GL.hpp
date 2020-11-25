@@ -37,36 +37,47 @@
 #endif
 
 #include <iostream>
+#include <cstring>
 
-inline bool glxxInit()
+namespace bh3d
 {
-    try
-    {
-    #if defined(BH3D_IMPL_OPENGL_LOADER_GL3W)
-        if(gl3wInit())
-        {
-            std::cout<<"Failed to initialize gl3w." << std::endl;
-            return false;
-        }
-    #elif defined(BH3D_IMPL_OPENGL_LOADER_GLEW)
-        GLenum err = glewInit();
-        if (GLEW_OK != err) {
-            std::cout<<"Error: " << glewGetErrorString(err) << std::endl;
-            return false;
-        }
-    #elif defined(BH3D_IMPL_OPENGL_LOADER_GLAD)
-         if(!gladLoadGL())        {
-            std::cout<<"Failed to initialize glad." << std::endl;
-            return false;
-        }
-    #endif 
-    }
-    catch(...)
-    {
-        return false;
-    }
 
-    return true;
+	inline bool glxxInit()
+	{
+		try
+		{
+#if defined(BH3D_IMPL_OPENGL_LOADER_GL3W)
+			if (gl3wInit())
+			{
+				std::cout << "Failed to initialize gl3w." << std::endl;
+				return false;
+			}
+#elif defined(BH3D_IMPL_OPENGL_LOADER_GLEW)
+			GLenum err = glewInit();
+			if (GLEW_OK != err) {
+				std::cout << "Error: " << glewGetErrorString(err) << std::endl;
+				return false;
+			}
+#elif defined(BH3D_IMPL_OPENGL_LOADER_GLAD)
+			if (!gladLoadGL()) {
+				std::cout << "Failed to initialize glad." << std::endl;
+				return false;
+			}
+#endif 
+		}
+		catch (...)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	inline bool HasExtensionGL(const char * extension)
+	{
+		const GLubyte *str = glGetString(GL_EXTENSIONS);
+		return (std::strstr((const char *)str, extension) != NULL);
+	}
 }
 
 

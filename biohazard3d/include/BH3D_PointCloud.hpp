@@ -41,6 +41,11 @@ namespace bh3d
 		void Create(const std::vector<float>& vPositions, const std::vector<float>& vColors, GLenum usage = GL_STREAM_DRAW);
 
 		/// <summary>
+		/// Allocate a GPU buffer for a number of points.
+		/// </summary>
+		void Create(std::size_t point_capacity, GLenum usage = GL_STREAM_DRAW);
+
+		/// <summary>
 		/// Update a existing point cloud
 		/// </summary>
 		void Update(const std::vector<glm::vec3>& vPositions, const std::vector<glm::vec4>& vColors, GLenum usage = GL_STREAM_DRAW);

@@ -97,6 +97,9 @@
     <ClCompile Include="G:\Projects\Biobazard\biohazard3d\src\imgui\BH3D_WidgetImGUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="G:\Projects\Biobazard\biohazard3d\src\imgui\BH3D_imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="G:\Projects\Biobazard\biohazard3d\src\cv\BH3D_FontOpenCV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

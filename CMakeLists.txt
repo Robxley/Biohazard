@@ -9,12 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# Set compiler warning options
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra") # -Wconversion -Werror
-
-# Set compiler cpu optimization options
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -mtune=native") # detects the cpu on the compiling machine and favor instructions that run faster on this processor
-
 # Display build type
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 

@@ -68,6 +68,33 @@ namespace bh3d
 
 	}
 
+	void PointCloud::Create(std::size_t point_capacity, GLenum usage)
+	{
+		BH3D_GL_CHECK_ERROR;
+
+		//Destroy the existing point cloud
+		Destroy();
+
+		//Opengl call
+		{
+			//VAO setting
+			glGenVertexArrays(1, &m_vertex_array);					//Creation VAO	
+			assert(m_vertex_array > 0 && "VAO allocation KO");
+			glBindVertexArray(m_vertex_array);
+
+			//Opengl Buffer allocation
+			m_position_buffer = AllocateVBO<float, 3>(point_capacity, (GLuint)bh3d::ATTRIB_INDEX::POSITION, usage);		//Buffer allocation for Position vertex array
+			assert(m_position_buffer > 0);
+
+			m_color_buffer = AllocateVBO<float, 4>(point_capacity, (GLuint)bh3d::ATTRIB_INDEX::COLOR, usage);					//Buffer allocation for color vertex array
+			assert(m_color_buffer > 0);
+		}
+
+		//Unbind
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+
 
 	void PointCloud::Update(const std::vector<glm::vec3>& vPositions, const std::vector<glm::vec4>& vColors, GLenum usage)
 	{

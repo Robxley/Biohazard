@@ -41,7 +41,6 @@ namespace bh3d
 		assert(pixels != nullptr);
 		assert(width > 0);
 		assert(height > 0);
-		assert(glGenTextures);
 
 		GLuint texture_id = 0;
 

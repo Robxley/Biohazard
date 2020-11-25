@@ -53,11 +53,11 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;BH3D_IMPL_OPENGL_LOADER_GLAD;IMGUI_IMPL_OPENGL_LOADER_GLAD;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BH3D_IMPL_OPENGL_LOADER_GLAD;IMGUI_IMPL_OPENGL_LOADER_GLAD;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>G:\Projects\Biobazard\biohazard3d\include;G:\Projects\Biobazard\biohazard3d\include\imgui;G:\Projects\Biobazard\biohazard3d\include\cv;G:\Projects\Biobazard\biohazard3d\include\std;G:\Projects\Biobazard\3rd\imgui;H:\vcpkg\installed\x64-windows\include;H:\vcpkg\installed\x64-windows\include\glad;H:\vcpkg\installed\x64-windows\include\SDL2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -125,6 +125,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="G:\Projects\Biobazard\3rd\imgui\imgui_widgets.cpp" />
     <ClCompile Include="G:\Projects\Biobazard\biohazard3d\src\imgui\BH3D_SDLImGUI.cpp" />
     <ClCompile Include="G:\Projects\Biobazard\biohazard3d\src\imgui\BH3D_WidgetImGUI.cpp" />
+    <ClCompile Include="G:\Projects\Biobazard\biohazard3d\src\imgui\BH3D_imgui_widgets.cpp" />
     <ClCompile Include="G:\Projects\Biobazard\biohazard3d\src\cv\BH3D_FontOpenCV.cpp" />
     <ClCompile Include="G:\Projects\Biobazard\biohazard3d\src\cv\BH3D_TextureManagerOpenCV.cpp" />
   </ItemGroup>

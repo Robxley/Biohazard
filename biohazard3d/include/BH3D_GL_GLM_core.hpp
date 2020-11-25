@@ -91,7 +91,7 @@ namespace bh3d
 		return buffer_id;
 	}
 
-	template<class T = float, int TVertexSize = 1>
+	template<class T, int TVertexSize = 1>
 	auto AllocateVBO(std::size_t vertex_count, GLenum usage = GL_STATIC_DRAW)
 	{
 		// Perform the buffer allocation in function
@@ -100,7 +100,7 @@ namespace bh3d
 	}
 
 
-	template<class T = float, int TVertexSize, int TGLType = GLType2Enum<T>::GLEnum()>
+	template<class T, int TVertexSize, int TGLType = GLType2Enum<T>::GLEnum()>
 	auto AllocateVBO(std::size_t vertex_count, GLuint index_attrib, GLenum usage = GL_STATIC_DRAW)
 	{
 		assert(vertex_count > 0);

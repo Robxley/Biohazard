@@ -1,6 +1,7 @@
 #include <sstream>
 
 #include <SDL2/SDL.h>
+
 #include "BH3D_Common.hpp"
 #include "BH3D_SDLEngine.hpp"
 
@@ -158,8 +159,8 @@ namespace bh3d
 
 		// OpenGL Properties
 		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-		
-		
+
+
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, m_windowInfo.glContextMajorVersion);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, m_windowInfo.glContextMinorVersion);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -171,19 +172,29 @@ namespace bh3d
 
 		//Multisample
 		if (m_windowInfo.glMultiSamples > 0) {
-			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,1);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, m_windowInfo.glMultiSamples);
 		}
 
 		// Create a windows supporting opengl
-		auto & window = m_SDL_Windows_GL_Context.m_SDL_Window;
+		auto& window = m_SDL_Windows_GL_Context.m_SDL_Window;
 		Uint32 windowFlags = (SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+
+		if (m_windowInfo.width <= 0 || m_windowInfo.height <= 0)
+		{
+			SDL_DisplayMode DM;
+			SDL_GetCurrentDisplayMode(0, &DM);
+			if(m_windowInfo.width <= 0)  m_windowInfo.width = DM.w;
+			if(m_windowInfo.height <= 0) m_windowInfo.height = DM.h;
+		}
+
 
 		if (m_windowInfo.fullscreen)
 			windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		if (m_windowInfo.borderless)
 			windowFlags |= SDL_WINDOW_BORDERLESS;
 		
+
 		window = SDL_CreateWindow(m_windowInfo.title.c_str(),
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,

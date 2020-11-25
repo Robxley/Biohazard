@@ -160,11 +160,39 @@ namespace bh3d
 			m_direction = glm::normalize(target - m_position);
 		}
 
-		inline void LookAtTarget(const glm::vec3 & target, bool updateNow) {
-			m_target = target;
-			m_direction = glm::normalize(target - m_position);
-			if(updateNow)
+		/// <summary>
+		/// Look at a specifique point.
+		/// Set updateNow to true, or don't forget to call LookAt function to recompute the camera matrix (or wait a update of a CameraEngine)
+		/// </summary>
+		/// <param name="target">point to target</param>
+		/// <param name="updateMatrix">If true update the lookAt matrix</param>
+		inline void LookAtTarget(const glm::vec3 & target, bool updateMatrix) {
+			LookAtTarget(target);
+			if(updateMatrix)
 				LookAt();
+		}
+
+
+		/// <summary>
+		/// Keep to Look at a specifique point.
+		/// Don't forget to call LookAt function to recompute the camera matrix (or wait a update of a CameraEngine)
+		/// </summary>
+		/// <param name="target">point to target</param>
+		inline void KeepToLookAtTarget(const glm::vec3& target) {
+			m_use_target = true;
+			LookAtTarget(target);
+		}
+
+
+		/// <summary>
+		/// Keep to Look at a specifique point.
+		/// Set updateNow to true or don't forget to call LookAt function to recompute the camera matrix (or wait a update of a CameraEngine)
+		/// </summary>
+		/// <param name="target">point to target</param>
+		/// <param name="updateNow">If true update the lookAt matrix</param>
+		inline void KeepToLookAtTarget(const glm::vec3& target, bool updateMatrix) {
+			m_use_target = true;
+			LookAtTarget(target, updateMatrix);
 		}
 
 		using LookAtInfos = std::tuple<glm::vec3, glm::vec3, glm::vec3>;
@@ -208,11 +236,12 @@ namespace bh3d
 		/// <param name="near">The closest plane from which objects are drawn on the screen.</param>
 		/// <param name="far">The farthest plane from which objects are no longer drawing on the screen.</param>
 		void Resize(unsigned int w, unsigned int h, float angle_fov, float zNear, float zFar) {
+			assert(w > 0 && h > 0 && angle_fov > 0);
 			m_width = w; m_height = h;
 			m_angle_fov = glm::radians(angle_fov);
 			m_zNear = zNear;
 			m_zFar = zFar;
-			m_projection = glm::perspectiveFov(m_angle_fov, (float)w, (float)h, zNear, zFar);
+			Resize();
 		}
 
 		/// <summary>
@@ -221,14 +250,16 @@ namespace bh3d
 		/// <param name="w">New width for the viewport</param>
 		/// <param name="h">New height for the viewport</param>
 		void Resize(unsigned int w, unsigned int h) {
+			assert(w > 0 && h > 0);
 			m_width = w; m_height = h;
-			m_projection = glm::perspectiveFov(m_angle_fov, (float)w, (float)h, m_zNear, m_zFar);
+			Resize();
 		}
 
 		/// <summary>
 		///  Resize function.
 		/// </summary>
 		void Resize() {
+			assert(m_width > 0 && m_height > 0);
 			m_projection = glm::perspectiveFov(m_angle_fov, (float)m_width, (float)m_height, m_zNear, m_zFar);
 		}
 
