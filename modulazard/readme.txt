@@ -1,5 +1,7 @@
 Main directory of modulazard project
 
+A tiny module framework for rapid tests in computer vision
+
 Requirements:
 	- c++17 (with asynchronism/multithreading, pthread on unix system)
 	- opencv 

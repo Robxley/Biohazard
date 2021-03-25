@@ -17,5 +17,5 @@ Module framework for quick tests of image processing algorithms.
 Mainly base on OpenCV.
 
 
-Work in progress !
+### Work in progress !
 
