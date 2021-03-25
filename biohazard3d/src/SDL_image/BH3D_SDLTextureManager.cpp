@@ -26,7 +26,6 @@
 
 #ifdef _WIN32
 #include <SDL_image.h>
-#pragma comment(lib,"SDL2_image.lib")
 #else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
