@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_FACE_H_
-#define _BH3D_FACE_H_
 
 namespace bh3d
 {
@@ -65,7 +63,7 @@ namespace bh3d
 		*\~french
 		*\brief		true si tous les indices sont diff�rents et sup�rieurs ou �gale � 0 (>=0).
 		*/
-		inline bool IsValide()
+		inline bool IsValid()
 		{
 			return (((id[0] != id[1]) && (id[0] != id[2]) && (id[1] != id[2])));
 		}
@@ -108,4 +106,4 @@ namespace bh3d
 		}
 	};
 }
-#endif //
+

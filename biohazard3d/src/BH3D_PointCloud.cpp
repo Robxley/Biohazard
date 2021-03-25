@@ -63,9 +63,10 @@ namespace bh3d
 		}
 
 		//Unbind
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
-
+		glDisableVertexAttribArray((GLuint)bh3d::ATTRIB_INDEX::POSITION);
+		glDisableVertexAttribArray((GLuint)bh3d::ATTRIB_INDEX::COLOR);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 	void PointCloud::Create(std::size_t point_capacity, GLenum usage)
@@ -91,8 +92,11 @@ namespace bh3d
 		}
 
 		//Unbind
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
+		glDisableVertexAttribArray((GLuint)bh3d::ATTRIB_INDEX::POSITION);
+		glDisableVertexAttribArray((GLuint)bh3d::ATTRIB_INDEX::COLOR);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	}
 
 
@@ -120,6 +124,7 @@ namespace bh3d
 		assert((vPositions.size() / 3) == (vColors.size() / 4) && "The number of vertex have to be the same");
 
 		BH3D_GL_CHECK_ERROR;
+
 		// Update the buffers that OpenGL uses for rendering.
 
 		UpdateVBO(m_position_buffer, vPositions, usage);
@@ -139,9 +144,9 @@ namespace bh3d
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		//Delete arrays and buffers
-		glDeleteVertexArrays(1, &m_vertex_array);
 		glDeleteBuffers(1, &m_position_buffer);
 		glDeleteBuffers(1, &m_color_buffer);
+		glDeleteVertexArrays(1, &m_vertex_array);
 
 		m_position_buffer = 0;
 		m_color_buffer = 0;

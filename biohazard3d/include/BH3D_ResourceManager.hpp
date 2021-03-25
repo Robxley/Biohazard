@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_RESOURCE_MANAGER_H_
-#define _BH3D_RESOURCE_MANAGER_H_
 
 #include <functional>
 #include <filesystem>
@@ -299,6 +297,3 @@ namespace bh3d
 
 }
 
-
-
-#endif //_BH3D_RESOURCE_MANAGER_H_

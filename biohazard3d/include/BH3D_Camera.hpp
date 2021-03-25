@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_CAMERA_H_
-#define _BH3D_CAMERA_H_
 
 #include <map>
 #include <functional>
@@ -48,13 +46,22 @@ namespace bh3d
 	struct CameraProjectionInfos
 	{
 		//Features for the projection matrix
-		float m_angle_fov = glm::radians(60.0f);
+		float m_angle_fov = glm::radians(60.0f);	//! Fov angle in radian
 		float m_zNear = 0.1f;
-		float m_zFar = 500.0f;
+		float m_zFar  = 1000.0f;
+
+		void SetAngleFov(float radian) { m_angle_fov = radian; }
+		void SetZNear(float znear) { m_zNear = znear; }
+		void SetZFar(float zfar) { m_zFar = zfar; }
 	};
 
 	/// <summary>
 	/// Features of the camera (used to compute the modelview matrix)
+	/// 
+	/// Be aware:
+	/// The zoom parameter is a "translation" (not a zoom using the angle of fov). 
+	/// That means the camera "virtual position" (in the 3d world) is computed as : virtual position = m_target + (m_position - m_target) * m_zoom).
+	/// so by default m_zoom = 1.0f, like this the camera "virtual position" is the camera position.
 	/// </summary>
 	struct CameraLookAtInfos
 	{
@@ -62,7 +69,45 @@ namespace bh3d
 		glm::vec3 m_direction = { 0.0f, 0.0f, 1.0f };			//! Direction vector of the camera. Linked with the target.
 		glm::vec3 m_up = { 0.0f, 1.0f, 0.0f };					//! The up of the camera
 		glm::vec3 m_target = { 0.0f, 0.0f, 1.0f };				//! Target of the camera. Linked with the m_direction and m_lookAtTarget
-		float m_zoom = 1.0f;									//! Zoom value on the target
+		float m_zoom = 1.0f;									//! Zoom value on the target (it is not a zoom using the fov angle. It's a "translation". The camera position is computed as : target + (position - target) * zoom)
+		bool m_use_target = false;								//! If true, m_target is preferable to m_direction (for the computation of the modelview matrix)
+
+		/// <summary>
+		/// Set the position of the lookAt matrix
+		/// </summary>
+		/// <param name="position">Camera position</param>
+		void SetLookAtPosition(const glm::vec3& position) { m_position = position; }
+
+		/// <summary>
+		/// Set the direction of the lookAt matrix
+		/// </summary>
+		/// <param name="direction">Camera direction</param>
+		void SetLookAtDirection(const glm::vec3& direction) { m_direction = direction; }
+
+		/// <summary>
+		/// Set the up/top of the lookAt matrix
+		/// </summary>
+		/// <param name="up">Camera up/top</param>
+		void SetLookAtUp(const glm::vec3& up) { m_up = up; }
+
+		/// <summary>
+		/// Set the lookAt "target". The point focuses by the camera.
+		/// </summary>
+		/// <param name="target"></param>
+		void SetLookAtTarget(const glm::vec3& target) { m_target = target; }
+
+		/// <summary>
+		/// Set a zoom (as translation of the camera position following the camera direction/target : target + (position - target) * zoom)
+		/// By default: 1.0f
+		/// </summary>
+		/// <param name="zoom">Zoom factor.</param>
+		void SetLookAtZoom(float zoom) { m_zoom = zoom; }
+
+		/// <summary>
+		/// Use the target instead of the direction to compute the lookAt matrix
+		/// </summary>
+		/// <param name="flag"></param>
+		void SetUseTarget(bool flag) { m_use_target = flag; }
 	};
 
 	/// <summary>
@@ -70,16 +115,26 @@ namespace bh3d
 	/// </summary>
 	struct CameraMatrices
 	{
-		//Camera matrices
-		glm::mat4 m_projection = glm::mat4(1.0f);					//Projection matrix (camera projection in the viewport)
-		glm::mat4 m_modelview = glm::mat4(1.0f);					//Look At/Modelview matrix (camera matrix position in the 3d world)
-		glm::mat4 m_transform = glm::mat4(1.0f);					//Transorm
+		//Camera matrices (identity by default)
+		glm::mat4 m_projection = glm::mat4(1.0f);	//! Projection matrix (camera projection in the viewport)
+		glm::mat4 m_modelview = glm::mat4(1.0f);	//! Look At/Model-view matrix (camera matrix position in the 3d world)
+		glm::mat4 m_transform = glm::mat4(1.0f);	//! Transform matrix (world transform matrix)
+
+		const glm::mat4& Projection() const {
+			return m_projection;
+		}
+		const glm::mat4& Modelview() const {
+			return m_modelview;
+		}
+		const glm::mat4& Transform() const {
+			return m_transform;
+		}
 
 		/// <summary>
 		/// Multiplication of the projection, lookAt and transform matrix.
 		/// </summary>
 		/// <returns>Multiplication Result </returns>
-		inline glm::mat4 ProjViewTransform() const {
+		glm::mat4 ProjViewTransform() const {
 			return m_projection * m_modelview * m_transform;
 		}
 
@@ -87,9 +142,43 @@ namespace bh3d
 		/// Multiplication of the projection, lookAt matrix
 		/// </summary>
 		/// <returns>Multiplication Result</returns>
-		inline glm::mat4 ProjView() const {
+		glm::mat4 ProjView() const {
 			return m_projection * m_modelview;
 		}
+
+		/// <summary>
+		/// Extract the camera position from the modelview matrix.
+		/// (by supposing the model view matrix don't contain scale factors for example when it is build form a LookAt function)
+		/// </summary>
+		/// <returns>Modelview camera position</returns>
+		glm::vec3 ExtractCameraPosition() const { return ExtractCameraPosition_NoScale(m_modelview); }
+	
+		/// <summary>
+		/// Extract the camera position from the modelview matrix.
+		/// (by supposing the model view matrix don't contain scale factors for example when it is build form a LookAt function)
+		/// </summary>
+		/// <param name="modelView">Modelview matrix (without any scale factor, for example build from a LookAt function)</param>
+		/// <returns>Modelview camera position</returns>
+		static glm::vec3 ExtractCameraPosition_NoScale(const glm::mat4& modelView)
+		{
+			glm::mat3 rotMat(modelView);
+			glm::vec3 d(modelView[3]);
+			glm::vec3 retVec = -d * rotMat;
+			return retVec;
+		}
+
+		void SetProjection(const glm::mat4& projection) {
+			m_projection = projection;
+		}
+
+		void SetModelview(const glm::mat4& modelview) {
+			m_modelview = modelview;
+		}
+
+		void SetTransform(const glm::mat4& transform) {
+			m_transform = transform;
+		}
+
 	};
 
 	/// <summary>
@@ -101,24 +190,21 @@ namespace bh3d
 	public:
 
 		// Camera mouvement ajustements
-		bool m_use_target = false;								//! If true, m_target is preferable to m_direction (for the computation of the modelview matrix)
 		float m_movement_speed = 15.0f;							//! The scaling quantity of movement
 		float m_mouse_speed = 0.008f;							//! The mouse sensitivity
 		float m_zoom_speed = 1.0f;								//! Zoom speed
 		float m_zoom_max = 500;									//! Max zoom value
 		float m_zoom_min = 0;									//! Min zoom value
-		float m_default_zoom = 0.0f;							//! Default zoom value
+		float m_default_zoom = 1.0f;							//! Default zoom value
 		float m_fps_elapse_time = 1.0f / 60.0f;					//! Frame per second to normalise each camera mouvement
 			
 		/// <summary>
 		/// Zoom clamp in the min-max ranges
 		/// </summary>
-		void ZoomClamp()
-		{
+		void ZoomClamp() {
 			this->m_zoom = std::clamp(this->m_zoom, this->m_zoom_min, this-> m_zoom_max);
 		}
 		
-
 		/// <summary>
 		/// Update the modelview matrix
 		/// </summary>
@@ -172,7 +258,6 @@ namespace bh3d
 				LookAt();
 		}
 
-
 		/// <summary>
 		/// Keep to Look at a specifique point.
 		/// Don't forget to call LookAt function to recompute the camera matrix (or wait a update of a CameraEngine)
@@ -183,20 +268,62 @@ namespace bh3d
 			LookAtTarget(target);
 		}
 
-
 		/// <summary>
-		/// Keep to Look at a specifique point.
-		/// Set updateNow to true or don't forget to call LookAt function to recompute the camera matrix (or wait a update of a CameraEngine)
+		/// Keep to Look at a specific point.
+		/// Set updateMatrix to true or don't forget to call LookAt function to recompute the camera matrix (or wait a update of a CameraEngine)
 		/// </summary>
 		/// <param name="target">point to target</param>
-		/// <param name="updateNow">If true update the lookAt matrix</param>
+		/// <param name="updateMatrix">If true update the lookAt matrix</param>
 		inline void KeepToLookAtTarget(const glm::vec3& target, bool updateMatrix) {
 			m_use_target = true;
 			LookAtTarget(target, updateMatrix);
 		}
 
-		using LookAtInfos = std::tuple<glm::vec3, glm::vec3, glm::vec3>;
-		static LookAtInfos ExtractLookAtInfos(const glm::mat4& lookat, const glm::vec4& direction, const glm::vec4& up);
+		/// <summary>
+		/// Reset the zoom value with default zoom value
+		/// And Reset the camera transform matrix with the identity matrix
+		/// Don't forget to call LookAt() function to recompute the camera matrix (or wait a update of a CameraEngine)
+		/// </summary>
+		void Identity() {
+			m_zoom = m_default_zoom;
+			m_transform = glm::mat4(1.0f);
+		}
+
+		/// <summary>
+		/// Reset the zoom value with default zoom value
+		/// And Reset the camera transform matrix with the identity matrix
+		/// Then call the lookAt() function to update the camera matrix if the flag updateMatrix is true
+		/// </summary>
+		/// <param name="updateMatrix">If true, call LookAt() function to update the camera matrix</param>
+		void Identity(bool updateMatrix) {
+			Identity();
+			if (updateMatrix)
+				LookAt();
+		}
+
+		/// <summary>
+		/// Compute a lookAt matrix from a modelview/transform matrix (transform matrix have only be a combination of translation and rotation, without sascaling)
+		/// </summary>
+		/// <param name="pose">transformation matrix without scaling / shrinking </param>
+		/// <param name="direction"></param>
+		/// <param name="up"></param>
+		void SetLookAtFromPose(const glm::mat4& pose, const glm::vec3& direction, const glm::vec3& up)
+		{
+			std::tie(m_position, m_direction, m_up) = ExtractLookAtInfos(pose, direction, up);
+			m_use_target = false;
+			LookAt();
+		}
+
+		using LookAtInfos = std::tuple<glm::vec3, glm::vec3, glm::vec3>; //! As position, target, and up 
+
+		/// <summary>
+		/// Apply the LookAt parameters to a transofrm matrix
+		/// </summary>
+		/// <param name="pose">transofrm matrix</param>
+		/// <param name="direction">Direction of the lookAt camera</param>
+		/// <param name="up">Up of the lookAt camera</param>
+		/// <returns>Look at infos tuple</returns>
+		static LookAtInfos ExtractLookAtInfos(const glm::mat4& pose, const glm::vec3& direction, const glm::vec3& up);
 
 	protected:
 
@@ -260,7 +387,8 @@ namespace bh3d
 		/// </summary>
 		void Resize() {
 			assert(m_width > 0 && m_height > 0);
-			m_projection = glm::perspectiveFov(m_angle_fov, (float)m_width, (float)m_height, m_zNear, m_zFar);
+			if(m_width > 0 && m_height > 0)
+				m_projection = glm::perspectiveFov(m_angle_fov, (float)m_width, (float)m_height, m_zNear, m_zFar);
 		}
 
 		//Update the camera matrices
@@ -273,7 +401,6 @@ namespace bh3d
 
 		void Update()
 		{
-
 			UpdateMatrices();
 		}
 
@@ -281,16 +408,16 @@ namespace bh3d
 		/// Update the deplacement of the camera according to the movement of the mouse and the selected mod
 		/// </summary>
 		/// <param name="m_mouse">Mouse inputs</param>
-		virtual void Update(const Mouse &m_mouse)
+		virtual void Update(const Mouse &mouse)
 		{
 			assert(m_cameraMod != CameraMod_TrajectoryFlight && "Use a CameraTrajectory object with this mod");
 			switch (m_cameraMod)
 			{
 			case CameraMod_LookAround:
-				LookAround(m_mouse);
+				LookAround(mouse);
 				return;
 			default:
-				FreeFlight(m_mouse);
+				FreeFlight(mouse);
 				return;
 			}
 		}
@@ -300,13 +427,13 @@ namespace bh3d
 		/// Look around the target point according to the movement of the mouse
 		/// </summary>
 		/// <param name="m_mouse">Mouse inputs</param>
-		void LookAround(const Mouse &m_mouse);
+		void LookAround(const Mouse &mouse);
 
 		/// <summary>
 		/// Free movement of the camera according to the movement of the mouse
 		/// </summary>
 		/// <param name="m_mouse">Mouse inputs</param>
-		void FreeFlight(const Mouse &m_mouse);
+		void FreeFlight(const Mouse &mouse);
 
 	};
 
@@ -398,4 +525,3 @@ namespace bh3d
 
 
 }
-#endif //

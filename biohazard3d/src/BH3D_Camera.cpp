@@ -25,15 +25,16 @@ namespace bh3d
 			}
 			return true;
 		};
+		
 		if (isfinite(tmp_modelview))
 			m_modelview = tmp_modelview;
 	}
 
-	Camera::LookAtInfos Camera::ExtractLookAtInfos(const glm::mat4 & lookat, const glm::vec4 & direction, const glm::vec4 & up)
+	Camera::LookAtInfos Camera::ExtractLookAtInfos(const glm::mat4 & pose, const glm::vec3 & direction, const glm::vec3 & up)
 	{
-		glm::vec3 position = glm::column(lookat, 3);
+		glm::vec3 position = glm::column(pose, 3);
 
-		auto new_vec = [&](const glm::vec4& v) ->glm::vec3 { return glm::normalize(glm::vec3(lookat * v)); };
+		auto new_vec = [&](const glm::vec3& v) ->glm::vec3 { return glm::normalize(glm::vec3(pose * glm::vec4(v, 0.0f))); };
 
 		glm::vec3 new_dir = new_vec(direction);
 		glm::vec3 new_up = new_vec(up);
@@ -41,23 +42,23 @@ namespace bh3d
 		return std::tuple(position, new_dir, new_up);
 	}
 
-	void CameraEngine::LookAround(const Mouse &m_mouse)
+	void CameraEngine::LookAround(const Mouse &mouse)
 	{
 
-		if (m_mouse == Mouse::Event::UP || m_mouse == Mouse::Event::NONE)
+		if (mouse == Mouse::Event::UP || mouse == Mouse::Event::NONE)
 			return;
 
-		if (m_mouse == Mouse::Event::WHEEL)
+		if (mouse == Mouse::Event::WHEEL)
 		{
-			m_zoom += m_zoom_speed * m_mouse.GetData();
+			m_zoom -= m_zoom_speed * mouse.GetData();
 			m_zoom = std::clamp(m_zoom, m_zoom_min, m_zoom_max);
 		}
-		else if (m_mouse == Mouse::Event::MOVE || m_mouse & Mouse::Button::LEFT)
+		else if (mouse == Mouse::Event::MOVE && (mouse & Mouse::Button::LEFT) )
 		{
-			if (m_mouse & Mouse::Button::LEFT)
+			if (mouse & Mouse::Button::LEFT)
 			{
-				int delta_x = m_mouse.GetRelativePosX();
-				int delta_y = m_mouse.GetRelativePosY();
+				int delta_x = mouse.GetRelativePosX();
+				int delta_y = mouse.GetRelativePosY();
 
 				if (float angle_x = delta_x * m_mouse_speed; std::isfinite(angle_x))
 				{
@@ -69,52 +70,65 @@ namespace bh3d
 					}
 				}
 			}
-
 		}
-		else if (m_mouse & Mouse::Button::RIGHT)
+		else if (mouse == Mouse::Event::MOVE && (mouse & Mouse::Button::MIDDLE))
 		{
-			m_zoom = m_default_zoom;
-			m_transform = glm::mat4( 1.0f );
+			float delta_x = mouse.GetRelativePosX() / 4.0f;
+			float delta_y = mouse.GetRelativePosY() / 4.0f;
+
+			if (float angle_x = delta_x * m_mouse_speed; std::isfinite(angle_x))
+			{
+				if (float angle_y = delta_y * m_mouse_speed; std::isfinite(angle_y))
+				{
+					glm::mat4 newTranslate = glm::translate(glm::mat4(1.0f), glm::vec3(delta_x, -delta_y, 0));
+					m_transform = newTranslate * m_transform;
+				}
+			}
+		}
+		else if (mouse & Mouse::Button::RIGHT)
+		{
+			Identity();
 		}
 
 		LookAt();
 	}
 
-	void CameraEngine::FreeFlight(const Mouse &m_mouse)
+	void CameraEngine::FreeFlight(const Mouse &mouse)
 	{
 
-		if (m_mouse == Mouse::Event::UP || m_mouse == Mouse::Event::NONE)
+		if (mouse == Mouse::Event::UP || mouse == Mouse::Event::NONE)
 			return;
 
-		if (m_mouse == Mouse::Event::WHEEL)
+		if (mouse == Mouse::Event::WHEEL)
 		{
-			m_movement_speed += m_mouse.GetData();
+			m_movement_speed += mouse.GetData();
 		}
-		else if (m_mouse == Mouse::Event::MOVE && (m_mouse & Mouse::Button::LEFT || m_mouse & Mouse::Button::RIGHT))
+		else if (mouse == Mouse::Event::MOVE && (mouse & Mouse::Button::LEFT || mouse & Mouse::Button::RIGHT))
 		{
-			int delta_x = m_mouse.GetRelativePosX();
-			int delta_y = m_mouse.GetRelativePosY();
+			int delta_x = mouse.GetRelativePosX();
+			int delta_y = mouse.GetRelativePosY();
 
 			glm::vec3 right_direction = glm::normalize(glm::cross(m_up, m_direction));
+
 			if (float angle_x = delta_x * m_mouse_speed; std::isfinite(angle_x))
 			{
-				glm::vec3 up_directiction = glm::normalize(glm::cross(right_direction, m_direction));
-				m_direction = glm::rotate(m_direction, angle_x, up_directiction);
+				glm::vec3 up_direction = glm::normalize(glm::cross(right_direction, m_direction));
+				m_direction = glm::rotate(m_direction, angle_x, up_direction);
 			}
 
 			if (float angle_y = delta_y * m_mouse_speed; std::isfinite(angle_y))
 			{
-				glm::vec3 right_direction = glm::normalize(glm::cross(m_up, m_direction));
+				right_direction = glm::normalize(glm::cross(m_up, m_direction));
 				m_direction = glm::rotate(m_direction, angle_y, right_direction);
 			}
 		}
 
 
-		if (m_mouse & Mouse::Button::RIGHT && m_mouse & Mouse::Button::LEFT)
+		if (mouse & Mouse::Button::RIGHT && mouse & Mouse::Button::LEFT)
 		{
 			MoveBackWard();
 		}	
-		else if (m_mouse & Mouse::Button::LEFT)
+		else if (mouse & Mouse::Button::LEFT)
 		{
 			MoveForward();
 		}
@@ -122,15 +136,15 @@ namespace bh3d
 		LookAt();
 	}
 
-	void CameraTrajectory::TrajectoryFlight(const Mouse &m_mouse)
+	void CameraTrajectory::TrajectoryFlight(const Mouse &mouse)
 	{
 
-		if (m_mouse == Mouse::Event::UP || m_mouse == Mouse::Event::NONE)
+		if (mouse == Mouse::Event::UP || mouse == Mouse::Event::NONE)
 			return;
 
-		if (m_mouse == Mouse::Event::WHEEL)
+		if (mouse == Mouse::Event::WHEEL)
 		{
-			int wheel_value = m_mouse.GetData();
+			int wheel_value = mouse.GetData();
 			if (wheel_value > 0) {
 					m_key++;
 			}
@@ -139,10 +153,10 @@ namespace bh3d
 			}
 			ExtractLookAtParams();
 		}
-		else if (m_mouse == Mouse::Event::MOVE && m_mouse & Mouse::Button::LEFT)
+		else if (mouse == Mouse::Event::MOVE && mouse & Mouse::Button::LEFT)
 		{
-			int delta_x = m_mouse.GetRelativePosX();
-			int delta_y = m_mouse.GetRelativePosY();
+			int delta_x = mouse.GetRelativePosX();
+			int delta_y = mouse.GetRelativePosY();
 
 			glm::vec3 right_direction = glm::normalize(glm::cross(m_up, m_direction));
 			if (float angle_x = delta_x * m_mouse_speed; std::isfinite(angle_x))
@@ -153,16 +167,16 @@ namespace bh3d
 
 			if (float angle_y = delta_y * m_mouse_speed; std::isfinite(angle_y))
 			{
-				glm::vec3 right_direction = glm::normalize(glm::cross(m_up, m_direction));
+				right_direction = glm::normalize(glm::cross(m_up, m_direction));
 				m_direction = glm::rotate(m_direction, angle_y, right_direction);
 			}
 		}
 
-		if ( (m_mouse & Mouse::Button::LEFT) && (m_mouse & Mouse::Button::RIGHT) )
+		if ( (mouse & Mouse::Button::LEFT) && (mouse & Mouse::Button::RIGHT) )
 		{
 			m_position += (m_direction)*(m_movement_speed * m_fps_elapse_time);
 		}
-		else if (m_mouse & Mouse::Button::RIGHT)
+		else if (mouse & Mouse::Button::RIGHT)
 		{
 			m_position -= (m_direction)*(m_movement_speed * m_fps_elapse_time);
 		}

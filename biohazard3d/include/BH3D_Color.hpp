@@ -1,7 +1,5 @@
 
 #pragma once
-#ifndef _BH3D_COLOR_OPENCV_H_
-#define _BH3D_COLOR_OPENCV_H_
 
 #include <glm/glm.hpp>
 

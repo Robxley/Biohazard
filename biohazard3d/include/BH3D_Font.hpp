@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_FONT_H_
-#define _BH3D_FONT_H_
 
 #include <sstream>
 #include <filesystem>
@@ -318,4 +316,3 @@ namespace bh3d
 		}
 	}
 }
-#endif //

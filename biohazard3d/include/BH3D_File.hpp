@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_FILE_H_
-#define _BH3D_FILE_H_
 
 #include <filesystem>
 
@@ -145,4 +143,3 @@ namespace bh3d
 
 
 }
-#endif //

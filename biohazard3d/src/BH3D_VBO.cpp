@@ -65,16 +65,16 @@ namespace bh3d
 				fullSize += buffer.byteSize;
 			
 			//creation du VBO
-			glGenBuffers(1, &arrayBufferID);								//g�n�ration d'un buffer
+			glGenBuffers(1, &arrayBufferID);								//génération d'un buffer
 			glBindBuffer(GL_ARRAY_BUFFER, arrayBufferID);					//activation du buffer
-			glBufferData(GL_ARRAY_BUFFER, fullSize, nullptr, mod);			//allocation m�moire du buffer array
+			glBufferData(GL_ARRAY_BUFFER, fullSize, nullptr, mod);			//allocation mémoire du buffer array
 
 			//copie des donn�es dans le vbo
 			std::size_t offset = 0;
 			for (const auto &buffer : vArrayBuffers)
 			{
 				glBufferSubData(GL_ARRAY_BUFFER, offset, buffer.byteSize, buffer.data);
-				offset += buffer.byteSize; //on d�cale l'offset aux donn�es suivantes.
+				offset += buffer.byteSize; //on décale l'offset aux donn�es suivantes.
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace bh3d
 			for (const auto &buffer : vElementBuffers)
 				fullSize += buffer.byteSize;
 
-			glGenBuffers(1, &elementBufferID); //g�n�ration d'un buffer
+			glGenBuffers(1, &elementBufferID); //génération d'un buffer
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferID);  //activation du buffer
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, fullSize, nullptr, mod); //allocation memoire du buffer
 			

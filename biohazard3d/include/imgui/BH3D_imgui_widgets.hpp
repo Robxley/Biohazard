@@ -73,7 +73,7 @@ namespace bh3d
 		int m_displayHeight = 0; //! displayable height
 
 		using FuncViewportCallBack = std::function<void(float x, float y, float width, float height)>;
-		FuncViewportCallBack m_viewportCallback; //!if set, this function is called when the window viewport has been changed
+		FuncViewportCallBack m_viewportCallback = {}; //!if set, this function is called when the window viewport has been changed
 
 		/// <summary>
 		/// Compute the window size in pixel from the global size of the application and the percent values of m_percent_rect.

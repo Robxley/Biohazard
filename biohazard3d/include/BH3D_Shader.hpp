@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_SHADER_H_
-#define _BH3D_SHADER_H_
 
 #include <string>
 #include <vector>
@@ -277,6 +275,8 @@ namespace bh3d
 			SendTransform(transform);
 		}
 
+		void Destroy();
+
 	private:
 
 		int LoadTypeShader(GLuint &shader, GLenum type, const File & source);
@@ -287,8 +287,6 @@ namespace bh3d
 
 		template <typename T>
 		inline int LoadT(T vertex, T fragment);
-
-		void Destroy();
 
 		void BindAllAttribLocation() const;
 
@@ -608,4 +606,3 @@ namespace bh3d
 
 
 }
-#endif //

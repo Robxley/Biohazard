@@ -33,53 +33,7 @@
 
 namespace bh3d
 {
-	Texture TextureManager::CreateTextureRGBA(GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
-	{
-
-		BH3D_GL_CHECK_ERROR;
-
-		assert(pixels != nullptr);
-		assert(width > 0);
-		assert(height > 0);
-
-		GLuint texture_id = 0;
-
-		//cr?ation de la texture opengl et remplissage
-		glGenTextures(1, &texture_id);
 	
-		if (texture_id == 0) {
-			BH3D_LOGGER_ERROR("OpenGL can't allocate texture ressource");
-			return {};
-		}
-
-		assert(texture_id != 0);
-
-		glBindTexture(m_textureTarget, texture_id);
-
-		glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		if (m_useMipmap)
-			glTexParameteri(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-		glTexImage2D(m_textureTarget,
-			0,
-			GL_RGBA,
-			width, height,
-			0,
-			format,  //GL_RGBA
-			type, //GL_UNSIGNED_BYTE,
-			pixels);
-
-		if (m_useMipmap)
-			glGenerateMipmap(GL_TEXTURE_2D);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		return Texture(texture_id, m_textureTarget);
-
-	}
 	void TextureManager::FreeResource(Texture& ressource)
 	{
 		BH3D_GL_CHECK_ERROR;

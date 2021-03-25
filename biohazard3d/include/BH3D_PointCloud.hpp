@@ -1,6 +1,4 @@
 #pragma once
-#ifndef _BH3D_POINT_CLOUD_H_
-#define _BH3D_POINT_CLOUD_H_
 
 #include "BH3D_GL.hpp"
 #include "BH3D_Shader.hpp"
@@ -17,6 +15,8 @@ namespace bh3d
 	{
 	public:
 
+		static constexpr GLenum DEFAULT_USAGE = GL_STREAM_DRAW;
+
 		virtual ~PointCloud() {
 			Destroy();
 		}
@@ -31,31 +31,31 @@ namespace bh3d
 		/// <summary>
 		/// Use the vector capacities to allocate some GPU buffers
 		/// </summary>
-		void Create(const std::vector<glm::vec3>& vPositions, const std::vector<glm::vec4>& vColors, GLenum usage = GL_STREAM_DRAW);
+		void Create(const std::vector<glm::vec3>& vPositions, const std::vector<glm::vec4>& vColors, GLenum usage = DEFAULT_USAGE);
 		
 		/// <summary>
 		/// Use the vector capacities to allocate some GPU buffers
 		/// The capacity of the position vector must be divided by 3 as [x0,y0,z0, x1,y1,z1,...]
 		/// The capacity of the color vector must be divided by 4 as [r0,g0,b0,a0, r1,g2,b3,a4,...]
 		/// </summary>
-		void Create(const std::vector<float>& vPositions, const std::vector<float>& vColors, GLenum usage = GL_STREAM_DRAW);
+		void Create(const std::vector<float>& vPositions, const std::vector<float>& vColors, GLenum usage = DEFAULT_USAGE);
 
 		/// <summary>
 		/// Allocate a GPU buffer for a number of points.
 		/// </summary>
-		void Create(std::size_t point_capacity, GLenum usage = GL_STREAM_DRAW);
+		void Create(std::size_t point_capacity, GLenum usage = DEFAULT_USAGE);
 
 		/// <summary>
 		/// Update a existing point cloud
 		/// </summary>
-		void Update(const std::vector<glm::vec3>& vPositions, const std::vector<glm::vec4>& vColors, GLenum usage = GL_STREAM_DRAW);
+		void Update(const std::vector<glm::vec3>& vPositions, const std::vector<glm::vec4>& vColors, GLenum usage = DEFAULT_USAGE);
 		
 		/// <summary>
 		/// Use the vector capacities to allocate some GPU buffers
 		/// The size of the position vector must be divided by 3 as [x0,y0,z0, x1,y1,z1,...]
-		/// The size of the color vector must be divided by 4 as [r0,g0,b0,a0, r1,g2,b3,a4,...]
+		/// The size of the color vector must be divided by 4 as [r0,g0,b0,a0, r1,g1,b1,a1,...]
 		/// </summary>
-		void Update(const std::vector<float>& vPositions, const std::vector<float>& vColors, GLenum usage = GL_STREAM_DRAW);
+		void Update(const std::vector<float>& vPositions, const std::vector<float>& vColors, GLenum usage = DEFAULT_USAGE);
 
 
 		/// <summary>
@@ -66,7 +66,6 @@ namespace bh3d
 			assert(IsValid() && "Allocate the buffer before updating - Call CreateCameraTrajectoryVBO");
 			assert(first >= 0);
 			assert(first + count <= m_vertex_count);
-			assert(IsValid() && "Allocate the buffer before updating - Call CreateCameraTrajectoryVBO");
 			glBindVertexArray(m_vertex_array);
 			glDrawArrays(mode, first, count);
 		}
@@ -86,6 +85,13 @@ namespace bh3d
 			assert(m_shader.IsValid() && "Create a shader / Call LoadShader");
 			m_shader(projection_modelview_transform);
 			Draw();
+		}
+
+		void Draw(const glm::mat4 & projection_modelview_transform, GLint first, GLsizei count) 
+		{
+			assert(m_shader.IsValid() && "Create a shader / Call LoadShader");
+			m_shader(projection_modelview_transform);
+			Draw(GL_POINTS, first, count);
 		}
 
 		bool LoadShader()
@@ -109,5 +115,4 @@ namespace bh3d
 	};
 }
 
-#endif
 

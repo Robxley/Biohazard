@@ -22,13 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-
- 
  
 #pragma once
-#ifndef _BH3D_CUBE_H_
-#define _BH3D_CUBE_H_
 
 #include <glm/glm.hpp>
 
@@ -138,4 +133,3 @@ namespace bh3d
 	}
 
 }
-#endif //

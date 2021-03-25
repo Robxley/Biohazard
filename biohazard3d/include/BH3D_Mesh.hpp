@@ -23,11 +23,7 @@
  * THE SOFTWARE.
  */
 
-
-
 #pragma once
-#ifndef _BH3D_MESH_H_
-#define _BH3D_MESH_H_
 
 #include <optional>
 
@@ -111,6 +107,8 @@ namespace bh3d
 		bool AddSubMesh(const std::vector<Face> & vFaces, const std::vector<glm::vec3> & vPositions, const std::vector<glm::vec2> & vTexCoords);
 
 		bool AddSubMesh(const std::vector<Face> & vFaces, const std::vector<glm::vec3> & vPositions);
+
+		bool AddColoredSubMesh(const std::vector<Face>& vFaces, const std::vector<glm::vec3>& vPositions, const std::vector<glm::vec4>& vColors);
 
 		/**
 		*\~english
@@ -216,122 +214,131 @@ namespace bh3d
 		*/
 		void TranslateMesh(const glm::vec3 &translation, UOptionalUInt submeshid = {});
 
-			/**
-			*\~english
-			*\brief		Works like TransformMesh to scale the mesh
-			*\param[in]	scale vector.
-			*\param[in]	id of submesh
-			*\remark	The mesh become invalid.
-			*\~french
-			*\brief		Marche comme pour TransformMesh
-			*\param[in] vecteur de redimentionnement.
-			*\param[in]	Si inf�rieur � 0 application � l'ensemble des submesh.
-			*\remark	Le mesh devient invalide.
-			*/
-			void ScaleMesh(const glm::vec3 & scale, UOptionalUInt submeshid = {});
-			void ScaleMesh(float scale, UOptionalUInt submeshid = {});
+		/**
+		*\~english
+		*\brief		Works like TransformMesh to scale the mesh
+		*\param[in]	scale vector.
+		*\param[in]	id of submesh
+		*\remark	The mesh become invalid.
+		*\~french
+		*\brief		Marche comme pour TransformMesh
+		*\param[in] vecteur de redimentionnement.
+		*\param[in]	Si inf�rieur � 0 application � l'ensemble des submesh.
+		*\remark	Le mesh devient invalide.
+		*/
+		void ScaleMesh(const glm::vec3& scale, UOptionalUInt submeshid = {});
+		void ScaleMesh(float scale, UOptionalUInt submeshid = {});
 
-			/**
-			*\~english
-			*\brief		To Center the Mesh on the origin with a offset.
-			*\param[in]	offset position
-			*\remark	The mesh become invalid.
-			*\~french
-			*\brief		Pour centrer le mesh sur l'origine avec un offset.
-			*\param[in] vecteur offset
-			*\remark	Le mesh devient invalide.
-			*/
-			void CenterDataToOrigin(const glm::vec3 & offset = glm::vec3(0));
+		/**
+		*\~english
+		*\brief		To Center the Mesh on the origin with a offset.
+		*\param[in]	offset position
+		*\remark	The mesh become invalid.
+		*\~french
+		*\brief		Pour centrer le mesh sur l'origine avec un offset.
+		*\param[in] vecteur offset
+		*\remark	Le mesh devient invalide.
+		*/
+		void CenterDataToOrigin(const glm::vec3& offset = glm::vec3(0));
 
-			/**
-			*\~english
-			*\brief		Scales the mesh in box with the size (1,1,1)
-			*\param[in]	keep the ratio on x,y,z size
-			*\remark	The mesh become invalid.
-			*\~french
-			*\brief		Redimensionne le mesh pour �tre contenu dans un cube de dimension (1,1,1)
-			*\param[in] ratio entre les diff�rentes dimensions.
-			*\remark	Le mesh devient invalide.
-			*/
-			void NormalizeData(bool keepRatio = 1);
-
-
-			/**
-			*\~english
-			*\brief		Requests that the vertex capacity be at least enough to contain n meshes.
-			*\param[in]	face number for all submeshes.
-			*\param[in]	vertex number for all submeshes.
-			*\remark	Container allocation.
-			*\~french
-			*\brief		Permets de d�finir la taille des containers m�moires.
-			*\param[in] Nombre de faces qui sera utilis� par l'ensemble des submeshes
-			*\param[in] Nombre de vertices qui sera utilis� par l'ensemble des submeshes
-			*\remark	Permets d'�viter l'allocation/d�sallocations des containers � chaque ajouts de mesh
-			*/
-			inline void ReserveMemory(unsigned int faceNumber, unsigned int vertexNumber, unsigned int meshNumber = 0);
+		/**
+		*\~english
+		*\brief		Scales the mesh in box with the size (1,1,1)
+		*\param[in]	keep the ratio on x,y,z size
+		*\remark	The mesh become invalid.
+		*\~french
+		*\brief		Redimensionne le mesh pour �tre contenu dans un cube de dimension (1,1,1)
+		*\param[in] ratio entre les diff�rentes dimensions.
+		*\remark	Le mesh devient invalide.
+		*/
+		void NormalizeData(bool keepRatio = 1);
 
 
-			//Accesseur/Getter
-			inline std::vector<glm::vec3>&	 GetTabPosition();
-			inline std::vector<glm::vec3>&	 GetTabNormal();
-			inline std::vector<glm::vec2>&	 GetTabTexCoord2();
-			inline std::vector<glm::vec3>&	 GetTabTexCoord3();
-			inline std::vector<glm::vec3>&  GetTabColor3();
-			inline std::vector<glm::vec4>&  GetTabColor4();
-			inline std::vector<glm::vec3>&  GetTabTangent();
-			inline std::vector<Face>&  GetTabFace();
-			inline std::vector<Mesh::SubMesh>&  GetTabSubMeshes();
-			inline std::size_t GetSubMeshCount() const;
+		//Compute smoothed normals
+		void ComputeSmoothNormal();
+
+		/**
+		*\~english
+		*\brief		Requests that the vertex capacity be at least enough to contain n meshes.
+		*\param[in]	face number for all submeshes.
+		*\param[in]	vertex number for all submeshes.
+		*\remark	Container allocation.
+		*\~french
+		*\brief		Permets de d�finir la taille des containers m�moires.
+		*\param[in] Nombre de faces qui sera utilis� par l'ensemble des submeshes
+		*\param[in] Nombre de vertices qui sera utilis� par l'ensemble des submeshes
+		*\remark	Permets d'�viter l'allocation/d�sallocations des containers � chaque ajouts de mesh
+		*/
+		inline void ReserveMemory(unsigned int faceNumber, unsigned int vertexNumber, unsigned int meshNumber = 0);
 
 
-			//applique un meme et unique material � tous les submeshes
-			inline void SetMaterial(const Material & m);
+		//Accesseur/Getter
+		inline std::vector<glm::vec3>& GetTabPosition();
+		inline std::vector<glm::vec3>& GetTabNormal();
+		inline std::vector<glm::vec2>& GetTabTexCoord2();
+		inline std::vector<glm::vec3>& GetTabTexCoord3();
+		inline std::vector<glm::vec3>& GetTabColor3();
+		inline std::vector<glm::vec4>& GetTabColor4();
+		inline std::vector<glm::vec3>& GetTabTangent();
+		inline std::vector<Face>& GetTabFace();
+		inline std::vector<Mesh::SubMesh>& GetTabSubMeshes();
+		inline std::size_t GetSubMeshCount() const;
 
-			//application a un seul mesh
-			inline void SetMaterialSubMesh(unsigned int submeshid, const Material &m);
 
-			//idem mais pour une texture
-			inline void SetTexture(const Texture &t);
-			inline void SetTexture(const Texture * t);
-			inline void SetTexture(const std::filesystem::path & pathname);
-			inline void SetTextureSubMesh(unsigned int submeshid, const Texture & texture);
-			inline void SetTextureSubMesh(unsigned int submeshid, const std::filesystem::path & pathname);
+		//applique un meme et unique material � tous les submeshes
+		inline void SetMaterial(const Material& m);
 
-			//idem pour la couleur
-			inline void SetColor(const glm::vec4 & color);
-			inline void SetColorSubMesh(unsigned int submeshid, const glm::vec4 & color);
+		//application a un seul mesh
+		inline void SetMaterialSubMesh(unsigned int submeshid, const Material& m);
 
-			inline void SetBoundingBox(const BoundingBox & bdBox);
+		//idem mais pour une texture
+		inline void SetTexture(const Texture& t);
+		inline void SetTexture(const Texture* t);
+		inline void SetTexture(const std::filesystem::path& pathname);
+		inline void SetTextureSubMesh(unsigned int submeshid, const Texture& texture);
+		inline void SetTextureSubMesh(unsigned int submeshid, const std::filesystem::path& pathname);
 
-			//retourne nullptr si indice invalide
-			inline Material * GetSubMeshMaterial(unsigned int submeshid);
+		//idem pour la couleur
+		inline void SetColor(const glm::vec4& color);
+		inline void SetColorSubMesh(unsigned int submeshid, const glm::vec4& color);
 
-			//Bind the vbo used by the mesh without drawing
-			inline void BindVBO() const;
+		inline void SetBoundingBox(const BoundingBox& bdBox);
 
-			//Bind the materail of spectific submeshid
-			inline void BindMaterial(unsigned int submeshid) const;
+		//retourne nullptr si indice invalide
+		inline Material* GetSubMeshMaterial(unsigned int submeshid);
 
-			//Only call glDrawElements a the specific submesh (without any VBO or Material binding)
-			inline void DrawSubMeshElements(unsigned int submeshid) const;
+		//Bind the vbo used by the mesh without drawing
+		inline void BindVBO() const;
+
+		//Bind the materail of spectific submeshid
+		inline void BindMaterial(unsigned int submeshid) const;
+
+		//Only call glDrawElements a the specific submesh (without any VBO or Material binding)
+		inline void DrawSubMeshElements(unsigned int submeshid) const;
+
+		//Only call glDrawElements for all meshes (without any VBO or Material binding)
+		inline void DrawElements() const;
+
+		//Compute the bounding box of the mesh from the vertex array
+		virtual BoundingBox& ComputeBoundingBox();
 
 		protected:
 
-			bool LoadSubMesh(std::size_t nFaces, const unsigned int *pvFaces, std::size_t nVertices, const float * pvPositions, const float * pvTexCoords = nullptr, char textureFormat = 2, const float * pvNormals = nullptr, const float *pvColors = nullptr, char colorFormat = 0, const Material *pMaterial = nullptr);
-
-			virtual BoundingBox& ComputeBoundingBox();
+			bool LoadSubMesh(std::size_t nFaces, const unsigned int* pvFaces, std::size_t nVertices, const float* pvPositions, const float* pvTexCoords = nullptr, char textureFormat = 2, const float* pvNormals = nullptr, const float* pvColors = nullptr, char colorFormat = 0, const Material* pMaterial = nullptr);
 
 		protected:
 
 
 			std::vector<SubMesh>		m_vSubMeshes;
 
-			VBO	m_vbo;			  //vbo utiliser par le mesh
+			GLsizei m_element_count = 0;		//Number of faces for overall meshes multiply by 3
+
+			VBO	m_vbo;			  //vbo utilisé par le mesh
 
 			bool m_computed = 0;
 
 			unsigned int m_reserveFaceNumber = 0, m_reserveVertexNumber = 0, m_reserveMeshNumber = 0;
-			
+
 			std::vector<glm::vec3>	m_vPositions;
 			std::vector<glm::vec3>	m_vNormals;
 			std::vector<glm::vec2>	m_vTexCoords2;
@@ -339,7 +346,7 @@ namespace bh3d
 			std::vector<glm::vec3>  m_vColors3;
 			std::vector<glm::vec4>  m_vColors4;
 			std::vector<glm::vec3>  m_vTangents;
-			std::vector<Face>	m_vFaces;		
+			std::vector<Face>	m_vFaces;
 
 			char m_textureFormat = 2; //2 or 3
 			char m_colorFormat = 3;	//3 or 4
@@ -512,13 +519,21 @@ namespace bh3d
 	}
 
 #define BH3D_BUFFER_OFFSET(i) ((void*)(i))
-	void Mesh::DrawSubMeshElements(unsigned int id) const
+	inline void Mesh::DrawSubMeshElements(unsigned int id) const
 	{
 		assert(id < m_vSubMeshes.size());
-		assert(IsValid() && "No valid Mesh, can't draw it");
+		assert(IsValid() && "No valid Mesh, can't draw it.");
 		glDrawElements(GL_TRIANGLES, (GLsizei)m_vSubMeshes[id].nFaces * 3, GL_UNSIGNED_INT, BH3D_BUFFER_OFFSET(m_vSubMeshes[id].faceOffset * 3 * sizeof(unsigned int)));
 	}
-#undef BH3D_BUFFER_OFFSET
 
+
+	inline void Mesh::DrawElements() const
+	{
+		assert(IsValid() && "No valid Mesh, can't draw it");
+		assert(m_element_count != 0 && "Something strange");
+
+		glDrawElements(GL_TRIANGLES, m_element_count, GL_UNSIGNED_INT, BH3D_BUFFER_OFFSET(0));
+	}
+#undef BH3D_BUFFER_OFFSET
 }
-#endif //_BH3D_MESH_H_
+

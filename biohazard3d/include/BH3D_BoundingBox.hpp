@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_BOUNDING_BOX_H_
-#define _BH3D_BOUNDING_BOX_H_
 
 #include <glm/glm.hpp>
 
@@ -51,4 +49,3 @@ namespace bh3d
 
 	};
 }
-#endif 

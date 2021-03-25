@@ -33,7 +33,7 @@ namespace bh3d
 		return std::tuple(formated_img, format);
 	}
 
-	MatTextureRGBAInfos& MatTextureRGBAInfos::operator<<(const cv::Mat& mat)
+	MatTextureInfos& MatTextureInfos::operator<<(const cv::Mat& mat)
 	{
 		auto [img, format] = FormatedMatForGL(mat);
 		m_img = img;
@@ -81,7 +81,6 @@ namespace bh3d
 		return texture;
 	}
 
-
 	std::tuple<cv::Mat, Texture> TextureManagerOpenCV::LoadMatTexture(const std::filesystem::path & pathname, const std::string & resource_name) 
 	{
 		cv::Mat img = cv::imread(pathname.generic_string(), cv::IMREAD_UNCHANGED);
@@ -92,7 +91,6 @@ namespace bh3d
 		auto texture = Load(img, resource_name.empty() ? pathname.generic_string() : resource_name);
 		return { img, texture };
 	}
-
 
 	std::tuple<cv::Mat, Texture> TextureManagerOpenCV::AddTexture(const std::filesystem::path pathname, const std::string & texture_name)
 	{

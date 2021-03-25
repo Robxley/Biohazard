@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_MATERIAL_H_
-#define _BH3D_MATERIAL_H_
 
 #include <vector>
 
@@ -235,4 +233,4 @@ namespace bh3d
 	}
 
 }
-#endif //
+

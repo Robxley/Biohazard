@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef _BH3D_DRAWABLE_H_
-#define _BH3D_DRAWABLE_H_
-
 #include <sstream>
 
 #include "BH3D_Mesh.hpp"
@@ -65,7 +62,7 @@ namespace bh3d
 		/// Display the mesh with the specific shader.
 		/// </summary>
 		virtual void DrawMesh() const {
-			assert(m_mesh.IsValid());
+			// assert(m_mesh.IsValid());
 			m_mesh.Draw();
 		}
 
@@ -94,5 +91,3 @@ namespace bh3d
 		}
 	};
 }
-
-#endif

@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef _BH3D_SDL_ENGINE_H_
-#define _BH3D_SDL_ENGINE_H_
-
 #include <any>
 #include <type_traits>
 
@@ -173,4 +170,3 @@ namespace bh3d
 	}
 
 }
-#endif //BHD_SDL_ENGINE_H_

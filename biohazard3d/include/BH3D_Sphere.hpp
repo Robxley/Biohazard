@@ -25,8 +25,6 @@
 
 
 #pragma once
-#ifndef _BH3D_SPHERE_H_
-#define _BH3D_SPHERE_H_
 
 #include <glm/glm.hpp>
 
@@ -133,4 +131,4 @@ namespace bh3d
 		return m_boundingBox;
 	}
 }
-#endif //
+

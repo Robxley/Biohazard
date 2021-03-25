@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_STD_OBJECT_LOADER_H_
-#define _BH3D_STD_OBJECT_LOADER_H_
 
  #if defined(__has_include)
         #if __has_include(<glm/glm.hpp>)
@@ -41,54 +39,11 @@
 #include <filesystem>
 #include <vector>
 #include <array>
+#include <fstream>
+#include <map>
 
 namespace bh3d
 {
-	class ObjectLoader
-	{
-	public:
-
-		ObjectLoader(const std::filesystem::path & path) :
-			m_filepath(path)
-		{	}
-
-		ObjectLoader() = default;
-
-		//Return true if the STL was laoded correctly
-		bool LoadSTL();
-
-		using UFace = std::array<uint32_t, 3>;
-
-		#ifdef USE_GLM_VEC3
-		using UVec3 = glm::vec3;
-		#else
-		using UVec3 = std::array<float,3>;
-		#endif
-
-		//Input parameter
-		std::filesystem::path m_filepath;	 //! file path 
-
-		//Output parameteter
-		std::vector<UVec3> m_vVertices; //! Vertex position array
-		std::vector<UVec3> m_vNormals;	//! Vertex normal array
-		std::vector<UFace> m_vFaces;	//! Face indice array
-
-		std::string m_error;			//! Error message. Empty means no error.
-
-
-	public:
-		static std::string LoadBinary(const std::filesystem::path & m_filepath, std::vector<UVec3> & vVertices, std::vector<UVec3> & vNormals, std::vector<UFace> & vFaces) 
-		{
-			ObjectLoader loader = { m_filepath };
-			loader.LoadSTL();
-			vVertices = std::move(loader.m_vVertices);
-			vNormals = std::move(loader.m_vNormals);
-			vFaces = std::move(loader.m_vFaces);
-			return loader.m_error;
-		}
-
-	};
-
 	template<typename TVec>
 	void accumulate_vec(TVec & vec1, const TVec & vec2) {
 		vec1 += vec2;
@@ -221,6 +176,54 @@ namespace bh3d
 		return {};
 	}
 
+	class ObjectLoader
+	{
+	public:
+
+		ObjectLoader(const std::filesystem::path & path) :
+			m_filepath(path)
+		{	}
+
+		ObjectLoader() = default;
+
+		//Return true if the STL was laoded correctly
+		inline bool LoadSTL()
+		{
+			this->m_error = LoadSTLFromFile(this->m_filepath, this->m_vVertices, this->m_vNormals, this->m_vFaces);
+			return m_error.empty();
+		}
+
+		using UFace = std::array<uint32_t, 3>;
+
+		#ifdef USE_GLM_VEC3
+		using UVec3 = glm::vec3;
+		#else
+		using UVec3 = std::array<float,3>;
+		#endif
+
+		//Input parameter
+		std::filesystem::path m_filepath;	 //! file path 
+
+		//Output parameteter
+		std::vector<UVec3> m_vVertices; //! Vertex position array
+		std::vector<UVec3> m_vNormals;	//! Vertex normal array
+		std::vector<UFace> m_vFaces;	//! Face indice array
+
+		std::string m_error;			//! Error message. Empty means no error.
+
+
+	public:
+		static std::string LoadBinary(const std::filesystem::path & m_filepath, std::vector<UVec3> & vVertices, std::vector<UVec3> & vNormals, std::vector<UFace> & vFaces) 
+		{
+			ObjectLoader loader = { m_filepath };
+			loader.LoadSTL();
+			vVertices = std::move(loader.m_vVertices);
+			vNormals = std::move(loader.m_vNormals);
+			vFaces = std::move(loader.m_vFaces);
+			return loader.m_error;
+		}
+
+	};
+
 }
 
-#endif

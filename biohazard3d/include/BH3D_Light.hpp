@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_LIGHT_H_
-#define _BH3D_LIGHT_H_
 
 #include <vector>
 
@@ -43,4 +41,4 @@ namespace bh3d
 		glm::vec4 m_color = { 1.0, 1.0, 1.0, 1.0 };
 	};
 }
-#endif //
+

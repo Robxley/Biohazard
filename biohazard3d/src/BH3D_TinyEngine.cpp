@@ -32,8 +32,7 @@ namespace bh3d
 		}
 
 #ifdef OPENGL_DEBUG
-		assert(glGetIntegerv && "A OpenGL context have to be created before using BH3D library");
-		if (glGetIntegerv)
+		assert((bool)glGetIntegerv && "A OpenGL context have to be created before using BH3D library");
 		{
 			bh3d::GLCheckError::InitGLDebugMsg();
 

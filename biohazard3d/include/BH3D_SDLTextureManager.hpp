@@ -25,8 +25,6 @@
 
 #pragma once
  
-#ifndef _BH3D_SDL_TEXTUREMANAGER_H_
-#define _BH3D_SDL_TEXTUREMANAGER_H_
 
 #ifdef _WIN32
 #if defined(__has_include)
@@ -83,4 +81,4 @@ namespace bh3d
 	};
 
 }
-#endif //
+

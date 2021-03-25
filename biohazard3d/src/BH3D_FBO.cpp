@@ -36,6 +36,7 @@
 
 
 #include "BH3D_FBO.hpp"
+#include <algorithm>
 
 #define BH3D_BUFFER_OFFSET(i) ((void*)(i))
 
@@ -43,5 +44,112 @@ namespace bh3d
 {
 
 
+	bool TextureStorage::ClampGLMaxSize()
+	{
+		GLint maxSize;
+
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+		bool reshape = false;
+		if (m_width > maxSize) {
+			m_width = maxSize;
+			reshape = true;
+		}
+
+		if (m_height > maxSize) {
+			m_height = maxSize;
+			reshape = true;
+		}
+
+		glGetIntegerv(GL_MAX_SAMPLES, &maxSize);
+		if (m_multisample > maxSize) {
+			m_multisample = maxSize;
+			reshape = true;
+		}
+		return reshape;
+	}
+
+	std::tuple<GLuint, GLenum> TextureStorage::CreateStorage2D(GLsizei width, GLsizei height, GLenum format, GLsizei multisample, GLuint texture)
+	{
+
+		BH3D_GL_CHECK_ERROR;
+
+		if (texture == 0)
+		{
+			//Opengl texture allocation
+			glGenTextures(1, &texture);
+			assert(texture != 0 && "So bad. A shit happened with opengl!");
+		}
+
+		GLuint target = multisample == 0 ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE;
+		glBindTexture(target, texture);
+		if (multisample == 0)
+		{
+
+			//glTexStorage2D(GL_TEXTURE_2D, 0, format, width, height);
+			
+			//Use glTexImage2D (old fashioned way) if glTexStorage2D is not supported
+			glTexImage2D(GL_TEXTURE_2D,
+				0, format, width, height,			//Allocation parameters
+				0, GL_RGB, GL_UNSIGNED_BYTE, NULL	//Unnecessary parameters, no user data is copied inside the texture
+			);
+		}
+		else
+		{
+			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisample, format, width, height, GL_TRUE);
+		}
+
+		//No filter necessary -> NEAREST interpolation
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		//glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		//glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		//glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		
+		return std::tuple(texture, target);
+	}
+
+	bool BufferStorage::ClampGLMaxSize()
+	{
+		GLint maxSize;
+
+		glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &maxSize);
+		bool reshape = false;
+		if (m_width > maxSize) {
+			m_width = maxSize;
+			reshape = true;
+		}
+
+		if (m_height > maxSize) {
+			m_height = maxSize;
+			reshape = true;
+		}
+
+		glGetIntegerv(GL_MAX_SAMPLES, &maxSize);
+		if (m_multisample > maxSize) {
+			m_multisample = maxSize;
+			reshape = true;
+		}
+		return reshape;
+	}
+
+	std::tuple<GLuint, GLenum> BufferStorage::CreateStorage2D(GLsizei width, GLsizei height, GLenum format, GLsizei multisample, GLuint buffer)
+	{
+		BH3D_GL_CHECK_ERROR;
+
+		if (buffer == 0)
+		{
+			glGenRenderbuffers(1, &buffer);
+			assert(buffer != 0 && "So bad. A shit happened with opengl!");
+		}
+
+		glBindRenderbuffer(GL_RENDERBUFFER, buffer);
+		if (multisample > 0)
+			glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, format, width, height);
+		else
+			glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+
+		return std::tuple(buffer, GL_RENDERBUFFER);
+	}
 
 }

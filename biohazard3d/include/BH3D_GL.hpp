@@ -1,6 +1,4 @@
 #pragma once
-#ifndef _BH3D_GL_H_
-#define _BH3D_GL_H_
 
 #if !defined(BH3D_IMPL_OPENGL_LOADER_GL3W) \
  && !defined(BH3D_IMPL_OPENGL_LOADER_GLEW) \
@@ -17,7 +15,7 @@
             #error "Cannot detect OpenGL loader!"
         #endif
     #else
-        #define BH3D_IMPL_OPENGL_LOADER_GL3W       // Default to GL3W
+        #define BH3D_IMPL_OPENGL_LOADER_GLEW       // Default to GL3W
     #endif
 #endif
 
@@ -79,6 +77,3 @@ namespace bh3d
 		return (std::strstr((const char *)str, extension) != NULL);
 	}
 }
-
-
-#endif

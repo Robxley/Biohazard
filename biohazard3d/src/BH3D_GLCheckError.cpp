@@ -64,9 +64,9 @@ namespace
 		GLenum type,
 		GLuint id,
 		GLenum severity,
-		GLsizei length,
+		GLsizei /*length*/,
 		const GLchar *message,
-		const void *userParam)
+		const void */*userParam*/)
 	{
 
 		// unsignifant code (like buffer NVIDIA buffer creation)

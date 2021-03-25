@@ -25,8 +25,11 @@
  */
 
 #pragma once
-#ifndef _BH3D_GL_CHECK_ERROR_H_
-#define _BH3D_GL_CHECK_ERROR_H_
+
+#ifdef _DEBUG
+#define OPENGL_DEBUG
+#endif
+
 
 #ifdef OPENGL_DEBUG
 
@@ -62,5 +65,3 @@ namespace bh3d
 #else
 #define BH3D_GL_CHECK_ERROR
 #endif
-
-#endif //_BH3D_GL_CHECK_ERROR_H_

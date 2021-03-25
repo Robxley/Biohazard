@@ -1,18 +1,16 @@
 #include "BH3D_imgui_widgets.hpp"
+#include <algorithm>
 
 namespace bh3d
 {
-
 	void ImGuiFixedWindow::ComputeWindowRect()
 	{
-		int w = (int)ImGui::GetIO().DisplaySize.x;
-		int h = (int)ImGui::GetIO().DisplaySize.y;
+		auto& io = ImGui::GetIO();
+		int w = (int)io.DisplaySize.x;
+		int h = (int)io.DisplaySize.y;
 
-		if (
-			m_displayWidth != w ||
-			m_displayHeight != h)
+		if (m_displayWidth != w || m_displayHeight != h)
 		{
-
 			m_displayWidth = w;
 			m_displayHeight = h;
 
@@ -21,9 +19,11 @@ namespace bh3d
 				auto rest_percent = 1.0f - pos;
 				return std::min(-percent, rest_percent);
 			};
+
 			auto rest_z = [&] {
 				return rest(m_rect.z, m_displayWidth > 0 ? m_display_rect.x / m_displayWidth : 1.0f);
 			};
+
 			auto rest_w = [&] {
 				return rest(m_rect.w, m_displayHeight > 0 ? m_display_rect.y / m_displayHeight : 1.0f);
 			};
@@ -40,7 +40,6 @@ namespace bh3d
 	// Get the drawable region of a window
 	void ImGuiFixedWindow::UpdateWindowDrawableRegion()
 	{
-
 		ImVec2 vMin = ImGui::GetWindowContentRegionMin();
 		ImVec2 vMax = ImGui::GetWindowContentRegionMax();
 		ImVec2 pos = ImGui::GetWindowPos();
@@ -53,7 +52,7 @@ namespace bh3d
 #ifdef _DEBUG
 		//ImGui::GetForegroundDrawList()->AddRect(vMin, vMax, IM_COL32(255, 255, 0, 255));
 #endif
-		m_display_viewport = {vMin.x, vMin.y, vMax.x - vMin.x, vMax.y - vMin.y}; //rect as (x,y,w,h)
+		m_display_viewport = { vMin.x, vMin.y, vMax.x - vMin.x, vMax.y - vMin.y }; //rect as (x,y,w,h)
 		m_display_viewport.y = m_displayHeight - (m_display_viewport.w + m_display_viewport.y);
 	}
 

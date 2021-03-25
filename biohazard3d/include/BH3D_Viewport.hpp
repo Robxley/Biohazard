@@ -24,8 +24,7 @@
  */
 
 #pragma once
-#ifndef _BH3D_VIEWPORT_H_
-#define _BH3D_VIEWPORT_H_
+
 
 #include <map>
 #include <functional>
@@ -201,4 +200,4 @@ namespace bh3d
 	};
 
 }
-#endif //
+

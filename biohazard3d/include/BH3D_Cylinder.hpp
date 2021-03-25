@@ -23,12 +23,7 @@
  * THE SOFTWARE.
  */
 
-
- 
- 
 #pragma once
-#ifndef _BH3D_CYLINDER_H_
-#define _BH3D_CYLINDER_H_
 
 #include <glm/glm.hpp>
 
@@ -138,4 +133,4 @@ namespace bh3d
 	}
 
 }
-#endif //
+

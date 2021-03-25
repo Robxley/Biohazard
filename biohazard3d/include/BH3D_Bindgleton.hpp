@@ -1,7 +1,5 @@
 
 #pragma once
-#ifndef _BH3D_BINDGLETON_OPENCV_H_
-#define _BH3D_BINDGLETON_OPENCV_H_
 
 #include <cassert>
 
@@ -39,5 +37,5 @@ namespace bh3d
 		}
 	};
 }
-#endif
+
 

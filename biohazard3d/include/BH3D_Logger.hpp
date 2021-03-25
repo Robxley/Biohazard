@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_LOGGER_H_
-#define _BH3D_LOGGER_H_
 
 #define BH3D_VERBOSE
 
@@ -155,4 +153,3 @@ namespace bh3d
 }
 
 #endif // BH3D_VERBOSE
-#endif //_BH3D_LOGGER_H_

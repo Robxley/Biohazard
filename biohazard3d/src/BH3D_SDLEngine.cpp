@@ -5,15 +5,11 @@
 #include "BH3D_Common.hpp"
 #include "BH3D_SDLEngine.hpp"
 
-#define		AUTO_CAST(var) operator decltype(var)&(){return var;}
-
 namespace bh3d
 {
-
 	namespace
 	{
-
-		bool MouseEvent(const SDL_Event & event, Mouse & mouse)
+		bool MouseEvent(const SDL_Event& event, Mouse& mouse)
 		{
 			auto SDL_2_BH3D_BUTTON = [](auto bouton)
 			{
@@ -64,7 +60,7 @@ namespace bh3d
 		{
 			SDL_Event sdlevent;
 			sdlevent.type = SDL_QUIT;
-    		SDL_PushEvent(&sdlevent);
+			SDL_PushEvent(&sdlevent);
 		}
 
 		bool ThreadSafeInitSDL()
@@ -87,7 +83,7 @@ namespace bh3d
 					m_ok = true;
 				}
 
-				bool IsInit() { return m_ok	; }
+				bool IsInit() { return m_ok; }
 			};
 			static CInitSDL initSDL;
 
@@ -95,7 +91,6 @@ namespace bh3d
 		}
 
 	} // Anonymous namespace
-
 
 	SDL_Windows_GL_Context::~SDL_Windows_GL_Context()
 	{
@@ -108,8 +103,6 @@ namespace bh3d
 		SDL_Quit();
 	}
 
-
-
 	void SDLEngine::Init()
 	{
 		CreateWindow();		//Create a SDL windows with a opengl context
@@ -117,10 +110,10 @@ namespace bh3d
 	}
 
 	//Main loop of the opengl application
-	void SDLEngine::Run() 
-	{	
+	void SDLEngine::Run()
+	{
 		Resize();			//Call the resize function once before the first display
-		
+
 		while (PollEvents())	//Collect overall event (return false when the program have to exist)
 		{
 			Update();				//Event processing and stuff like that
@@ -141,25 +134,33 @@ namespace bh3d
 
 	// The width and height are ignored with fullscreen flag or with negative values.
 	void SDLEngine::SetWindowFullScreen(bool borderless) {
-		SDL_SetWindowFullscreen(m_SDL_Windows_GL_Context, borderless ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_FULLSCREEN);
+		if (SDL_SetWindowFullscreen(m_SDL_Windows_GL_Context, borderless ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_FULLSCREEN) == EXIT_SUCCESS)
+		{
+			m_windowInfo.borderless = borderless;
+			m_windowInfo.fullscreen = true;
+		}
 	}
 
 	// Set the windowed mode. The width and height are ignored with negative values.
 	void SDLEngine::SetWindowedMode(int w, int h) {
-		SDL_SetWindowFullscreen(m_SDL_Windows_GL_Context, 0);	//Leave the full screen mode
-		if (w > 0 && h > 0)		//! Window mode (sdl_flags == 0) and valid value for w and h
-			SDL_SetWindowSize(m_SDL_Windows_GL_Context, w, h);
+		if (SDL_SetWindowFullscreen(m_SDL_Windows_GL_Context, 0) == EXIT_SUCCESS)	//Leave the full screen mode
+		{
+			if (w > 0 && h > 0) 
+			{
+				SDL_SetWindowSize(m_SDL_Windows_GL_Context, w, h);
+				SDL_SetWindowPosition(m_SDL_Windows_GL_Context, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+			}
+			m_windowInfo.fullscreen = false;
+		}
 	}
 
 	int SDLEngine::CreateWindow()
 	{
-
 		// SDL initialisation
 		ThreadSafeInitSDL();
 
 		// OpenGL Properties
 		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-
 
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, m_windowInfo.glContextMajorVersion);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, m_windowInfo.glContextMinorVersion);
@@ -184,16 +185,14 @@ namespace bh3d
 		{
 			SDL_DisplayMode DM;
 			SDL_GetCurrentDisplayMode(0, &DM);
-			if(m_windowInfo.width <= 0)  m_windowInfo.width = DM.w;
-			if(m_windowInfo.height <= 0) m_windowInfo.height = DM.h;
+			if (m_windowInfo.width <= 0)  m_windowInfo.width = DM.w;
+			if (m_windowInfo.height <= 0) m_windowInfo.height = DM.h;
 		}
-
 
 		if (m_windowInfo.fullscreen)
 			windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		if (m_windowInfo.borderless)
 			windowFlags |= SDL_WINDOW_BORDERLESS;
-		
 
 		window = SDL_CreateWindow(m_windowInfo.title.c_str(),
 			SDL_WINDOWPOS_CENTERED,
@@ -213,7 +212,7 @@ namespace bh3d
 		BH3D_LOGGER("SDL_CreateWindow : OK");
 
 		// Creation du contexte OpenGL
-		auto & glcontext = m_SDL_Windows_GL_Context.m_SDL_GLContext;
+		auto& glcontext = m_SDL_Windows_GL_Context.m_SDL_GLContext;
 		glcontext = SDL_GL_CreateContext(window);
 		if (glcontext == nullptr)
 		{
@@ -230,7 +229,6 @@ namespace bh3d
 
 		//synchronized with the vertical retrace ?
 		SDL_GL_SetSwapInterval(m_windowInfo.vsync);
-		
 
 		return BH3D_OK;
 	}
@@ -244,7 +242,7 @@ namespace bh3d
 
 		while (SDL_PollEvent(&event))  //get the next event
 		{
-			if(m_FProcessEvent)
+			if (m_FProcessEvent)
 				if ((returnValue = m_FProcessEvent(&event)) != BH3D_OK) {
 					return returnValue;
 				}
@@ -297,7 +295,4 @@ namespace bh3d
 		SDL_GL_GetDrawableSize(m_SDL_Windows_GL_Context, &m_windowInfo.width, &m_windowInfo.height);
 		bh3d::TinyEngine::Resize(m_windowInfo.width, m_windowInfo.height);
 	}
-
-
-
 }

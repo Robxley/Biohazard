@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_TEXTURE_MANAGER_OPENCV_H_
-#define _BH3D_TEXTURE_MANAGER_OPENCV_H_
 
 #include <memory>
 
@@ -147,18 +145,16 @@ namespace bh3d
 	};
 
 
-	struct MatTextureRGBAInfos : public TextureRGBAInfos
+	struct MatTextureInfos : public TextureInfos
 	{
-		MatTextureRGBAInfos(){}
-		MatTextureRGBAInfos(const cv::Mat& mat) {
+		MatTextureInfos(){}
+		MatTextureInfos(const cv::Mat& mat) {
 			(*this) << mat;
 		}
 		cv::Mat m_img;
-		MatTextureRGBAInfos& operator<<(const cv::Mat& mat);
+		MatTextureInfos& operator<<(const cv::Mat& mat);
 	};
 
 
 
 }
-
-#endif

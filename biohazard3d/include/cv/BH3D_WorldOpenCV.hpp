@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef _BH3D_WORLD_OPENCV_H_
-#define _BH3D_WORLD_OPENCV_H_
-
 #include <opencv2/opencv.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -19,6 +16,17 @@ namespace bh3d
 		memcpy(glm::value_ptr(glmmat), cvmat.data, 16 * sizeof(float));
 		glmmat = glm::transpose(glmmat);	//glm use column based matrix and opencv use row based matrix
 	}
+
+	/// <summary>
+	/// Convert a cv::Mat 4x4 32F to glm::mat4
+	/// </summary>
+	/// <param name="cvmat">Input OpenCV matrix</param>
+	/// <param name="glmmat">Output GLM matrix</param>
+	inline void fromCV2GLM(const cv::Matx44f cvmat, glm::mat4& glmmat) {
+		memcpy(glm::value_ptr(glmmat), cvmat.val, 16 * sizeof(float));
+		glmmat = glm::transpose(glmmat);	//glm use column based matrix and opencv use row based matrix
+	}
+
 	/// <summary>
 	/// Convert a cv::Mat 4x4 32F to glm::mat4
 	/// </summary>
@@ -72,5 +80,3 @@ namespace bh3d
 		return s;
 	}
 }
-
-#endif

@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_VBO_H_
-#define _BH3D_VBO_H_
 
 #include <vector>
 
@@ -147,7 +145,6 @@ namespace bh3d
 		/// Build a vertex array objecs arround overall vertex buffer objects
 		/// </summary>
 		void BuildVAO();
-
 
 		GLuint arrayBufferID = 0;   //VBO
 		GLuint elementBufferID = 0; //
@@ -349,5 +346,3 @@ namespace bh3d
 	}
 }
 
-
-#endif //_BH3D_VBO_H_

@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_STL_MESH_LOADER_H_
-#define _BH3D_STL_MESH_LOADER_H_
 
 #include <filesystem>
 
@@ -35,12 +33,22 @@ namespace bh3d
 {
 	class Mesh;
 
+	/// <summary>
+	/// Load a mesh from a model file.
+	/// </summary>
 	class MeshLoader
 	{
 	public:
 		std::filesystem::path m_filepath;
 		
+		/// <summary>
+		/// Load a mesh from model file using the member variable "m_filepath".
+		/// Don't forget to call "ComputeMesh" before using it
+		/// </summary>
+		/// <param name="mesh">Mesh destination</param>
+		/// <returns>true if correctly loaded</returns>
 		bool LoadSTL(Mesh & mesh) const;
+
 
 		static bool LoadSTL(const std::filesystem::path & m_filepath, Mesh & mesh) {
 			MeshLoader loader = { m_filepath };
@@ -59,5 +67,3 @@ namespace bh3d
 
 }
 
-
-#endif //_BH3D_VBO_H_

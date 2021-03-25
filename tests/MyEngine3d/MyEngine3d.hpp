@@ -1,13 +1,11 @@
-
+#pragma once
 
 #include "BH3D_SDLEngine.hpp"
 #include "BH3D_SDLImGUI.hpp"
 #include "BH3D_GLCheckError.hpp"
 
-
 class MyEngine3d : public bh3d::SDLEngine
 {
-public:
 
 public:
 	MyEngine3d(const bh3d::WindowInfo& windowInfo = {}) :

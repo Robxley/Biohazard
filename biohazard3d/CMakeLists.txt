@@ -1,108 +1,54 @@
-﻿# __________________________________________
-# biohazard3d project
-
-project(bh3d)
-
-# Set C++ standard 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Display build type
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-
-
-if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
-endif()
-
 # __________________________________________
-# 3rd libraries / Packages
+# __ Library : biohazard3d - bh3d 
 
-# Threads
-find_package(Threads REQUIRED)
-
-# OpenGL
 find_package(OpenGL REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(GLEW REQUIRED)
 
-# glad or glew
-if(NOT GLAD_SRC_DIRS)
-	find_package(glad CONFIG QUIET)
-	if (glad_FOUND)
-		   include_directories(${GLAD_INCLUDE_DIRS})
-		   link_libraries(${GLAD_LIBRARIES})
-		   set(XXXX_IMPL_OPENGL_LOADER BH3D_IMPL_OPENGL_LOADER_GLAD IMGUI_IMPL_OPENGL_LOADER_GLAD)
-	else()
-		find_package(GLEW CONFIG REQUIRED)
-		if (GLEW_FOUND)
-			   include_directories(${GLEW_INCLUDE_DIRS})
-			   link_libraries(${GLEW_LIBRARIES})
-			   set(XXXX_IMPL_OPENGL_LOADER BH3D_IMPL_OPENGL_LOADER_GLEW IMGUI_IMPL_OPENGL_LOADER_GLEW)
-		endif()
-	endif()
-endif()
+FILE(GLOB IMGUI_SOURCEFILES
+        ${IMGUI_DIR}/*.cpp)
 
-# GLM
-find_package(glm CONFIG QUIET)
-if (NOT ${glm_FOUND})
-    include_directories("${PROJECT_SOURCE_DIR}/../3rd")
-endif()
-
-# SLD2 
-find_package(SDL2 CONFIG REQUIRED)
-
-
-# OpenCV
-find_package(OpenCV QUIET)
-
-
-# __________________________________________
-# Create source files list
-
-# Main biohazard3d source file
-FILE(GLOB BH3D_SRC
+FILE(GLOB BH3D_SOURCEFILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/BH3D*.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/*.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/cv/*.cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/src/std/*.cpp)
-		
-# Inlucde imgui source file if valable
-if(IMGUI_DIR)
-	FILE(GLOB BH3D_IMGUI
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/*.cpp
-		${IMGUI_DIR}/*.cpp)
 
-	set(BH3D_SRC ${BH3D_SRC} ${BH3D_IMGUI} ${IMGUI_SOURCEFILES})
+if(WIN32)
+	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main)
 endif()
 
-# Inlucde Opencv source file if valable
-if(OpenCV_FOUND)
-	FILE(GLOB BH3D_OPENCV 
-		${CMAKE_CURRENT_SOURCE_DIR}/src/cv/*.cpp)
-		
-	set(BH3D_SRC ${BH3D_SRC} ${BH3D_OPENCV})
-endif()
+add_library(bh3d STATIC ${BH3D_SOURCEFILES} ${IMGUI_SOURCEFILES})
 
+set_target_properties(bh3d PROPERTIES
+                    	OUTPUT_NAME bh3d
+                    	LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
+                    	ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
-set(DEPENDENCIES_LIBRARIES glad::glad SDL2::SDL2 SDL2::SDL2main glm)
-message(STATUS "DEPENDENCIES_LIBRARIES: ${DEPENDENCIES_LIBRARIES}")
-
-
-# __________________________________________
-# Biohazard3d library
-
-add_library(bh3d STATIC ${CMAKE_CURRENT_SOURCE_DIR} ${BH3D_SRC})
-
-target_link_libraries(bh3d PUBLIC ${OpenCV_LIBS} ${DEPENDENCIES_LIBRARIES} ${OPENGL_LIBRARIES})
-
-target_compile_definitions(bh3d PRIVATE ${XXXX_IMPL_OPENGL_LOADER})
-message(STATUS "XXXX_IMPL_OPENGL_LOADER: ${XXXX_IMPL_OPENGL_LOADER}")
-
-target_include_directories(bh3d 
+target_include_directories(bh3d
 							PUBLIC
-							${OPENGL_INCLUDE_DIRS}
-                           	${SDL2_INCLUDE_DIRS}
-			   				${OpenCV_INCLUDE_DIRS}
-			   				${CMAKE_CURRENT_SOURCE_DIR}/include
-							${CMAKE_CURRENT_SOURCE_DIR}/include/imgui
-							${CMAKE_CURRENT_SOURCE_DIR}/include/cv
-							${CMAKE_CURRENT_SOURCE_DIR}/include/std
-			   				${3RD_DIR}/imgui)
+								${CMAKE_CURRENT_SOURCE_DIR}/include
+								${CMAKE_CURRENT_SOURCE_DIR}/include/imgui
+								${CMAKE_CURRENT_SOURCE_DIR}/include/cv
+								${CMAKE_CURRENT_SOURCE_DIR}/include/std
+								${IMGUI_DIR}
+							SYSTEM PUBLIC
+								${glm_INCLUDE_DIR}
+							PRIVATE
+								${OPENGL_INCLUDE_DIRS}
+							   	${SDL2_INCLUDE_DIRS}
+							   	${OpenCV_INCLUDE_DIRS}
+								${GLEW_INCLUDE_DIRS})
 
+target_link_libraries(bh3d
+						PRIVATE 
+							${OpenCV_LIBS}
+							${SDL2_LIBRARIES}
+							${OPENGL_LIBRARIES}
+							${GLEW_LIBRARIES}
+							${WIN32_DEPENDENCIES_LIBRARIES})
+if (WIN32)
+	target_compile_options(bh3d PRIVATE /W3 /WX)
+else()
+	target_compile_options(bh3d PRIVATE -w)
+endif()

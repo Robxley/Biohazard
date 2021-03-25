@@ -26,8 +26,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_FONT_OPENCV_H_
-#define _BH3D_FONT_OPENCV_H_
 
 #include "opencv2/opencv.hpp"
 
@@ -100,5 +98,3 @@ namespace bh3d
 		cv::Point m_glyphe_origin;
 	};
 }
-
-#endif // _BH3D_FONT_OPENCV_H_

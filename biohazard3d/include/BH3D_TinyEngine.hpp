@@ -25,13 +25,9 @@
 
 #pragma once
 
-#ifndef _BH3D_TINY_ENGINE_H_
-#define _BH3D_TINY_ENGINE_H_
-
 /// <summary>
 /// Basic engine based on biohasard 3D
 /// </summary>
-
 
 #include <glm/glm.hpp>
 
@@ -98,4 +94,3 @@ namespace bh3d
 
 	};
 }
-#endif

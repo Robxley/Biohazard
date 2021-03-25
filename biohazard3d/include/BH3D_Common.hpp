@@ -40,8 +40,6 @@
 */
 
 #pragma once
-#ifndef _BH3D_COMMON_H_
-#define _BH3D_COMMON_H_
 
 #include <variant>
 #include <memory>
@@ -185,5 +183,3 @@ namespace bh3d
 	using interval_int = interval<int>;
 
 }
-
-#endif

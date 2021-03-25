@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef _BH3D_SDL_IMGUI_H_
-#define _BH3D_SDL_IMGUI_H_
-
 #include "imgui.h"
 #include "BH3D_SDLEngine.hpp"
 
@@ -26,5 +23,3 @@ namespace bh3d
 	};
 
 }
-
-#endif

@@ -25,9 +25,6 @@
 
 #pragma once
 
-#ifndef _BH3D_POLYGONE_H_
-#define _BH3D_POLYGONE_H_
-
 #include <glm/glm.hpp>
 
 namespace bh3d
@@ -43,4 +40,3 @@ namespace bh3d
 		void AddSubMesh_Quad(Mesh & mesh, const glm::vec2 & size, const glm::mat4 & transform = glm::mat4(1.0));
 	}
 }
-#endif

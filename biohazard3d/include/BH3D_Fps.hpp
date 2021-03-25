@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_FPS_H_
-#define _BH3D_FPS_H_
 
 #include <chrono>
 
@@ -99,4 +97,4 @@ namespace bh3d
 
 
 }
-#endif //
+

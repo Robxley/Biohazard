@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_EVENT_H_
-#define _BH3D_EVENT_H_
 
 #include <map>
 
@@ -121,4 +119,4 @@ namespace bh3d
 	};
 
 }
-#endif //
+

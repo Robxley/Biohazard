@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_TEXTURE_MANAGER_H_
-#define _BH3D_TEXTURE_MANAGER_H_
 
 #include "BH3D_ResourceManager.hpp"
 #include "BH3D_Texture.hpp"
@@ -36,19 +34,10 @@
 
 namespace bh3d
 {
-	struct TextureRGBAInfos
-	{
-		GLsizei m_width = 0;
-		GLsizei m_height = 0;
-		GLenum m_format = 0;
-		GLenum m_type = 0;
-		const void *m_pixels = nullptr;
-		std::string m_texture_name = {};
-	};
-
 
 	class TextureManager : public ResourceManager<TextureManager ,Texture>
 	{
+
 		public:
 
 			TextureManager(const std::string & name = {}, bool bind = true) : ResourceManager<TextureManager, Texture>(name, bind)
@@ -83,22 +72,25 @@ namespace bh3d
 			/// <param name="pixels">Raw memory</param>
 			/// <param name="texture_name">Texture name of identification in the Texturemanager</param>
 			/// <returns>Texture object</returns>
-			Texture AddTextureRGBA(GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels, const std::string & texture_name) {
+			Texture AddTextureRGBA(GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels, const std::string & name) {
 				Texture tex = CreateTextureRGBA(width, height, format, type, pixels);
-				return Add(std::move(tex), texture_name);
+				return Add(std::move(tex), name);
 			}
 
 
-			Texture AddTextureRGBA(const TextureRGBAInfos & textureInfos) {
-				return AddTextureRGBA(textureInfos.m_width, textureInfos.m_height, textureInfos.m_format, textureInfos.m_type, textureInfos.m_pixels, textureInfos.m_texture_name);
+			Texture AddTextureRGBA(const TextureInfos & textureInfos) {
+				return AddTextureRGBA(textureInfos.m_width, textureInfos.m_height, textureInfos.m_format, textureInfos.m_type, textureInfos.m_pixels, textureInfos.m_name);
 			}
+
 
 		protected:
 			bool LoadResourceFromFile(const std::filesystem::path & /*pathname*/, Texture & /*texture*/) override { assert(0 && "Not yet implemented"); return false; };
 			bool LoadResourceFromRaw(const void * /*data*/, Texture & /*texture*/) override { assert(0 && "not yet implemented"); return false; };
 
 			//OpenGL Texture is allocated
-			Texture CreateTextureRGBA(GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
+			Texture CreateTextureRGBA(GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels) {
+				return Texture::CreateTextureRGBA(width, height, format, type, pixels, m_textureTarget, m_useMipmap);
+			}
 
 			static void FreeResource(Texture& ressource);
 
@@ -107,4 +99,4 @@ namespace bh3d
 	};
 
 }
-#endif //
+

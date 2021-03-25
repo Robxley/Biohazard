@@ -29,6 +29,8 @@
 #include "BH3D_Logger.hpp"
 #include "BH3D_Mesh.hpp"
 
+#include <glm/gtx/normal.hpp>
+
 #define BH3D_BUFFER_OFFSET(i) ((void*)(i))
 
 namespace bh3d
@@ -87,6 +89,9 @@ namespace bh3d
 	BH3D_ADD_SUB_MESH_FPTN_PTRS;										\
 	const float * pvColors = (const float *)BH3D_VertexPtr(vColors)							
 
+#define BH3D_ADD_COLORED_SUB_MESH_FPC									\
+	BH3D_ADD_SUB_MESH_FP_PTRS;											\
+	const float* pvColors = (const float*)BH3D_VertexPtr(vColors)		
 
 	bool Mesh::AddSubMesh(const std::vector<Face> & vFaces, const std::vector<glm::vec3> & vPositions, const std::vector<glm::vec2> & vTexCoords, const std::vector<glm::vec3> & vNormals, const std::vector<glm::vec3> & vColors, const Material * pMaterial)
 	{
@@ -126,6 +131,12 @@ namespace bh3d
 	{
 		BH3D_ADD_SUB_MESH_FP_PTRS;
 		return AddSubMesh(nFaces, pvFaces, nVertex, pvPositions, nullptr, 2, nullptr, nullptr, 0, nullptr);
+	}
+
+	bool Mesh::AddColoredSubMesh(const std::vector<Face>& vFaces, const std::vector<glm::vec3>& vPositions, const std::vector<glm::vec4> & vColors)
+	{
+		BH3D_ADD_COLORED_SUB_MESH_FPC;
+		return AddSubMesh(nFaces, pvFaces, nVertex, pvPositions, nullptr, 2, nullptr, pvColors, 4);
 	}
 
 	void Mesh::FreeArraysCPU()
@@ -188,6 +199,7 @@ namespace bh3d
 		
 		if (m_vbo.Create())
 		{
+			m_element_count = (GLsizei) m_vFaces.size() * 3;
 			m_computed = BH3D_OK;
 			return BH3D_OK;
 		}
@@ -198,9 +210,6 @@ namespace bh3d
 
 		return BH3D_ERROR;
 	}
-
-
-
 
 	void Mesh::Destroy()
 	{
@@ -221,10 +230,9 @@ namespace bh3d
 		m_reserveFaceNumber = 0;
 		m_reserveVertexNumber = 0;
 		m_reserveMeshNumber = 0;
-	
+		m_element_count = 0;
 
 	}
-
 
 	bool Mesh::LoadSubMesh(std::size_t nFaces, const unsigned int *pvFaces, std::size_t nVertices, const float * pvPositions, const float * pvTexCoords, char textureFormat, const float * pvNormals, const float *pvColors, char colorFormat, const Material *pMaterial)
 	{
@@ -398,6 +406,39 @@ namespace bh3d
 
 		m_boundingBox.Reset();
 	}
+
+	void Mesh::ComputeSmoothNormal()
+	{
+
+		if (m_vPositions.empty() || m_vFaces.empty()) return;
+
+		auto get_normal_from_face = [&](auto & face)
+		{
+			auto & a = m_vPositions[face[0]];
+			auto & b = m_vPositions[face[1]];
+			auto & c = m_vPositions[face[2]];
+			auto normal = glm::triangleNormal(a, b, c);
+			return normal;
+		};
+
+		m_vNormals.clear();
+		m_vNormals.resize(m_vPositions.size(), glm::vec3(0.0f, 0.0f, 0.0f));
+
+		for (auto & face : m_vFaces)
+		{
+			auto normal = get_normal_from_face(face);
+			m_vNormals[face[0]] += normal;
+			m_vNormals[face[1]] += normal;
+			m_vNormals[face[2]] += normal;
+		}
+
+		for (auto& n : m_vNormals) {
+			n = glm::normalize(n);
+		}
+	}
+
+
+
 	void Mesh::Draw() const
 	{
 		assert(IsValid() && "No valid Mesh, can't draw it");
@@ -417,7 +458,6 @@ namespace bh3d
 
 	void Mesh::DrawSubMesh(unsigned int id) const
 	{
-
 		assert(IsValid() && "No valid Mesh, can't draw it");
 
 		m_vbo.Enable();
@@ -428,7 +468,6 @@ namespace bh3d
 #ifndef NDEBUG
 		m_vbo.Disable();
 #endif
-
 	}
 
 	void Mesh::DrawSubMesh(unsigned int minRangeID, unsigned int maxRangeID) const
@@ -440,17 +479,13 @@ namespace bh3d
 		m_vbo.Enable();
 		for (unsigned int i = minRangeID; i < maxRangeID; i++)
 		{
-
 			m_vSubMeshes[i].nMaterial.Bind();
-
 			glDrawElements(GL_TRIANGLES, (GLsizei)m_vSubMeshes[i].nFaces * 3, GL_UNSIGNED_INT, BH3D_BUFFER_OFFSET(m_vSubMeshes[i].faceOffset * 3 * sizeof(unsigned int)));
-
 		}
 #ifndef NDEBUG
 		m_vbo.Disable();
 #endif
 	}
-
 
 	BoundingBox& Mesh::ComputeBoundingBox()
 	{
@@ -518,7 +553,6 @@ namespace bh3d
 			dz = 1.0f / m_boundingBox.size.z;
 			m_boundingBox.size.z = 1.0f;
 		}
-
 
 		if (keepRatio)
 		{

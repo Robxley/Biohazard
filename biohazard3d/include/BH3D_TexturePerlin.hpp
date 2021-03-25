@@ -24,8 +24,6 @@
  */
 
 #pragma once
-#ifndef _BH3D_TEXTURE_PERLIN_H_
-#define _BH3D_TEXTURE_PERLIN_H_
 
 #include "BH3D_TextureManager.hpp"
 
@@ -50,4 +48,4 @@ namespace bh3d
 	};
 
 }
-#endif //
+

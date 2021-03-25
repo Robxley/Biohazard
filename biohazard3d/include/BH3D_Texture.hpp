@@ -25,13 +25,46 @@
 
 #pragma once
 
-#ifndef _BH3D_TEXTURE_H_
-#define _BH3D_TEXTURE_H_
-
 #include "BH3D_GL.hpp"
+
+#include <optional>
+#include <cassert>
 
 namespace bh3d
 {	
+
+	struct TextureInfos
+	{
+		std::string m_name = {};				//optional name
+
+		GLsizei m_width = 0;					//image width in pixels
+		GLsizei m_height = 0;					//image height in pixels
+
+		//Image features (CPU side)
+		GLint m_format = GL_RGBA;				//packed format
+		GLenum m_type = GL_UNSIGNED_BYTE;		//data type
+		const void *m_pixels = nullptr;			//raw data
+		std::optional<GLint> m_alignement;		//See glPixelStorei(GL_UNPACK_ALIGNMENT, m_alignement)
+
+		//Texture format (GPU side)
+		GLenum m_target = GL_TEXTURE_2D;		//Texture target
+		GLint m_internalFormat = GL_RGBA8;		//Opengl internal format
+		GLsizei m_mipmaps = 0;					//Number of mipmap
+
+		/// <summary>
+		/// Allocate a GPU memory using width, height, target and internal format
+		/// </summary>
+		GLuint Storage2D(); 
+
+		//Allocate the GPU memory and fill the texture with the texture infos
+		GLuint TexImage2D();
+
+		//Fill a existing texture with the texture infos
+		void TexImage2D(GLuint glid);
+	};
+
+	
+
 	class Texture
 	{
 		private:
@@ -41,6 +74,8 @@ namespace bh3d
 
 			Texture(GLuint glid = 0, GLenum target = GL_TEXTURE_2D);
 			Texture(const Texture &t);
+
+			static Texture CreateTextureRGBA(GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels, GLenum target = GL_TEXTURE_2D, bool mipmap = true);
 
 			inline void Bind() const;
 			inline void Bind(GLenum  unitTarget) const;
@@ -55,7 +90,7 @@ namespace bh3d
 			inline void SetTexture(const Texture * t);
 
 			//operator
-			inline operator GLuint() const;	// retunr the OpenGL id  (glid)
+			inline operator GLuint() const;	// Return the OpenGL id  (glid)
 
 			inline operator bool() const;	//Return true if glid > 0
 
@@ -112,7 +147,6 @@ namespace bh3d
 		return gltarget;
 	}
 
-	//opérateur
 	inline const Texture & Texture::operator = (const Texture & t)
 	{
 		glid = t.glid;
@@ -135,4 +169,4 @@ namespace bh3d
 	}
 
 }
-#endif //
+

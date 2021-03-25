@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef _BH3D_TINY_SHADER_H_
-#define _BH3D_TINY_SHADER_H_
-
 /// <summary>
 /// Basic shader used by default in TinyEngine  (Engine example using Biohasard3D)
 /// </summary>
@@ -198,11 +195,13 @@ namespace bh3d
 			R"(
 				#version 330 core
 				
-				layout (location = 0) in vec3 in_Position;								
+				layout (location = 0) in vec3 in_Position;
+				layout (location = 1) in vec4 in_Color;								
 				layout (location = 3) in vec3 in_Normal;								
 
 				out vec3 FragPos;
 				out vec3 Normal;
+				out vec4 Color;
 
 				uniform mat4 transform;
 				uniform mat4 modelview;
@@ -212,6 +211,7 @@ namespace bh3d
 				{
 					FragPos = vec3(transform * vec4(in_Position, 1.0));
 					Normal = mat3(transpose(inverse(transform))) * in_Normal;
+					Color =  in_Color;
 					gl_Position = projection * modelview * vec4(FragPos, 1.0);
 				}
 			)";
@@ -225,6 +225,7 @@ namespace bh3d
 				out vec4 FragColor;
 				in vec3 Normal;
 				in vec3 FragPos;
+				in vec4 Color;
 
 				uniform vec3 lightPos;
 				uniform vec3 viewPos;
@@ -249,9 +250,9 @@ namespace bh3d
 					vec3 reflectDir = reflect(-lightDir, norm);
 					float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
 					vec3 specular = specularStrength * spec * lightColor;
-
-					vec3 result = (ambient + diffuse + specular) * objectColor;
-					FragColor = vec4(result, 1.0);
+					vec3 mixColor = Color.rgb + objectColor;
+					vec3 result = (ambient + diffuse + specular) * mixColor;
+					FragColor = vec4(result, Color.a);
 				}
 			)";
 		}
@@ -260,4 +261,4 @@ namespace bh3d
 
 }  // Namespace bh3d
 
-#endif
+
