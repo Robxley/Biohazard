@@ -6,7 +6,9 @@
 
 namespace ImGui
 {
-
+	/// <summary>
+	/// Window context infos used with class ContextSDLGL 
+	/// </summary>
 	struct ContextSDLGLInfos
 	{
 		std::string m_title = "SDL GL ImGui window";
@@ -18,12 +20,20 @@ namespace ImGui
 		std::array<float, 4> m_clearcolor = { 0.45f, 0.55f, 0.60f, 1.00f };
 	};
 
+	/// <summary>
+	/// Create a SDL / Opengl window context
+	/// </summary>
 	class ContextSDLGL : public ContextSDLGLInfos
 	{
 
 	public:
 		
+		/// <summary>
+		/// Default initialization function
+		/// </summary>
+		/// <returns>Return EXIT_FAILURE / EXIT_SUCESS</returns>
 		int Init();
+
 		int Init(const ContextSDLGLInfos& infos) {
 			static_cast<ContextSDLGLInfos&>(*this) = infos;
 			return Init();

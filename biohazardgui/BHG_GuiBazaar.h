@@ -15,7 +15,7 @@ namespace bhd
 {
 
 	/// <summary>
-	/// Simple interface class used to create a gui context
+	/// Simple interface class used to create a GUI context
 	/// </summary>
 	class GuiBazaar
 	{
@@ -49,6 +49,9 @@ namespace bhd
 		virtual void DrawGui() { /*Draw what you want*/	};
 	};
 
+	/// <summary>
+	/// Default GUI used to manage a image processing module
+	/// </summary>
 	class GuiModulazaar : public GuiBazaar
 	{
 	public:
@@ -60,7 +63,9 @@ namespace bhd
 		ImGui::MatWatch m_outputWatcher;	//Image Watcher for output image
 		ImGui::ImComparer m_imComparer = { &m_inputWatcher , &m_outputWatcher }; //Link images watcher with comparer
 
+
 		ModuleGui m_module;
+
 
 		void Init(const std::filesystem::path& path) {
 			GuiBazaar::Init();
