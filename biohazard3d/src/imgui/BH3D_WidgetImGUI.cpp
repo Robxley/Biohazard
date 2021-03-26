@@ -59,7 +59,6 @@ namespace bh3d
 			}
 
 			updated |= ImGui::SliderFloat3("Target", glm::value_ptr(cameraLookAtInfos.m_target), v_min, v_max);
-			updated |= ImGui::SliderFloat("Zoom", &cameraLookAtInfos.m_zoom, v_min, v_max);
 
 			updated |= RSR.Widget(cameraLookAtInfos);
 
@@ -77,12 +76,12 @@ namespace bh3d
 			ImGui::TextColored(glm2imvec(COLOR_TITLE_WIDGET), "Camera features: ");
 
 			bool updated = ImGui::Checkbox("Target as direction: ", &camera.m_use_target);
-			updated |= ImGui::SliderFloat("Mov. speed", &camera.m_movement_speed, v_min, v_max, "%.3f");
-			updated |= ImGui::SliderFloat("Mouse speed", &camera.m_mouse_speed, v_min * 0.001f, v_max * 0.001f, "%.3f");
+			updated |= ImGui::SliderFloat("Mov. speed", &camera.m_speed_movement, v_min, v_max, "%.3f");
+			updated |= ImGui::SliderFloat("Mouse speed", &camera.m_speed_mouse, v_min * 0.001f, v_max * 0.001f, "%.3f");
 			updated |= ImGui::SliderFloat("Zoom speed", &camera.m_zoom_speed, v_min, v_max, "%.3f");
 			updated |= ImGui::SliderFloat("Zoom max", &camera.m_zoom_max, std::max(camera.m_zoom_min, v_min), v_max, "%.3f");
 			updated |= ImGui::SliderFloat("Zoom min", &camera.m_zoom_min, v_min, std::min(camera.m_zoom_max, v_max), "%.3f");
-			updated |= ImGui::SliderFloat("Default zoom", &camera.m_default_zoom, v_min, v_max, "%.3f");
+			updated |= ImGui::SliderFloat("Default zoom", &camera.m_zoom_default, v_min, v_max, "%.3f");
 			updated |= ImGui::SliderFloat("Elapse time (fps)", &camera.m_fps_elapse_time, v_min, v_max, "%.3f");
 
 			updated |= RSR.Widget(camera);

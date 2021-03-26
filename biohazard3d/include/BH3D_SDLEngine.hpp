@@ -135,7 +135,7 @@ namespace bh3d
 		auto Get_SDL_GLContext() const { return m_SDL_Windows_GL_Context.m_SDL_GLContext; }
 		auto& Get_SDL_Windows_GL_Context() const { return m_SDL_Windows_GL_Context; }
 
-	protected:
+	public:
 
 		Mouse m_mouse;
 		FProcessEvent m_FProcessEvent; 	//! if valid, the function is called inside the internal loop of PollEvent. Break the event loop in the PollEvents function if the return value of the function differs from BH3D_OK

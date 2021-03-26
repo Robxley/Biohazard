@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "BH3D_Mesh.hpp"
+#include "BH3D_Camera.hpp"
 
 namespace bh3d
 {
@@ -22,7 +23,9 @@ namespace bh3d
 		/// Every init necessary before drawing the mesh.
 		/// Virtual function called before Display function
 		/// </summary>
-		virtual void Init() {}
+		virtual void Init() {
+			m_mesh.ComputeMesh();
+		}
 
 		/// <summary>
 		/// Clear function
@@ -56,6 +59,16 @@ namespace bh3d
 		{
 			m_shader(projection_modelview_transform);	//Enable the shader and send the "projection modelview transform" matrix to the shader
 			DrawMesh();
+		}
+
+		/// <summary>
+		/// Display the mesh with the specific shader.
+		/// A fusioned matrix are send to the sahder during the drawing process
+		/// </summary>
+		/// <param name="projection_modelview_transform">Generaly combination of the projection, modelview and model transform matrices</param>
+		virtual void Draw(const Camera & camera)
+		{
+			Draw(camera.ProjViewTransform());	//Enable the shader and send the "projection modelview transform" matrix to the shader
 		}
 
 		/// <summary>

@@ -100,7 +100,7 @@ namespace bh3d
 
 
 			//Cube parameter
-			glm::vec3 m_size = { 0, 0, 0 };
+			glm::vec3 m_size = { 1.0f, 1.0f, 1.0f };
 	};
 
 	//inline functions

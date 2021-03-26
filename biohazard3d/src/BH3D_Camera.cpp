@@ -44,25 +44,33 @@ namespace bh3d
 
 	void CameraEngine::LookAround(const Mouse &mouse)
 	{
-
+		
 		if (mouse == Mouse::Event::UP || mouse == Mouse::Event::NONE)
 			return;
 
 		if (mouse == Mouse::Event::WHEEL)
 		{
-			m_zoom -= m_zoom_speed * mouse.GetData();
-			m_zoom = std::clamp(m_zoom, m_zoom_min, m_zoom_max);
+			float factor = (1.0f + m_scale_speed * mouse.GetData());
+			if (float updated_scale = m_scale * factor;  updated_scale >= m_scale_min && updated_scale <= m_scale_max)  //Check if the updated scale is out of range
+			{
+				m_scale = updated_scale;
+				glm::mat4 newScale = glm::scale(glm::mat4(1.0f), glm::vec3(factor));
+				m_transform = newScale * m_transform;
+			}
+			else
+				return;  //Nothing change, return the function
 		}
-		else if (mouse == Mouse::Event::MOVE && (mouse & Mouse::Button::LEFT) )
+
+		else if (mouse == Mouse::Event::MOVE && (mouse & Mouse::Button::LEFT))
 		{
 			if (mouse & Mouse::Button::LEFT)
 			{
 				int delta_x = mouse.GetRelativePosX();
 				int delta_y = mouse.GetRelativePosY();
 
-				if (float angle_x = delta_x * m_mouse_speed; std::isfinite(angle_x))
+				if (float angle_x = delta_x * m_speed_mouse; std::isfinite(angle_x))
 				{
-					if (float angle_y = delta_y * m_mouse_speed; std::isfinite(angle_y))
+					if (float angle_y = delta_y * m_speed_mouse; std::isfinite(angle_y))
 					{
 						glm::mat4 newRotate = glm::rotate(glm::mat4(1.0f), angle_x, glm::vec3(0, 1, 0));
 						newRotate = glm::rotate(newRotate, angle_y, glm::vec3(1, 0, 0));
@@ -71,21 +79,22 @@ namespace bh3d
 				}
 			}
 		}
-		else if (mouse == Mouse::Event::MOVE && (mouse & Mouse::Button::MIDDLE))
+		else if (mouse == Mouse::Event::MOVE && (mouse & Mouse::Button::RIGHT))
 		{
-			float delta_x = mouse.GetRelativePosX() / 4.0f;
-			float delta_y = mouse.GetRelativePosY() / 4.0f;
 
-			if (float angle_x = delta_x * m_mouse_speed; std::isfinite(angle_x))
+			float delta_x = mouse.GetRelativePosX() * m_speed_movement;
+			float delta_y = mouse.GetRelativePosY() * m_speed_movement;
+
+			if (float angle_x = delta_x * m_speed_mouse; std::isfinite(angle_x))
 			{
-				if (float angle_y = delta_y * m_mouse_speed; std::isfinite(angle_y))
+				if (float angle_y = delta_y * m_speed_mouse; std::isfinite(angle_y))
 				{
 					glm::mat4 newTranslate = glm::translate(glm::mat4(1.0f), glm::vec3(delta_x, -delta_y, 0));
 					m_transform = newTranslate * m_transform;
 				}
 			}
 		}
-		else if (mouse & Mouse::Button::RIGHT)
+		else if (mouse & Mouse::Button::MIDDLE)
 		{
 			Identity();
 		}
@@ -101,7 +110,7 @@ namespace bh3d
 
 		if (mouse == Mouse::Event::WHEEL)
 		{
-			m_movement_speed += mouse.GetData();
+			m_speed_movement += mouse.GetData();
 		}
 		else if (mouse == Mouse::Event::MOVE && (mouse & Mouse::Button::LEFT || mouse & Mouse::Button::RIGHT))
 		{
@@ -110,19 +119,18 @@ namespace bh3d
 
 			glm::vec3 right_direction = glm::normalize(glm::cross(m_up, m_direction));
 
-			if (float angle_x = delta_x * m_mouse_speed; std::isfinite(angle_x))
+			if (float angle_x = delta_x * m_speed_movement; std::isfinite(angle_x))
 			{
 				glm::vec3 up_direction = glm::normalize(glm::cross(right_direction, m_direction));
 				m_direction = glm::rotate(m_direction, angle_x, up_direction);
 			}
 
-			if (float angle_y = delta_y * m_mouse_speed; std::isfinite(angle_y))
+			if (float angle_y = delta_y * m_speed_movement; std::isfinite(angle_y))
 			{
 				right_direction = glm::normalize(glm::cross(m_up, m_direction));
 				m_direction = glm::rotate(m_direction, angle_y, right_direction);
 			}
 		}
-
 
 		if (mouse & Mouse::Button::RIGHT && mouse & Mouse::Button::LEFT)
 		{
@@ -159,13 +167,13 @@ namespace bh3d
 			int delta_y = mouse.GetRelativePosY();
 
 			glm::vec3 right_direction = glm::normalize(glm::cross(m_up, m_direction));
-			if (float angle_x = delta_x * m_mouse_speed; std::isfinite(angle_x))
+			if (float angle_x = delta_x * m_speed_movement; std::isfinite(angle_x))
 			{
 				glm::vec3 up_directiction = glm::normalize(glm::cross(right_direction, m_direction));
 				m_direction = glm::rotate(m_direction, angle_x, up_directiction);
 			}
 
-			if (float angle_y = delta_y * m_mouse_speed; std::isfinite(angle_y))
+			if (float angle_y = delta_y * m_speed_movement; std::isfinite(angle_y))
 			{
 				right_direction = glm::normalize(glm::cross(m_up, m_direction));
 				m_direction = glm::rotate(m_direction, angle_y, right_direction);
@@ -174,11 +182,11 @@ namespace bh3d
 
 		if ( (mouse & Mouse::Button::LEFT) && (mouse & Mouse::Button::RIGHT) )
 		{
-			m_position += (m_direction)*(m_movement_speed * m_fps_elapse_time);
+			m_position += (m_direction)*(m_speed_movement * m_fps_elapse_time);
 		}
 		else if (mouse & Mouse::Button::RIGHT)
 		{
-			m_position -= (m_direction)*(m_movement_speed * m_fps_elapse_time);
+			m_position -= (m_direction)*(m_speed_movement * m_fps_elapse_time);
 		}
 
 		LookAt();

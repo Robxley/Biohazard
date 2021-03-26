@@ -99,8 +99,6 @@ namespace bh3d
 		unique_call(Args... args) {
 			std::invoke(std::forward<Args>(args)...);
 		}
-
-		inline void do_nothing(){}; //Remove compileur warning
 	};
 
 	template<typename TGLMVec = glm::vec4, typename TDot = char>

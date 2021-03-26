@@ -182,7 +182,6 @@ namespace bh3d
 				if(!glIsEnabled(GL_SCISSOR_TEST))
 					glEnable(GL_SCISSOR_TEST); 
 			};
-			ucall.do_nothing();
 			assert(glIsEnabled(GL_SCISSOR_TEST));
 			glScissor(m_position_x, m_position_y, m_width, m_height);
 		}

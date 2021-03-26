@@ -32,19 +32,26 @@ namespace bh3d
 	/// <summary>
 	/// Generate a random texture based on the algorithme of perlin
 	/// </summary>
-	class TexturePerlin
+	struct TexturePerlin
 	{
-		public:
-		TextureManager & m_TextureManager;	//! Default texture manager
-		TexturePerlin() : m_TextureManager(BH3D_TextureManager()) {}
-		TexturePerlin(TextureManager & textureManager) : m_TextureManager(textureManager) {}
+		static std::vector<GLubyte> Create(GLsizei width, GLsizei height, float baseFreq = 4.0f, float persistence = 0.5f, int octave = 4,  bool periodic = false);
 
-		Texture CreatePrelinTextureRGBA(GLsizei width, GLsizei height, float baseFreq = 4.0f, float persistence = 0.5f, bool periodic = false)
+		static Texture CreateRGB(GLsizei width, GLsizei height, float baseFreq = 4.0f, float persistence = 0.5f, bool periodic = false)
 		{
-			return CreatePrelinTexture(width, height, baseFreq, persistence, 4, periodic);
+			std::vector<GLubyte> pixels = Create(width, height, baseFreq, persistence, 3, periodic);
+			auto texture = Texture::CreateTextureRGBA(width, height, GL_RGB, GL_UNSIGNED_BYTE, (const void*)pixels.data(), GL_TEXTURE_2D, true);
+			assert(texture.IsValid());
+			return texture;
 		}
-	private:
-		Texture CreatePrelinTexture(GLsizei width, GLsizei height, float baseFreq = 4.0f, float persistence = 0.5f, int octave = 4,  bool periodic = false);
+
+		static Texture CreateRGBA(GLsizei width, GLsizei height, float baseFreq = 4.0f, float persistence = 0.5f, bool periodic = false)
+		{
+			std::vector<GLubyte> pixels = Create(width, height, baseFreq, persistence, 4, periodic);
+			auto texture = Texture::CreateTextureRGBA(width, height, GL_RGBA, GL_UNSIGNED_BYTE, (const void*)pixels.data(), GL_TEXTURE_2D, true);
+			assert(texture.IsValid());
+			return texture;
+		}
+
 	};
 
 }

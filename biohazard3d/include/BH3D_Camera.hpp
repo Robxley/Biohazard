@@ -69,8 +69,16 @@ namespace bh3d
 		glm::vec3 m_direction = { 0.0f, 0.0f, 1.0f };			//! Direction vector of the camera. Linked with the target.
 		glm::vec3 m_up = { 0.0f, 1.0f, 0.0f };					//! The up of the camera
 		glm::vec3 m_target = { 0.0f, 0.0f, 1.0f };				//! Target of the camera. Linked with the m_direction and m_lookAtTarget
-		float m_zoom = 1.0f;									//! Zoom value on the target (it is not a zoom using the fov angle. It's a "translation". The camera position is computed as : target + (position - target) * zoom)
 		bool m_use_target = false;								//! If true, m_target is preferable to m_direction (for the computation of the modelview matrix)
+
+
+		void SetLookAt(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up) 
+		{
+			m_position = position;
+			m_target = target;
+			m_up = up;
+			m_use_target = true;
+		}
 
 		/// <summary>
 		/// Set the position of the lookAt matrix
@@ -95,13 +103,6 @@ namespace bh3d
 		/// </summary>
 		/// <param name="target"></param>
 		void SetLookAtTarget(const glm::vec3& target) { m_target = target; }
-
-		/// <summary>
-		/// Set a zoom (as translation of the camera position following the camera direction/target : target + (position - target) * zoom)
-		/// By default: 1.0f
-		/// </summary>
-		/// <param name="zoom">Zoom factor.</param>
-		void SetLookAtZoom(float zoom) { m_zoom = zoom; }
 
 		/// <summary>
 		/// Use the target instead of the direction to compute the lookAt matrix
@@ -189,14 +190,24 @@ namespace bh3d
 	{
 	public:
 
-		// Camera mouvement ajustements
-		float m_movement_speed = 15.0f;							//! The scaling quantity of movement
-		float m_mouse_speed = 0.008f;							//! The mouse sensitivity
+		// Camera movement adjustments
+		float m_speed_movement = 15.0f;							//! The scaling quantity of movement
+		float m_speed_mouse = 0.008f;							//! The mouse sensitivity
+		float m_fps_elapse_time = 1.0f / 60.0f;					//! Frame per second to normalize each camera movement
+
+		// To manipulate the position of -> CameraLookAtInfos
+		float m_zoom = 1.0f;									//! Zoom value on the target (it is not a zoom using the fov angle. It's a "translation". The camera position is computed as : target + (position - target) * zoom)
 		float m_zoom_speed = 1.0f;								//! Zoom speed
 		float m_zoom_max = 500;									//! Max zoom value
 		float m_zoom_min = 0;									//! Min zoom value
-		float m_default_zoom = 1.0f;							//! Default zoom value
-		float m_fps_elapse_time = 1.0f / 60.0f;					//! Frame per second to normalise each camera mouvement
+		float m_zoom_default = 1.0f;							//! Default zoom value
+
+		// To manipulate the scaling factor of -> CameraMatrices::m_transform
+		float m_scale = 1.0f;							//! World global scale factor			
+		float m_scale_max = 10.0f;						//! Scale factor max value
+		float m_scale_min = 0.25f;						//! Scale factor min value
+		float m_scale_speed = 0.1f;						//! Scale speed factor value
+		float m_scale_default = 1.0f;					//! Default Scale value
 			
 		/// <summary>
 		/// Zoom clamp in the min-max ranges
@@ -237,7 +248,7 @@ namespace bh3d
 		}
 
 		/// <summary>
-		/// Look at a specifique point.
+		/// Look at a specific point.
 		/// Don't forget to call LookAt function to recompute the camera matrix (or wait a update of a CameraEngine)
 		/// </summary>
 		/// <param name="target">point to target</param>
@@ -247,7 +258,7 @@ namespace bh3d
 		}
 
 		/// <summary>
-		/// Look at a specifique point.
+		/// Look at a specific point.
 		/// Set updateNow to true, or don't forget to call LookAt function to recompute the camera matrix (or wait a update of a CameraEngine)
 		/// </summary>
 		/// <param name="target">point to target</param>
@@ -259,7 +270,7 @@ namespace bh3d
 		}
 
 		/// <summary>
-		/// Keep to Look at a specifique point.
+		/// Keep to Look at a specific point.
 		/// Don't forget to call LookAt function to recompute the camera matrix (or wait a update of a CameraEngine)
 		/// </summary>
 		/// <param name="target">point to target</param>
@@ -285,7 +296,8 @@ namespace bh3d
 		/// Don't forget to call LookAt() function to recompute the camera matrix (or wait a update of a CameraEngine)
 		/// </summary>
 		void Identity() {
-			m_zoom = m_default_zoom;
+			m_zoom = m_zoom_default;
+			m_scale = m_scale_default;
 			m_transform = glm::mat4(1.0f);
 		}
 
@@ -302,7 +314,7 @@ namespace bh3d
 		}
 
 		/// <summary>
-		/// Compute a lookAt matrix from a modelview/transform matrix (transform matrix have only be a combination of translation and rotation, without sascaling)
+		/// Compute a lookAt matrix from a modelview/transform matrix (transform matrix have only be a combination of translation and rotation, without scaling)
 		/// </summary>
 		/// <param name="pose">transformation matrix without scaling / shrinking </param>
 		/// <param name="direction"></param>
@@ -317,9 +329,9 @@ namespace bh3d
 		using LookAtInfos = std::tuple<glm::vec3, glm::vec3, glm::vec3>; //! As position, target, and up 
 
 		/// <summary>
-		/// Apply the LookAt parameters to a transofrm matrix
+		/// Apply the LookAt parameters to a transform matrix
 		/// </summary>
-		/// <param name="pose">transofrm matrix</param>
+		/// <param name="pose">transform matrix</param>
 		/// <param name="direction">Direction of the lookAt camera</param>
 		/// <param name="up">Up of the lookAt camera</param>
 		/// <returns>Look at infos tuple</returns>
@@ -329,7 +341,7 @@ namespace bh3d
 
 		inline glm::vec3 DirectionRight() { return glm::normalize(glm::cross(m_up, m_direction)); }
 
-		inline auto Velocity() { return m_movement_speed * m_fps_elapse_time; }
+		inline auto Velocity()			{ return m_speed_movement * m_fps_elapse_time; }
 		inline void MoveRight()			{ m_position -= DirectionRight() * Velocity(); }
 		inline void MoveLeft()			{ m_position += DirectionRight() * Velocity(); }
 		inline void MoveForward()		{ m_position += (m_direction) * Velocity(); }
@@ -345,10 +357,10 @@ namespace bh3d
 	class CameraEngine : public Viewport, public Camera
 	{
 	public:
-		int m_cameraMod = CameraMod_FreeFlight;
+		int m_cameraMod = CameraMod_LookAround;
 		/// <summary>
 		/// Resize function.
-		/// Generaly to call when the viewport (or the screen are resize)
+		/// Generally to call when the viewport (or the screen are resize)
 		///   Camera definition :
 		/// 		 / | 
 		///			|  |			|
@@ -405,7 +417,7 @@ namespace bh3d
 		}
 
 		/// <summary>
-		/// Update the deplacement of the camera according to the movement of the mouse and the selected mod
+		/// Update the movement of the camera according to the movement of the mouse and the selected mod
 		/// </summary>
 		/// <param name="m_mouse">Mouse inputs</param>
 		virtual void Update(const Mouse &mouse)
@@ -507,7 +519,7 @@ namespace bh3d
 		void TrajectoryFlight(const Mouse &m_mouse);
 
 		/// <summary>
-		/// Extract the lookAt paramters from the LookAt lambda function
+		/// Extract the lookAt parameters from the LookAt lambda function
 		/// </summary>
 		inline void ExtractLookAtParams() {
 			m_key = interval_int(m_key, 0, MaxKeyValue(), m_loop); // Clamp the value of m_key in the range [0, MaxKeyValue()[

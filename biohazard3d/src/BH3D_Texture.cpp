@@ -128,7 +128,7 @@ namespace bh3d
 			GL_RGBA,
 			width, height,
 			0,
-			format,  //GL_RGBA
+			format,  //image format
 			type, //GL_UNSIGNED_BYTE,
 			pixels);
 

@@ -35,10 +35,10 @@
 
 namespace bh3d
 {
-	Texture TexturePerlin::CreatePrelinTexture(GLsizei width, GLsizei height, float baseFreq, float persistence, int octave, bool periodic)
+
+	std::vector<GLubyte> TexturePerlin::Create(GLsizei width, GLsizei height, float baseFreq, float persistence, int octave, bool periodic)
 	{
 		
-
 		std::vector<GLubyte> pixels(width * height * octave);
 
 		float xFactor = 1.0f / (width - 1);
@@ -81,7 +81,7 @@ namespace bh3d
 			}
 		}
 
-		return m_TextureManager.AddTextureRGBA(width,height, GL_RGBA, GL_UNSIGNED_BYTE, (const void*)pixels.data(),"");
+		return pixels;
 	}
 
 }

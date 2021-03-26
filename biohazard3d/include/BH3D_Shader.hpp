@@ -121,7 +121,12 @@ namespace bh3d
 
 		static const Shader *CurrentBindedShader();
 
-		std::array<GLint, (int)UNIFORM_INDEX::N_NUMBER> defaultUniform = {-1, -1, -1, -1 };
+		std::array<GLint, (int)UNIFORM_INDEX::N_NUMBER> defaultUniform = { 
+			(int)UNIFORM_INDEX::PROJECTION, 
+			(int)UNIFORM_INDEX::MODELVIEW, 
+			(int)UNIFORM_INDEX::TRANSFORM, 
+			(int)UNIFORM_INDEX::PROJ_VIEW_TRANSFORM 
+		};
 		
 		template<typename ...TVertexArg>
 		inline static void SetGenericVertexAttrib(ATTRIB_INDEX index, TVertexArg&&... vertexArg);
@@ -184,9 +189,9 @@ namespace bh3d
 		inline GLuint GetGLProgramID() const;
 
 
-		//Fonction d'envoie uniform
+		//Uniform fonction
 		//-----------------------------------------------------------------------------
-		// Matrice sp�cifique
+		// Engine matrices (see UNIFORM_INDEX )
 		//----------------------------------------------------------------------------
 		inline void SendProjection(const glm::mat4 & m) const;
 		inline void SendModelView(const glm::mat4 & m) const;
@@ -196,58 +201,87 @@ namespace bh3d
 		//-----------------------------------------------------------------------------
 		// Send1i/Send1f
 		//-----------------------------------------------------------------------------
+
+		inline static void Send1i(GLint location, int a);
+		inline static void Send1f(GLint location, float a);
+
 		inline void Send1i(const GLchar* name, int a) const;
 		inline void Send1f(const GLchar* name, float a) const;
 
 		//-----------------------------------------------------------------------------
 		// Send2i/Send2f
 		//-----------------------------------------------------------------------------
+
+		inline static void Send2i(GLint location, int a, int b);
+		inline static void Send2f(GLint location, float a, float b);
+
 		inline void Send2i(const GLchar* name, int a, int b) const;
 		inline void Send2f(const GLchar* name, float a, float b) const;
 
 		//-----------------------------------------------------------------------------
 		// Send3i/Send3f
 		//-----------------------------------------------------------------------------
+
+		inline static void Send3i(GLint location, int a, int b, int c);
+		inline static void Send3f(GLint location, float a, float b, float c);
+
 		inline void Send3i(const GLchar* name, int a, int b, int c) const;
 		inline void Send3f(const GLchar* name, float a, float b, float c) const;
 
 		//-----------------------------------------------------------------------------
 		// Send4i/Send4f
 		//-----------------------------------------------------------------------------
+
+		inline static void Send4i(GLint location, int a, int b, int c, int d);
+		inline static void Send4f(GLint location, float a, float b, float c, float d);
+
 		inline void Send4i(const GLchar* name, int a, int b, int c, int d) const;
 		inline void Send4f(const GLchar* name, float a, float b, float c, float d) const;
-
 
 		//-----------------------------------------------------------------------------
 		// Sendmat4i/Sendmat4i
 		//-----------------------------------------------------------------------------
+
+		inline static void SendMat4f(GLint location, GLboolean transpose, const GLfloat* value);
+
 		inline void SendMat4f(const GLchar* name, GLboolean transpose, const GLfloat *value) const;
 
 
 		//-----------------------------------------------------------------------------
 		// Send2i/Send2f
 		//-----------------------------------------------------------------------------
-		inline void Send2i(const GLchar* name, const glm::ivec2 &v) const;
-		inline void Send2f(const GLchar* name, const glm::vec2 &v) const;
+		inline static void Send2i(GLint location, const glm::ivec2& v);
+		inline static void Send2f(GLint location, const glm::vec2 &v);
+
+		inline void Send2i(const GLchar* name, const glm::ivec2& v) const;
+		inline void Send2f(const GLchar* name, const glm::vec2& v) const;
 
 		//-----------------------------------------------------------------------------
 		// Send3i/Send3f
 		//-----------------------------------------------------------------------------
-		inline void Send3i(const GLchar* name, const glm::ivec3 &v) const;
-		inline void Send3f(const GLchar* name, const glm::vec3 &v) const;
+		inline static void Send3i(GLint location, const glm::ivec3& v);
+		inline static void Send3f(GLint location, const glm::vec3 &v);
+
+		inline void Send3i(const GLchar* name, const glm::ivec3& v) const;
+		inline void Send3f(const GLchar* name, const glm::vec3& v) const;
 
 		//-----------------------------------------------------------------------------
 		// Send4i/Send4f
 		//-----------------------------------------------------------------------------
-		inline void Send4i(const GLchar* name, const glm::ivec4 &v) const;
-		inline void Send4f(const GLchar* name, const glm::vec4 &v) const;
+		inline static void Send4i(GLint location, const glm::ivec4& v);
+		inline static void Send4f(GLint location, const glm::vec4 &v);
+
+		inline void Send4i(const GLchar* name, const glm::ivec4& v) const;
+		inline void Send4f(const GLchar* name, const glm::vec4& v) const;
 
 		//-----------------------------------------------------------------------------
 		// SendMat4f
 		//-----------------------------------------------------------------------------
-		inline void SendMat4f(const GLchar* name, GLboolean transpose, const glm::mat4& m) const;
-		inline void SendMat4f(const GLchar* name, GLboolean transpose, const std::vector<glm::mat4> & m) const;
+		inline static void SendMat4f(GLint location, GLboolean transpose, const glm::mat4& m);
+		inline static void SendMat4f(GLint location, GLboolean transpose, const std::vector<glm::mat4> & m);
 
+		inline void SendMat4f(const GLchar* name, GLboolean transpose, const glm::mat4& m) const;
+		inline void SendMat4f(const GLchar* name, GLboolean transpose, const std::vector<glm::mat4>& m) const;
 
 	public:
 
@@ -421,6 +455,13 @@ namespace bh3d
 	//-----------------------------------------------------------------------------
 	// Send1i/Send1f
 	//-----------------------------------------------------------------------------
+	inline void Shader::Send1i(GLint location, int a){
+		glUniform1i(location, a);
+	}
+	inline void Shader::Send1f(GLint location, float a){
+		glUniform1f(location, a);
+	}
+	
 	inline void Shader::Send1i(const GLchar* name, int a) const
 	{
 		assert_uniform_location();
@@ -435,6 +476,15 @@ namespace bh3d
 	//-----------------------------------------------------------------------------
 	// Send2i/Send2f
 	//-----------------------------------------------------------------------------
+	inline void Shader::Send2i(GLint location, int a, int b)
+	{
+		glUniform2i(location, a, b);
+	}
+	inline void Shader::Send2f(GLint location, float a, float b)
+	{
+		glUniform2f(location, a, b);
+	}
+
 	inline void Shader::Send2i(const GLchar* name, int a, int b) const
 	{
 		assert_uniform_location();
@@ -449,6 +499,17 @@ namespace bh3d
 	//-----------------------------------------------------------------------------
 	// Send3i/Send3f
 	//-----------------------------------------------------------------------------
+
+	void Shader::Send3i(GLint location, int a, int b, int c)
+	{
+		glUniform3i(location, a, b, c);
+	}
+
+	void Shader::Send3f(GLint location, float a, float b, float c)
+	{
+		glUniform3f(location, a, b, c);
+	}
+
 	inline void Shader::Send3i(const GLchar*name, int a, int b, int c) const
 	{
 		assert_uniform_location();
@@ -464,6 +525,15 @@ namespace bh3d
 	//-----------------------------------------------------------------------------
 	// Send4i/Send4f
 	//-----------------------------------------------------------------------------
+	inline void Shader::Send4i(GLint location, int a, int b, int c, int d)
+	{
+		glUniform4i(location, a, b, c, d);
+	}
+	inline void Shader::Send4f(GLint location, float a, float b, float c, float d)
+	{
+		glUniform4f(location, a, b, c, d);
+	}
+
 	inline void Shader::Send4i(const GLchar* name, int a, int b, int c, int d) const
 	{
 		assert_uniform_location();
@@ -477,12 +547,11 @@ namespace bh3d
 	//-----------------------------------------------------------------------------
 	// SendMat4f
 	//-----------------------------------------------------------------------------
-	inline void Shader::SendMat4f(const GLchar* name, GLboolean transpose, const GLfloat *value) const
+	inline void Shader::SendMat4f(GLint location, GLboolean transpose, const GLfloat *value)
 	{
-		assert_uniform_location();
 		glUniformMatrix4fv
 			(
-				glGetUniformLocation(m_programID, name),
+				location,
 				1,
 				transpose,
 				value
@@ -490,73 +559,126 @@ namespace bh3d
 
 	}
 
+	inline void Shader::SendMat4f(const GLchar* name, GLboolean transpose, const GLfloat* value) const
+	{
+		assert_uniform_location();
+		glUniformMatrix4fv
+		(
+			glGetUniformLocation(m_programID, name),
+			1,
+			transpose,
+			value
+		);
+
+	}
 
 	//-----------------------------------------------------------------------------
 	// Send2i/Send2f
 	//-----------------------------------------------------------------------------
-	inline void Shader::Send2i(const GLchar* name, const glm::ivec2 &v) const
+	inline void Shader::Send2i(GLint location, const glm::ivec2 &v)
+	{
+		glUniform2iv(location, 1, &v[0]);
+	}
+	inline void Shader::Send2f(GLint location, const glm::vec2 &v)
+	{
+		glUniform2fv(location, 1, &v[0]);
+	}
+
+	inline void Shader::Send2i(const GLchar* name, const glm::ivec2& v) const
 	{
 		assert_uniform_location();
 		glUniform2iv(glGetUniformLocation(m_programID, name), 1, &v[0]);
 	}
-	inline void Shader::Send2f(const GLchar* name, const glm::vec2 &v) const
+	inline void Shader::Send2f(const GLchar* name, const glm::vec2& v) const
 	{
 		assert_uniform_location();
 		glUniform2fv(glGetUniformLocation(m_programID, name), 1, &v[0]);
 	}
-
 	//-----------------------------------------------------------------------------
 	// Send3i/Send3f
 	//-----------------------------------------------------------------------------
-	inline void Shader::Send3i(const GLchar* name, const glm::ivec3 &v) const
+	inline void Shader::Send3i(GLint location, const glm::ivec3 &v)
+	{
+		glUniform3iv(location, 1, &v[0]);
+	}
+	inline void Shader::Send3f(GLint location, const glm::vec3 &v)
+	{
+		glUniform3fv(location, 1, &v[0]);
+	}
+
+	inline void Shader::Send3i(const GLchar* name, const glm::ivec3& v) const
 	{
 		assert_uniform_location();
 		glUniform3iv(glGetUniformLocation(m_programID, name), 1, &v[0]);
 	}
-	inline void Shader::Send3f(const GLchar* name, const glm::vec3 &v) const
+	inline void Shader::Send3f(const GLchar* name, const glm::vec3& v) const
 	{
 		assert_uniform_location();
 		glUniform3fv(glGetUniformLocation(m_programID, name), 1, &v[0]);
 	}
-
 	//-----------------------------------------------------------------------------
 	// Send4i/Send4f
 	//-----------------------------------------------------------------------------
-	inline void Shader::Send4i(const GLchar* name, const glm::ivec4 &v) const
+	inline void Shader::Send4i(GLint location, const glm::ivec4 &v)
+	{
+		glUniform4iv(location, 1, &v[0]);
+	}
+	inline void Shader::Send4f(GLint location, const glm::vec4 &v)
+	{
+		glUniform4fv(location, 1, &v[0]);
+	}
+	inline void Shader::Send4i(const GLchar* name, const glm::ivec4& v) const
 	{
 		assert_uniform_location();
 		glUniform4iv(glGetUniformLocation(m_programID, name), 1, &v[0]);
 	}
-	inline void Shader::Send4f(const GLchar* name, const glm::vec4 &v) const
+	inline void Shader::Send4f(const GLchar* name, const glm::vec4& v) const
 	{
 		assert_uniform_location();
 		glUniform4fv(glGetUniformLocation(m_programID, name), 1, &v[0]);
 	}
-
 	//-----------------------------------------------------------------------------
 	// SendMat4f
 	//-----------------------------------------------------------------------------
-	inline void Shader::SendMat4f(const GLchar* name, GLboolean transpose, const glm::mat4& m) const
+	inline void Shader::SendMat4f(GLint location, GLboolean transpose, const glm::mat4& m)
 	{
-		assert_uniform_location();
 		glUniformMatrix4fv
 			(
-				glGetUniformLocation(m_programID, name),
+				location,
 				1,
 				transpose,
 				glm::value_ptr(m)
 				);
 
 	}
+
+	inline void Shader::SendMat4f(const GLchar* name, GLboolean transpose, const glm::mat4& m) const
+	{
+		assert_uniform_location();
+		glUniformMatrix4fv
+		(
+			glGetUniformLocation(m_programID, name),
+			1,
+			transpose,
+			glm::value_ptr(m)
+		);
+
+	}
 	//-----------------------------------------------------------------------------
 	// SendMat4fv
 	//----------------------------------------------------------------------------
-	inline void Shader::SendMat4f(const GLchar* name, GLboolean transpose, const std::vector<glm::mat4> & m) const
+	inline void Shader::SendMat4f(GLint location, GLboolean transpose, const std::vector<glm::mat4> & m)
+	{
+		glUniformMatrix4fv(location, (GLsizei) m.size(), transpose, glm::value_ptr(m[0]));
+	}
+
+	inline void Shader::SendMat4f(const GLchar* name, GLboolean transpose, const std::vector<glm::mat4>& m) const
 	{
 		assert_uniform_location();
 		int id = glGetUniformLocation(m_programID, name);
-		glUniformMatrix4fv(id, (GLsizei) m.size(), transpose, glm::value_ptr(m[0]));
+		glUniformMatrix4fv(id, (GLsizei)m.size(), transpose, glm::value_ptr(m[0]));
 	}
+
 
 #undef assert_uniform_location
 
