@@ -16,7 +16,7 @@ namespace bhd
 		//Tool menu color
 		ImVec4 m_titleTools_Color = { 1.000f, 0.737f, 0.293f, 1.000f };
 
-		//Default ImGuiStyle used by kiwi
+		//Default ImGuiStyle
 		//Have to be call after the initialization of imgui
 		static void InitStyle()
 		{
