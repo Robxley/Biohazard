@@ -188,6 +188,12 @@ namespace bh3d
 		/// <returns>Opengl program id</returns>
 		inline GLuint GetGLProgramID() const;
 
+		/// <summary>
+		/// Returns the location of a uniform variable for this shader
+		/// </summary>
+		/// <param name="name">Points to a null terminated string containing the name of the uniform variable whose location is to be queried.</param>
+		/// <returns>location of a uniform variable for this shader</returns>
+		inline GLint GetUniformLocation(const GLchar* name) const;
 
 		//Uniform fonction
 		//-----------------------------------------------------------------------------
@@ -398,6 +404,11 @@ namespace bh3d
 	inline GLuint Shader::GetGLProgramID() const
 	{
 		return m_programID;
+	}
+
+	inline GLint Shader::GetUniformLocation(const GLchar* name) const
+	{
+		return glGetUniformLocation(m_programID, name);
 	}
 
 #define assert_default_uniform() assert(!defaultUniform.empty() && "Call DefaultUniformLocation() function before sending data to the shader")
