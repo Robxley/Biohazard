@@ -15,7 +15,7 @@
 
 #define FWD(a) std::forward<decltype(a)>(a)
 
-namespace mzd	
+namespace bhd
 {
 	/// <summary>
 	/// Useful trait template

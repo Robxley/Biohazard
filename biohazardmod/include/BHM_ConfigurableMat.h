@@ -1,8 +1,8 @@
 #pragma once
 
-#include "configurable.h"
+#include "BHM_Configurable.h"
 
-namespace mzd
+namespace bhd
 {
 
 	struct IFileMat : cv::Mat

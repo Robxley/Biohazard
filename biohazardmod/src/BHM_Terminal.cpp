@@ -1,11 +1,11 @@
 
-#include "terminal.h"
+#include "BHM_Terminal.h"
 
 #include <cassert>
 
 #ifdef _WIN32
 #include <Windows.h>
-namespace mzd
+namespace bhd
 {
 	void init_win32_console_for_ansi_mode(bool verbose)
 	{

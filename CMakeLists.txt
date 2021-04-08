@@ -54,7 +54,7 @@ set(IMGUI_DIR ${3RD_DIR}/imgui)							# ImGui - Dear ImGui
 # __________________________________________
 # __ Subdirectories
 
-add_subdirectory(modulazard)
+add_subdirectory(biohazardmod)
 add_subdirectory(biohazard3d)
 add_subdirectory(biohazardgui)
 add_subdirectory(tests)

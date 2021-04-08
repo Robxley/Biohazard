@@ -13,7 +13,7 @@ FILE(GLOB IMGUI_SOURCEFILES
 
 # Create toolkit source files list
 FILE(GLOB LOCAL_SOURCEFILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/BHG_*.cpp)
 
 
 # __________________________________________

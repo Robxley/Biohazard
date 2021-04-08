@@ -1,7 +1,7 @@
 #pragma once
 
-#include "utils.h"
-#include "terminal.h"
+#include "BHM_Utils.h"
+#include "BHM_Terminal.h"
 
 #include <type_traits>
 #include <mutex>
@@ -12,7 +12,7 @@
 
 #include <opencv2\opencv.hpp>
 
-namespace mzd::logging
+namespace bhd::logging
 {
 
 	/// <summary>

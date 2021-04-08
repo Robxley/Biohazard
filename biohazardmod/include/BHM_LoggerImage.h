@@ -1,8 +1,8 @@
 #pragma once
 
-#include "logger.h"
+#include "BHM_Logger.h"
 
-namespace mzd::logging
+namespace bhd::logging
 {
 
 	namespace core

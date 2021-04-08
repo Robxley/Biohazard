@@ -1,9 +1,9 @@
-#include "utils.h"
+#include "BHM_Utils.h"
 
 #include <cassert>
 #include <vector>
 
-using namespace mzd;
+using namespace bhd;
 
 std::vector<std::filesystem::path> GetFilesFromDir(const std::filesystem::path& path_dir, std::filesystem::path& ext)
 {

@@ -1,7 +1,7 @@
 #pragma once
 #ifndef __EXCEPTION_TRACKER_H__
 
-#include "logger.h"
+#include "BHM_Logger.h"
 
 #include <exception>
 

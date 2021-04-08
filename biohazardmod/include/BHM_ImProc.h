@@ -2,7 +2,7 @@
 
 #include <opencv2\opencv.hpp>
 
-namespace mzd::imgproc
+namespace bhd::imgproc
 {
 	// Mat Statictics
 	// --------------

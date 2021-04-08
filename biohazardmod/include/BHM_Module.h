@@ -1,11 +1,11 @@
 #pragma once
 
-#include "util_traits.h"
-#include "configurable.h"
+#include "BHM_UtilTraits.h"
+#include "BHM_Configurable.h"
 
 #include <variant>
 
-namespace mzd
+namespace bhd
 {
 	//Configurable default types (for quick recompilation needs)
 	namespace module_types
@@ -21,6 +21,7 @@ namespace mzd
 		using key_t = typename module_types::key_t;
 		using string_t = typename module_types::string_t;
 		using configurable_register_t = std::vector<IConfigurable*>;
+		using configurable_initializer_list = std::initializer_list<IConfigurable*>;
 		using submodule_t = object_wrapper<IModule>;
 		using module_register_t = std::vector<submodule_t>;
 
@@ -43,7 +44,6 @@ namespace mzd
 
 		virtual ~IModule() {};
 
-
 		/// <summary>
 		/// Configurable class
 		/// </summary>
@@ -56,33 +56,25 @@ namespace mzd
 			m_sInfo(info), 
 			m_sBlurb(blurb), 
 			m_sAlias(alias.empty() ? std::nullopt : std::optional<key_t>{alias})
-		{}
+		{		}
 
-		IModule(configurable_register_t&& configs, const key_t& key, const string_t& info = {}, const string_t& blurb = {}) :
-			m_sKey(key),
-			m_sInfo(info),
-			m_sBlurb(blurb),
-			m_sAlias(std::nullopt),
-			m_vConfigurables(std::move(configs))
-		{}
-
-		IModule(const configurable_register_t& configs, const key_t& key, const string_t& info = {}, const string_t& blurb = {}) :
+		template<class TConfigurables, class = std::enable_if_t<std::is_constructible_v<decltype(m_vConfigurables), TConfigurables>> > //configurable_initializer_list or any thing convertible to configurable_register_t
+		IModule(TConfigurables&& configs, const key_t& key, const string_t& info = {}, const string_t& blurb = {}) :
 			m_sKey(key),
 			m_sInfo(info),
 			m_sBlurb(blurb),
 			m_sAlias(std::nullopt),
 			m_vConfigurables(configs)
-		{}
-
+		{		}
 
 		//! Return the module key
-		const key_t& GetKey()				const { return m_sKey; }
+		const key_t& GetKey()				const noexcept { return m_sKey; }
 		
 		//! Return the module description
-		const string_t& GetInfo()			const { return m_sInfo; }
+		const string_t& GetInfo()			const noexcept { return m_sInfo; }
 		
 		//! Return the module blur
-		const string_t& GetBlurb()			const { return m_sBlurb; }
+		const string_t& GetBlurb()			const noexcept { return m_sBlurb; }
 
 		//! Return the module alias. If none alias is defined return the module key
 		const key_t& GetAlias() const { 
@@ -110,8 +102,24 @@ namespace mzd
 			return {};
 		}
 
+
+		std::string Infos(int format = cv::FileStorage::FORMAT_JSON)
+		{
+			try
+			{
+				cv::FileStorage fs("foo.json", cv::FileStorage::WRITE | cv::FileStorage::MEMORY | format);
+				if (!fs.isOpened())
+					return { "FileStorage can't be opened" };
+				write(fs);
+				return fs.releaseAndGetString();
+			}
+			catch (std::exception& e) { return e.what(); }
+			catch (...) { return "unknown exception"; }
+			return {};
+		}
+
 		/// <summary>
-		/// Import a configurable from a file
+		/// Import configurable/submodule values from a file
 		/// </summary>
 		/// <param name="file_path">File path</param>
 		/// <returns>Empty if not error, else message error</returns>
@@ -130,8 +138,8 @@ namespace mzd
 		}
 
 		/// <summary>
-		/// Try to import a configurable from a file.
-		/// If fail create a file.
+		/// Try to import configurable/submodule values from a file
+		/// If fail, the file is created as template
 		/// </summary>
 		/// <param name="file_path">File path</param>
 		/// <returns>Return a std::pair (uchar, std::string). int value as 0: import or export fail, 1: import, 2: export object. If not empty, the string value is the error of the import/export</returns>
@@ -156,8 +164,17 @@ namespace mzd
 		template<typename ... Args>
 		auto RegisterConfigurables(Args&& ...configurable_references) 
 		{
-			m_vConfigurables.reserve(m_vConfigurables.size() + sizeof...(Args));
-			(RegisterConfigurable(std::forward<Args>(configurable_references)), ...);
+			if constexpr (sizeof...(Args) > 0)
+			{
+				m_vConfigurables.reserve(std::size(m_vConfigurables) + sizeof...(Args));
+				(RegisterConfigurable(std::forward<Args>(configurable_references)), ...);
+			}
+		}
+
+		auto RegisterConfigurables(const std::initializer_list<IConfigurable*>& list)
+		{
+			m_vConfigurables.reserve(std::size(m_vConfigurables) + std::size(list));
+			m_vConfigurables.insert(std::end(m_vConfigurables), std::begin(list), std::end(list));
 		}
 
 		void RegisterSubModule(IModule& submodule) {
@@ -268,4 +285,26 @@ private:
 		}
 
 	};
+
+	template <class TConfigs, class = void>
+	struct CModule : public TConfigs, public IModule
+	{
+		template<typename ...Args>
+		CModule(Args&&... args) :
+			TConfigs(),
+			IModule(std::forward<Args>(args)...)
+		{		}
+
+	};
+
+	template <class TConfigs>
+	struct CModule<TConfigs, decltype(std::declval<TConfigs>().List(), void(0))> : public TConfigs, public IModule
+	{
+		template<typename ...Args>
+		CModule(Args&&... args) :
+			TConfigs(),
+			IModule(TConfigs::List(), std::forward<Args>(args)...)
+		{		}
+	};
+
 }

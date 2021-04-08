@@ -8,12 +8,12 @@
 #include <algorithm>
 #include <chrono>
 
-#include "common.h"
-#include "terminal.h"
+#include "BHM_Common.h"
+#include "BHM_Terminal.h"
 
 #define ASSERT_TEST(test) mzd::try_catch_terminal("test \"" ## #test ## "\": ", [&]{ if(!(test)) throw std::runtime_error("Invalid Test");});
 
-namespace mzd
+namespace bhd
 {
 
 	namespace unit_test  //unit test tools

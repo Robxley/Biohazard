@@ -1,19 +1,14 @@
 #pragma once
 
+#include "BHM_Module.h"
+#include "BHM_Logger.h"
+#include "BHM_LoggerImage.h"
+#include "BHM_Configurable.h"
 
-#include "Module.h"
-#include "Logger.h"
-#include "LoggerImg.h"
-#include "Configurable.h"
-
-
-
-
-
-namespace mzd
+namespace bhd
 {
 	/// <summary>
-	/// Embryo logger as instance of a logger and a image logger
+	/// Instance of a logger for text and image
 	/// </summary>
 	struct ILoggerProc
 	{
@@ -30,12 +25,6 @@ namespace mzd
 		ILoggerProc& operator=(const ILoggerProc &) = default;
 		ILoggerProc& operator=(ILoggerProc &&) = default;
 
-		template<typename TLogger, typename TLoggerImg>
-		ILoggerProc(TLogger&& logger, TLoggerImg&& loggerimg) :
-			m_pLogger(std::forward<TLogger>(logger)),
-			m_pLoggerImg(std::forward<TLoggerImg>(loggerimg))
-		{	}
-
 		template<typename ...Args>
 		static auto MakeLogger(Args&&... args) {
 			return std::make_shared<CLogger>(std::forward<Args>(args)...);
@@ -45,6 +34,17 @@ namespace mzd
 		static auto MakeLoggerImg(Args&&... args) {
 			return std::make_shared<CLoggerImg>(std::forward<Args>(args)...);
 		}
+
+		ILoggerProc() :
+			m_pLogger(MakeLogger()),
+			m_pLoggerImg(MakeLoggerImg())
+		{	}
+
+		template<typename TLogger, typename TLoggerImg>
+		ILoggerProc(TLogger&& logger, TLoggerImg&& loggerimg) :
+			m_pLogger(std::forward<TLogger>(logger)),
+			m_pLoggerImg(std::forward<TLoggerImg>(loggerimg))
+		{	}
 
 		/// <summary>
 		/// Log a sequence of arguments with the info prefix
@@ -113,7 +113,8 @@ namespace mzd
 	/// <summary>
 	/// Module with logger as instance of a logger and a image logger
 	/// </summary>
-	class CImgProcModule : public IModule, public ILoggerProc
+
+	class CImProcModule : public IModule, public ILoggerProc
 	{
 		using typename IModule::key_t;
 		using typename IModule::string_t;
@@ -121,28 +122,52 @@ namespace mzd
 	public:
 
 		template<typename ...Args>
-		CImgProcModule(ILoggerProc && logger, Args&&... args) :
+		CImProcModule(Args&&... args) :
+			IModule(std::forward<Args>(args)...),
+			ILoggerProc()
+		{	}
+
+		template<typename ...Args>
+		CImProcModule(ILoggerProc && logger, Args&&... args) :
 			IModule(std::forward<Args>(args)...),
 			ILoggerProc(std::move(logger))
 		{	}
 
 		template<typename ...Args>
-		CImgProcModule(const ILoggerProc & logger, Args&&... args) :
+		CImProcModule(const ILoggerProc & logger, Args&&... args) :
 			IModule(std::forward<Args>(args)...),
 			ILoggerProc(logger)
 		{	}
 
-		CImgProcModule(const ILoggerProc & logger) :
+		CImProcModule(const ILoggerProc & logger) :
 			ILoggerProc(logger)
 		{	}
 
-		CImgProcModule(const CImgProcModule & imgProcModule) :
-			CImgProcModule(static_cast<const ILoggerProc&>(imgProcModule))
+		CImProcModule(const CImProcModule& imgProcModule) :
+			CImProcModule(static_cast<const ILoggerProc&>(imgProcModule))
 		{	}
 			
-		virtual ~CImgProcModule() 
+		virtual ~CImProcModule()
 		{	}
 
+	};
+
+
+	template <class TConfigurables>
+	class TImProcModule : public TConfigurables, public CImProcModule
+	{
+	public:
+		template<typename ...Args>
+		TImProcModule(Args&&... args) :
+			CImProcModule(
+				TConfigurables::List(),								//Configurable list
+				"BILATERAL",									    //Key
+				"Bilateral filter",									//Info
+				"Applies the bilateral filter to an image."			//Blurb
+			)
+		{
+
+		}
 	};
 
 }

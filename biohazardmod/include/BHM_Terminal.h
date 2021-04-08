@@ -1,11 +1,11 @@
 #pragma once
 
-#include "exception.h"
-#include "util_traits.h"
+#include "BHM_Exception.h"
+#include "BHM_UtilTraits.h"
 #include <memory>
 #include <regex>
 
-namespace mzd
+namespace bhd
 {
 
 	// ANSI Terminal manipulation based on :

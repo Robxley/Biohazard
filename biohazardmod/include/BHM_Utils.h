@@ -4,7 +4,7 @@
 #include <vector>
 #include <filesystem>
 
-namespace mzd
+namespace bhd
 {
 
 	const std::vector<std::filesystem::path> IMG_EXTENSIONS = { ".png",".tif",".tiff",".jpg", ".jpeg", ".bmp",".jp2",".pbm",".pgm",".ppm" };

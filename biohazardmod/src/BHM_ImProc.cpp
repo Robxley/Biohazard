@@ -1,7 +1,7 @@
-#include "imgproc.h"
-#include "exception_tracking.h"
+#include "BHM_ImProc.h"
+#include "BHM_ExceptionTracking.h"
 
-namespace mzd::imgproc
+namespace bhd::imgproc
 {
 	void Hysteresis(const cv::Mat& base, const cv::Mat& marker, cv::Mat& dst, int connectivity)
 	{

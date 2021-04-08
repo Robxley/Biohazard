@@ -1,7 +1,7 @@
-#include "exception.h"
-#include "logger_image.h"
+#include "BHM_Exception.h"
+#include "BHM_LoggerImage.h"
 
-namespace mzd::logging
+namespace bhd::logging
 {
 
 	std::string SaveImg(

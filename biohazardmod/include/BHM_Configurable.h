@@ -6,10 +6,11 @@
 #include <optional>
 #include <cassert>
 #include <charconv>
+#include <cstdlib>
 
 #include <opencv2\opencv.hpp>
 
-namespace mzd
+namespace bhd
 {
 
 	//Configurable default types (for quick recompilation needs)
@@ -461,7 +462,13 @@ namespace mzd
 inline static
 cv::FileStorage& operator<<(cv::FileStorage & fs, const std::wstring & wstr)
 {
-	fs << std::string(std::begin(wstr), wstr.end());
+	assert(false && "NOT implemented correctly");
+
+	/*auto buffer_size = sizeof(wchar_t) * wstr.size();
+	std::string str(buffer_size, (char)0);
+	std::wcstombs(str.data(), wstr.data(), buffer_size);
+	fs << str;*/
+
 	return fs;
 }
 
@@ -491,14 +498,14 @@ const cv::FileNode& operator>>(const cv::FileNode & fs, std::filesystem::path & 
 }
 
 inline static
-std::ostream& operator<<(std::ostream& os, const mzd::IConfigurable & configurable)
+std::ostream& operator<<(std::ostream& os, const bhd::IConfigurable & configurable)
 {
 	os << configurable.GetStringValue();
 	return os;
 }
 
 inline static
-std::wostream& operator<<(std::wostream& wos, const mzd::IConfigurable & configurable)
+std::wostream& operator<<(std::wostream& wos, const bhd::IConfigurable & configurable)
 {
 	wos << configurable.GetWStringValue();
 	return wos;
@@ -508,21 +515,21 @@ std::wostream& operator<<(std::wostream& wos, const mzd::IConfigurable & configu
 //IConfigurable
 
 inline static
-cv::FileStorage& operator<<(cv::FileStorage & fs, const mzd::IConfigurable & configurable)
+cv::FileStorage& operator<<(cv::FileStorage & fs, const bhd::IConfigurable & configurable)
 {
 	configurable.write(fs);
 	return fs;
 }
 
 inline static
-const cv::FileNode& operator>>(const cv::FileNode & fn, mzd::IConfigurable & configurable)
+const cv::FileNode& operator>>(const cv::FileNode & fn, bhd::IConfigurable & configurable)
 {
 	configurable.read(fn);
 	return fn;
 }
 
 inline static
-const cv::FileStorage& operator>>(const cv::FileStorage & fs, mzd::IConfigurable & configurable)
+const cv::FileStorage& operator>>(const cv::FileStorage & fs, bhd::IConfigurable & configurable)
 {
 	configurable.read(fs.root());
 	return fs;
@@ -531,21 +538,21 @@ const cv::FileStorage& operator>>(const cv::FileStorage & fs, mzd::IConfigurable
 //TDataConfigurable
 
 template <class T>
-cv::FileStorage& operator<<(cv::FileStorage & fs, const mzd::TDataConfigurable<T> & configurable)
+cv::FileStorage& operator<<(cv::FileStorage & fs, const bhd::TDataConfigurable<T> & configurable)
 {
 	configurable.write(fs);
 	return fs;
 }
 
 template <class T>
-const cv::FileNode& operator>>(const cv::FileNode & fn, mzd::TDataConfigurable<T> & configurable)
+const cv::FileNode& operator>>(const cv::FileNode & fn, bhd::TDataConfigurable<T> & configurable)
 {
 	configurable.read(fn);
 	return fn;
 }
 
 template <class T>
-const cv::FileStorage& operator>>(const cv::FileStorage & fs, mzd::TDataConfigurable<T> & configurable)
+const cv::FileStorage& operator>>(const cv::FileStorage & fs, bhd::TDataConfigurable<T> & configurable)
 {
 	configurable.read(fs.root());
 	return fs;
@@ -554,7 +561,7 @@ const cv::FileStorage& operator>>(const cv::FileStorage & fs, mzd::TDataConfigur
 //CNumericConfigurable
 
 template <class T>
-cv::FileStorage& operator<<(cv::FileStorage & fs, const mzd::CNumericConfigurable<T> & configurable)
+cv::FileStorage& operator<<(cv::FileStorage & fs, const bhd::CNumericConfigurable<T> & configurable)
 {
 	configurable.write(fs);
 	return fs;
@@ -562,14 +569,14 @@ cv::FileStorage& operator<<(cv::FileStorage & fs, const mzd::CNumericConfigurabl
 
 
 template <class T>
-const cv::FileNode& operator>>(const cv::FileNode & fn, mzd::CNumericConfigurable<T> & configurable)
+const cv::FileNode& operator>>(const cv::FileNode & fn, bhd::CNumericConfigurable<T> & configurable)
 {
 	configurable.read(fn);
 	return fn;
 }
 
 template <class T>
-const cv::FileStorage& operator>>(const cv::FileStorage & fs, mzd::CNumericConfigurable<T> & configurable)
+const cv::FileStorage& operator>>(const cv::FileStorage & fs, bhd::CNumericConfigurable<T> & configurable)
 {
 	configurable.read(fs.root());
 	return fs;

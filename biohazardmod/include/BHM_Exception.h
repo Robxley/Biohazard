@@ -5,7 +5,7 @@
 #include <chrono>
 #include <stdexcept>
 
-namespace mzd
+namespace bhd
 {
 
 	namespace type_traits

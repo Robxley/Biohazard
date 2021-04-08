@@ -1,7 +1,7 @@
 ﻿# __________________________________________
 # modulazard project
 
-project(modulazard)
+project(biobazardmod)
 
 # Set C++ standard 
 set(CMAKE_CXX_STANDARD 17)
@@ -25,14 +25,14 @@ find_package(OpenCV REQUIRED)
 
 # Create toolkit source files list
 FILE(GLOB LOCAL_SOURCEFILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/BHM_*.cpp)
 
 
-add_library(modulazard STATIC ${CMAKE_CURRENT_SOURCE_DIR} ${LOCAL_SOURCEFILES})
+add_library(biobazardmod STATIC ${CMAKE_CURRENT_SOURCE_DIR} ${LOCAL_SOURCEFILES})
 
-target_link_libraries(modulazard PRIVATE ${OpenCV_LIBS})
+target_link_libraries(biobazardmod PRIVATE ${OpenCV_LIBS})
 
-target_include_directories(modulazard 
+target_include_directories(biobazardmod 
 							PUBLIC
 							${CMAKE_CURRENT_SOURCE_DIR}/include
 			   				${OpenCV_INCLUDE_DIRS})
