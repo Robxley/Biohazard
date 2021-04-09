@@ -7,13 +7,26 @@
 
 namespace bhd
 {
-	//Configurable default types (for quick recompilation needs)
+	//module default types (for quick recompilation needs)
 	namespace module_types
 	{
-		using key_t = std::string;
-		using string_t = std::string; //From c++17, use u8"blah blah" for utf8 encoding
+		using key_t = std::string;			//key as module id
+		using string_t = std::string;		//From c++17, use u8"blah blah" for utf8 encoding
 	}
 
+	/// <summary>
+	/// Module interface class.
+	/// The interface class is defined to manipulated (mainly to import/export in file) a list of configurables and submodules.
+	/// 
+	/// Module is defined by :
+	///		- a Key as identification label
+	///		- a Info as string short description
+	///		- a Blurb as string description
+	///		- an optional alias to distinguish instances of the same module.
+	/// 
+	///		- a list of configurable parameters (as pointers) linked to the module for its configuration.
+	///		- a list of sub-modules used by this module
+	/// </summary>
 	class IModule
 	{
 
@@ -21,19 +34,18 @@ namespace bhd
 		using key_t = typename module_types::key_t;
 		using string_t = typename module_types::string_t;
 		using configurable_register_t = std::vector<IConfigurable*>;
-		using configurable_initializer_list = std::initializer_list<IConfigurable*>;
 		using submodule_t = object_wrapper<IModule>;
 		using module_register_t = std::vector<submodule_t>;
 
 	public:
 
-		key_t m_sKey;						//! Configurable Key
-		string_t m_sInfo;					//! Info/description
-		string_t m_sBlurb;					//! Description
-		std::optional<key_t> m_sAlias;		//! Optional named module.
+		key_t m_sKey;								//! Configurable Key
+		string_t m_sInfo;							//! Info/description
+		string_t m_sBlurb;							//! Description
+		std::optional<key_t> m_sAlias;				//! Optional named module.
 
-		configurable_register_t m_vConfigurables;
-		module_register_t m_vpSubModules;
+		configurable_register_t m_vConfigurables;	//! List of configurable pointers
+		module_register_t m_vpSubModules;			//! List of submodules
 
 		IModule(const IModule&) = default;
 		IModule(IModule&&) = default;
@@ -58,7 +70,7 @@ namespace bhd
 			m_sAlias(alias.empty() ? std::nullopt : std::optional<key_t>{alias})
 		{		}
 
-		template<class TConfigurables, class = std::enable_if_t<std::is_constructible_v<decltype(m_vConfigurables), TConfigurables>> > //configurable_initializer_list or any thing convertible to configurable_register_t
+		template<class TConfigurables, class = std::enable_if_t<std::is_constructible_v<decltype(m_vConfigurables), TConfigurables>> > //any thing convertible to configurable_register_t
 		IModule(TConfigurables&& configs, const key_t& key, const string_t& info = {}, const string_t& blurb = {}) :
 			m_sKey(key),
 			m_sInfo(info),
@@ -76,7 +88,7 @@ namespace bhd
 		//! Return the module blur
 		const string_t& GetBlurb()			const noexcept { return m_sBlurb; }
 
-		//! Return the module alias. If none alias is defined return the module key
+		//! Return the module alias. If no alias is defined, return the module key
 		const key_t& GetAlias() const { 
 			assert(m_sAlias.has_value() || !GetKey().empty() && "Have to be a key or alias");
 			return (m_sAlias.has_value() ? m_sAlias.value() : GetKey()); 
@@ -147,12 +159,12 @@ namespace bhd
 		{
 			std::pair<uchar, std::string> stats = { 1, {} };
 			if (stats.second = ImportFile(file_path); !stats.second.empty())
-			{
-				stats.first = 2;
+			{	
+				//Import fail, try to export file
 				if (auto export_error = ExportFile(file_path); export_error.empty())
-					stats.first = 2;				//OK
+					stats.first = 2;								//OK
 				else 
-					stats = { 0, stats.second + export_error };    //Import & export fail
+					stats = { 0, stats.second + export_error };    //Import & export failure message
 			}
 			return stats;
 		}

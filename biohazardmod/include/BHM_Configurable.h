@@ -1,14 +1,11 @@
 #pragma once
 
-#include <string>
-#include <filesystem>
-#include <typeindex>
 #include <optional>
-#include <cassert>
-#include <charconv>
 #include <cstdlib>
 
 #include <opencv2\opencv.hpp>
+
+#include "BHM_Serialization.h"
 
 namespace bhd
 {
@@ -18,133 +15,6 @@ namespace bhd
 	{
 		using key_t = std::string;
 		using string_t = std::string;
-	}
-
-	namespace configurable_converter
-	{
-		template <class T>
-		auto to_string(const T & arg) -> decltype(std::stringstream() << arg, std::string())
-		{
-			std::stringstream ss;
-			ss << arg;
-			return ss.str();
-		};
-
-		inline auto to_string(const std::filesystem::path& path) {
-			return path.generic_string();
-		}
-
-		template <class T>
-		auto to_wstring(const T & arg)
-			-> decltype(std::wstringstream() << arg, std::wstring())
-		{
-			std::wstringstream ss;
-			ss << arg;
-			return ss.str();
-		};
-
-		template <class T>
-		auto to_data(const std::string & str, T & data)
-			-> decltype(std::istringstream(str) >> data, void())
-		{
-			std::istringstream(str) >> data;
-		}
-
-		template <class T>
-		auto to_data(const std::wstring & wstr, T & data)
-			-> decltype(std::wistringstream(wstr) >> data, void())
-		{
-			std::wistringstream(wstr) >> data;
-		}
-
-		inline auto to_data(const std::string& str, std::filesystem::path& data){
-			data = str;
-		}
-
-
-		template <typename T>
-		struct type_tokens {
-			static constexpr auto tokens() {
-				if constexpr (std::is_integral_v<T>)
-					return std::array{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9','-' };
-				else if constexpr (std::is_floating_point_v<T>)
-					return std::array{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9','-', '.' };
-				else
-					static_assert(0, "Unsupported type");
-			} 
-		};
-
-		template <typename T>
-		inline auto to_data(const std::string & str, T * buffer, std::size_t size)
-		{
-			std::size_t i = 0;
-	
-			const char * ptr_start = str.data();
-			const char * ptr_end = str.data() + str.size();
-			
-			auto tokens = type_tokens<T>::tokens();
-
-			while (ptr_start < ptr_end && i  < size)
-			{
-				ptr_start = std::find_first_of(ptr_start, ptr_end, tokens.begin(), tokens.end());
-				if (ptr_start == ptr_end)
-					return;
-
-				if (auto[ptr, ec] = std::from_chars(ptr_start, ptr_end, buffer[i]); ec == std::errc()) {
-					ptr_start = ptr;
-					i++;
-				}		
-				else{
-					return;
-				}
-			}
-		}
-
-		template<typename T>
-		auto to_data(const std::string & str, std::vector<T> & buffer)
-		{
-			const char * ptr_start = str.data();
-			const char * ptr_end = str.data() + str.size();
-
-			auto tokens = type_tokens<T>::tokens();
-			T value = {};
-			while (ptr_start < ptr_end)
-			{
-				ptr_start = std::find_first_of(ptr_start, ptr_end, tokens.begin(), tokens.end());
-				if (ptr_start == ptr_end)
-					return;
-
-				if (auto[ptr, ec] = std::from_chars(ptr_start, ptr_end, value); ec == std::errc()) {
-					buffer.emplace_back(value);
-					ptr_start = ptr;
-				}
-				else {
-					return;
-				}
-			}
-		}
-
-		inline auto to_data(const std::string & str, cv::Scalar & data) {
-			to_data(str, &data[0], 4);
-		}
-
-		static inline std::string to_string(...)
-		{
-			assert(0 && "Conversion to string not yet implemented");
-			return {};
-		};
-
-		static inline std::wstring to_wstring(...)
-		{
-			assert(0 && "Conversion to string not yet implemented");
-			return {};
-		};
-
-		static inline void to_data(...)
-		{
-			assert(0 && "Conversion from string not yet implemented");
-		}
-
 	}
 
 	//configurable
@@ -332,7 +202,7 @@ namespace bhd
 				return m_data;
 			}
 			else{
-				return configurable_converter::to_string(m_data);
+				return serialization::to_string(m_data);
 			}
 		}
 
@@ -342,7 +212,7 @@ namespace bhd
 				return m_data;
 			}
 			else{
-				return configurable_converter::to_wstring(m_data);
+				return wserialization::to_wstring(m_data);
 			}
 		}
 
@@ -361,7 +231,7 @@ namespace bhd
 			}
 			else
 			{
-				configurable_converter::to_data(svalue, m_data);
+				unserialization::to_data(svalue, m_data);
 			}
 		}
 
@@ -380,7 +250,7 @@ namespace bhd
 			}
 			else
 			{
-				configurable_converter::to_data(wsvalue, m_data);
+				unserialization::to_data(wsvalue, m_data);
 			}
 		}
 

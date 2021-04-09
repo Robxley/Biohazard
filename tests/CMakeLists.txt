@@ -1,3 +1,4 @@
 add_subdirectory(MyEngine3d)
 add_subdirectory(MyModuleGui)
 add_subdirectory(MyModuleTest)
+add_subdirectory(MyCppTest)
