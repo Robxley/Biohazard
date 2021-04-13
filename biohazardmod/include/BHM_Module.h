@@ -39,13 +39,13 @@ namespace bhd
 
 	public:
 
-		key_t m_sKey;								//! Configurable Key
-		string_t m_sInfo;							//! Info/description
-		string_t m_sBlurb;							//! Description
-		std::optional<key_t> m_sAlias;				//! Optional named module.
+		key_t m_sKey;	//! Configurable Key
+		string_t m_sInfo;	//! Info/description
+		string_t m_sBlurb;	//! Description
+		std::optional<key_t> m_sAlias;	//! Optional named module.
 
 		configurable_register_t m_vConfigurables;	//! List of configurable pointers
-		module_register_t m_vpSubModules;			//! List of submodules
+		module_register_t m_vpSubModules;	//! List of submodules
 
 		IModule(const IModule&) = default;
 		IModule(IModule&&) = default;
@@ -80,13 +80,13 @@ namespace bhd
 		{		}
 
 		//! Return the module key
-		const key_t& GetKey()				const noexcept { return m_sKey; }
+		const key_t& GetKey()	const noexcept { return m_sKey; }
 		
 		//! Return the module description
-		const string_t& GetInfo()			const noexcept { return m_sInfo; }
+		const string_t& GetInfo()	const noexcept { return m_sInfo; }
 		
 		//! Return the module blur
-		const string_t& GetBlurb()			const noexcept { return m_sBlurb; }
+		const string_t& GetBlurb()	const noexcept { return m_sBlurb; }
 
 		//! Return the module alias. If no alias is defined, return the module key
 		const key_t& GetAlias() const { 
