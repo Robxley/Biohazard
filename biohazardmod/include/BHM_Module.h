@@ -206,6 +206,15 @@ namespace bhd
 			m_vpSubModules.emplace_back(&submodule);
 		}
 
+		template <typename ...Args>
+		static auto MakeConfigurableList(Args&... configurables)
+		{
+			static_assert((std::is_base_of_v<IConfigurable, Args> && ...));
+			{
+				return configurable_register_t{ (static_cast<IConfigurable*>(&configurables), ...) };
+			}
+		}
+
 		template<typename ...Args>
 		void RegisterAsSubModule(configurable_register_t&& vConfigurables, Args&&... module_args) {
 			RegisterSubModule(
