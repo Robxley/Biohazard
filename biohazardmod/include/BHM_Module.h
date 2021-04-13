@@ -10,8 +10,8 @@ namespace bhd
 	//module default types (for quick recompilation needs)
 	namespace module_types
 	{
-		using key_t = std::string;			//key as module id
-		using string_t = std::string;		//From c++17, use u8"blah blah" for utf8 encoding
+		using key_t = std::string;      //key as module id
+		using string_t = std::string;   //From c++17, use u8"blah blah" for utf8 encoding
 	}
 
 	/// <summary>
@@ -39,13 +39,13 @@ namespace bhd
 
 	public:
 
-		key_t m_sKey;	//! Configurable Key
-		string_t m_sInfo;	//! Info/description
-		string_t m_sBlurb;	//! Description
-		std::optional<key_t> m_sAlias;	//! Optional named module.
+		key_t m_sKey;                   //! Configurable Key
+		string_t m_sInfo;               //! Info/description
+		string_t m_sBlurb;              //! Description
+		std::optional<key_t> m_sAlias;  //! Optional named module.
 
-		configurable_register_t m_vConfigurables;	//! List of configurable pointers
-		module_register_t m_vpSubModules;	//! List of submodules
+		configurable_register_t m_vConfigurables;   //! List of configurable pointers
+		module_register_t m_vpSubModules;           //! List of submodules
 
 		IModule(const IModule&) = default;
 		IModule(IModule&&) = default;
@@ -96,7 +96,7 @@ namespace bhd
 
 
 		/// <summary>
-		/// Export the configurable into a file. If the file can't be exported, return a error.
+		/// Export the configurables/submodule status of the module into a file. If the file can't be exported, return a error.
 		/// </summary>
 		/// <param name="file_path">File path</param>
 		/// <returns>Empty if not error, else message error</returns>
@@ -114,12 +114,16 @@ namespace bhd
 			return {};
 		}
 
-
+		/// <summary>
+		/// Export the configurables/submodule status of the module into a string.
+		/// </summary>
+		/// <param name="format">Export format. (see cv::FileStorage::Mode)</param>
+		/// <returns>Empty if not error, else message error</returns>
 		std::string Infos(int format = cv::FileStorage::FORMAT_JSON)
 		{
 			try
 			{
-				cv::FileStorage fs("foo.json", cv::FileStorage::WRITE | cv::FileStorage::MEMORY | format);
+				cv::FileStorage fs("foo", cv::FileStorage::WRITE | cv::FileStorage::MEMORY | format);
 				if (!fs.isOpened())
 					return { "FileStorage can't be opened" };
 				write(fs);
