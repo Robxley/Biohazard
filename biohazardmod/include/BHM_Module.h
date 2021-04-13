@@ -71,12 +71,12 @@ namespace bhd
 		{		}
 
 		template<class TConfigurables, class = std::enable_if_t<std::is_constructible_v<decltype(m_vConfigurables), TConfigurables>> > //any thing convertible to configurable_register_t
-		IModule(TConfigurables&& configs, const key_t& key, const string_t& info = {}, const string_t& blurb = {}) :
+		IModule(TConfigurables&& configs, const key_t& key, const string_t& info = {}, const string_t& blurb = {}, const key_t& alias = {}) :
 			m_sKey(key),
 			m_sInfo(info),
 			m_sBlurb(blurb),
-			m_sAlias(std::nullopt),
-			m_vConfigurables(configs)
+			m_sAlias(alias.empty() ? std::nullopt : std::optional<key_t>{ alias }),
+			m_vConfigurables(std::forward<TConfigurables>(configs))
 		{		}
 
 		//! Return the module key
