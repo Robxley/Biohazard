@@ -19,7 +19,7 @@ struct CProcessControler
 		template <typename Locker, typename Ptr>
 		CLocker(Locker&& lc, Ptr&& ptr) :
 			m_locker(std::forward<Locker>(lc)),
-			m_ptr(ptr)
+			m_ptr(std::forward<Ptr>(ptr))
 		{
 			assert(ptr != nullptr && "invalid pointer to protect");
 			std::cout << "CLocker: " << std::this_thread::get_id() << std::endl;
