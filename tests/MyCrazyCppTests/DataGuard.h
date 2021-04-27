@@ -1,5 +1,9 @@
 #pragma once
 
+#include <memory>
+#include <thread>
+#include <mutex>
+#include <cassert>
 
 template <typename T>
 struct CDataGuard
