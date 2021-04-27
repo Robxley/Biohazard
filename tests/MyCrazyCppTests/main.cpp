@@ -9,8 +9,32 @@
 #include <vector>
 
 template <typename T>
-struct CProcessControler
+struct CDataGuard
 {
+	std::shared_ptr<T> m_proc;
+
+	CDataGuard(std::shared_ptr<T>&& ptr) :
+		m_proc(ptr) { }
+
+	CDataGuard(std::shared_ptr<T>& ptr) :
+		m_proc(ptr) { }
+
+	auto operator->() {
+		return lock_guard();
+	}
+
+	auto operator->() const {
+		return lock_guard();
+	}
+
+	auto lock_guard() const {
+		return CLocker{ m_protector, m_proc.get() };
+	}
+
+	auto get() {
+		return m_proc.get();
+	}
+
 	struct CLocker
 	{
 		std::lock_guard<std::mutex> m_locker;
@@ -22,7 +46,6 @@ struct CProcessControler
 			m_ptr(std::forward<Ptr>(ptr))
 		{
 			assert(ptr != nullptr && "invalid pointer to protect");
-			std::cout << "CLocker: " << std::this_thread::get_id() << std::endl;
 		}
 
 		T* operator->() {
@@ -31,34 +54,10 @@ struct CProcessControler
 		const T* operator->() const {
 			return m_ptr;
 		}
-
-		~CLocker() {
-			std::cout << "~CLocker: " << std::this_thread::get_id() << '\n' << std::endl;
-		}
 	};
 
-	CProcessControler(std::shared_ptr<T>&& ptr) :
-		m_proc(ptr) { 
-	}
-
-	CProcessControler(std::shared_ptr<T>& ptr) :
-		m_proc(ptr) { }
-
-	std::shared_ptr<T> m_proc;
-	auto operator->() {
-		return lock_guard();
-	}
-
-	auto operator->() const {
-		return lock_guard();
-	}
-
-	auto lock_guard() {
-		return CLocker{ m_protector, m_proc.get() };
-	}
-
 protected:
-	std::mutex m_protector;
+	mutable std::mutex m_protector;
 };
 
 
@@ -82,7 +81,7 @@ struct Foo
 int main(int argc, char* argv[])
 {
 
-	CProcessControler myprotectedData = std::make_shared<Foo>();
+	CDataGuard myprotectedData = std::make_shared<Foo>();
 
 	std::thread th1 = std::thread([&] {
 		myprotectedData->f1();
