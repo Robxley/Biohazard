@@ -1,4 +1,4 @@
-# Biobazard
+# Biohazard
 
 The biohazard project is a set of libraries / executables that I develop for fun in my personal computer vision applications / projects (image processing, 3D, video games, etc.)
 
