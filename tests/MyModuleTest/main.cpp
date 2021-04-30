@@ -62,7 +62,7 @@ struct BilateralConfigurables
 	/// Create a list of configurables. Auto call by CModule during the initialization if the function exist
 	/// </summary>
 	/// <returns>list of configurables (as a std::vector<IConfigurable*>)std</returns>
-	IModule::configurable_register_t List()
+	IModule::configurable_register_t ConfigurableList()
 	{
 		return 
 		{

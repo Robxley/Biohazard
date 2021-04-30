@@ -310,12 +310,12 @@ private:
 	};
 
 	template <class TConfigs>
-	struct CModule<TConfigs, decltype(std::declval<TConfigs>().List(), void(0))> : public TConfigs, public IModule
+	struct CModule<TConfigs, decltype(std::declval<TConfigs>().ConfigurableList(), void(0))> : public TConfigs, public IModule
 	{
 		template<typename ...Args>
 		CModule(Args&&... args) :
 			TConfigs(),
-			IModule(TConfigs::List(), std::forward<Args>(args)...)
+			IModule(TConfigs::ConfigurableList(), std::forward<Args>(args)...)
 		{		}
 	};
 

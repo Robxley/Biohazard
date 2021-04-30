@@ -15,8 +15,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# Set compiler cpu optimization options  //  -march=native is MANDATORY if g2o was compiled using this option, otherwise the application will systematically crash
-add_compile_options(-march=native -mtune=native)    # detects the cpu on the compiling machine and favor instructions that run faster on this processor
 
 # Display build type
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
