@@ -45,8 +45,6 @@ message(STATUS "Third dependency directory: ${3RD_DIR}")
 #set(spdlog_INCLUDE_DIR ${3RD_DIR}/spdlog/include)		# spdlog - Fast C++ logging library
 #set(json_INCLUDE_DIR ${3RD_DIR}/json/include)			# JSON for modern C++ library
 set(glm_INCLUDE_DIR ${3RD_DIR}/glm/include)				# glm - OpenGL Mathematics
-
-#3rd libraries
 set(IMGUI_DIR ${3RD_DIR}/imgui)							# ImGui - Dear ImGui
 
 # __________________________________________

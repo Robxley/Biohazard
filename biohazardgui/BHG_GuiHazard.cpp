@@ -1,10 +1,10 @@
-#include "BHG_GuiBazaar.h"
+#include "BHG_GuiHazard.h"
 
 
 namespace bhd
 {
 
-	void GuiModulazaar::DrawGui()
+	void GuiModHazard::DrawGui()
 	{
 		MainMenuBar();
 		ImGui::MatWatch::Popup();
@@ -16,7 +16,7 @@ namespace bhd
 		});
 	}
 
-	void GuiModulazaar::MainMenuBar()
+	void GuiModHazard::MainMenuBar()
 	{
 		if (ImGui::BeginMainMenuBar())
 		{
@@ -59,7 +59,7 @@ namespace bhd
 		}
 	}
 
-	void GuiModulazaar::LeftPanel_ImgExplorer()
+	void GuiModHazard::LeftPanel_ImgExplorer()
 	{
 		// Left Image Explorer panel
 		{
@@ -70,7 +70,7 @@ namespace bhd
 		}
 	}
 
-	void GuiModulazaar::RightPanel_ImgWatcher()
+	void GuiModHazard::RightPanel_ImgWatcher()
 	{
 
 		ImGui::BeginGroup();

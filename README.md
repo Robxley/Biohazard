@@ -10,7 +10,7 @@ The biohazard project is a set of libraries / executables that I develop for fun
 
 Compilation of simple libraries (SDL, ImGui and OpenCV) to provide a GUI in image processing.
 
-## Modulazard
+## Biohazardmod
 
 Module framework for quick tests of image processing algorithms.
 

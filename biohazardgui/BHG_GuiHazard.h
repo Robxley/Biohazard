@@ -17,7 +17,7 @@ namespace bhd
 	/// <summary>
 	/// Simple interface class used to create a GUI context
 	/// </summary>
-	class GuiBazaar
+	class GuiHazard
 	{
 	protected:
 		//SDL / Opengl / ImGui context
@@ -27,9 +27,9 @@ namespace bhd
 		bool m_exit = false;	//Flag to leave the application
 
 	public:
-		GuiBazaar() {};
-		GuiBazaar(const char* win_name) : m_infos({ win_name }){}
-		GuiBazaar(const GuiBazaar&) = delete;
+		GuiHazard() {};
+		GuiHazard(const char* win_name) : m_infos({ win_name }){}
+		GuiHazard(const GuiHazard&) = delete;
 
 		/// <summary>
 		/// Initialize the Application/GUI context
@@ -52,7 +52,7 @@ namespace bhd
 	/// <summary>
 	/// Default GUI used to manage a image processing module
 	/// </summary>
-	class GuiModulazaar : public GuiBazaar
+	class GuiModHazard: public GuiHazard
 	{
 	public:
 
@@ -68,7 +68,7 @@ namespace bhd
 
 
 		void Init(const std::filesystem::path& path) {
-			GuiBazaar::Init();
+			GuiHazard::Init();
 
 			m_mainWindow.m_title = ICON_FA_BUG " Modulazard";
 			m_mainWindow.m_rect = ImGui::FixedWindow::RECT_FULLSCREEN;

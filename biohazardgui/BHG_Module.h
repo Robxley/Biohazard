@@ -89,7 +89,6 @@ namespace bhd
 		}
 	};
 
-
 	//
 	class ModuleGui : public ModuleTask
 	{

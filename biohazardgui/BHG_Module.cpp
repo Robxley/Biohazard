@@ -5,7 +5,6 @@
 
 namespace bhd
 {
-
 	namespace
 	{
 		constexpr auto INPUT_INT_W = 100.0f;
