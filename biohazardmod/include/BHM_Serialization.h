@@ -12,6 +12,11 @@ namespace bhd
 	
 	namespace serialization
 	{
+		template<typename ... Args>
+		std::string concat_to_string(Args&& ...args) {
+			return (std::stringstream() << ... << std::forward<Args>(args)).str();
+		}
+		
 		namespace details
 		{
 			template <typename T>
