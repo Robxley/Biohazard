@@ -2,9 +2,8 @@
 
 #include <optional>
 #include <cstdlib>
-
+#include <typeindex>
 #include <opencv2\opencv.hpp>
-
 #include "BHM_Serialization.h"
 
 namespace bhd
@@ -17,7 +16,13 @@ namespace bhd
 		using string_t = std::string;
 	}
 
-	//configurable
+	/// <summary>
+	/// Configurable class interface
+	/// A configurable is describe with :
+	///		- a key 
+	///		- a description
+	///		- a blurb
+	/// </summary>
 	class IConfigurable
 	{
 
@@ -30,10 +35,8 @@ namespace bhd
 		const string_t m_sBlurb;		//! short description
 
 		IConfigurable(const IConfigurable&) = delete;
-		IConfigurable& operator=(const IConfigurable&) = delete;
-
+		
 	public:
-
 
 		/// <summary>
 		/// Configurable class
@@ -112,6 +115,41 @@ namespace bhd
 			assert(0 && "not implemented (virtual function)");
 		}
 
+		/// <summary>
+		/// Copy this configurable state into another configurable 
+		/// </summary>
+		/// <param name="IConfigurable">Configurable destination</param>
+		virtual void CopyTo(IConfigurable& configurable) const {
+			assert(0 && "not implemented (virtual function)");
+		}
+
+		/// <summary>
+		/// Copy the state of configurable into this configurable
+		/// </summary>
+		/// <param name="configurable">Configurable source</param>
+		void CopyFrom(const IConfigurable& configurable) {
+			configurable.CopyTo(*this);
+		}
+
+		/// <summary>
+		/// Affectation operator. Call CopyTo
+		/// </summary>
+		/// <param name="configurable">configurable source</param>
+		/// <returns>Configurable reference</returns>
+		virtual IConfigurable& operator=(const IConfigurable& configurable) {
+			configurable.CopyTo(*this);
+			return *this;
+		}
+
+		/// <summary>
+		/// Get the type index of the configurable
+		/// </summary>
+		/// <returns></returns>
+		std::type_index TypeIndex() const { return std::type_index(typeid(*this)); }
+
+		/// <summary>
+		/// Reset the configurable. Virtual function
+		/// </summary>
 		virtual void Reset() = 0;
 	};
 
@@ -225,7 +263,7 @@ namespace bhd
 			{
 				m_data = svalue;
 			}
-			if constexpr (std::is_same_v<std::wstring, data_t>)
+			else if constexpr (std::is_same_v<std::wstring, data_t>)
 			{
 				assert(0 && "Instead, use SetWStringValue function");
 			}
@@ -244,7 +282,7 @@ namespace bhd
 			{
 				m_data = wsvalue;
 			}
-			if constexpr (std::is_same_v<std::string, data_t>)
+			else if constexpr (std::is_same_v<std::string, data_t>)
 			{
 				assert(0 && "Instead, use SetStringValue function");
 			}
@@ -255,14 +293,14 @@ namespace bhd
 		}
 
 
-		void write(cv::FileStorage& fs) const override 
-		{
+		void write(cv::FileStorage& fs) const override {
 			fs << GetKey() << m_data;
 		}
 
 		void read(const cv::FileNode& fs) override {
-
-			fs[GetKey()] >> m_data;
+			auto keyNode = fs[GetKey()];
+			if(!keyNode.empty())
+				keyNode >> m_data;
 		}
 
 	};
@@ -381,7 +419,6 @@ std::wostream& operator<<(std::wostream& wos, const bhd::IConfigurable & configu
 	return wos;
 }
 
-
 //IConfigurable
 
 inline static
@@ -436,7 +473,6 @@ cv::FileStorage& operator<<(cv::FileStorage & fs, const bhd::CNumericConfigurabl
 	configurable.write(fs);
 	return fs;
 }
-
 
 template <class T>
 const cv::FileNode& operator>>(const cv::FileNode & fn, bhd::CNumericConfigurable<T> & configurable)

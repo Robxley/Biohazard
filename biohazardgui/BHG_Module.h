@@ -48,6 +48,17 @@ namespace bhd
 			return task_duration_ms.count();
 		}
 		
+		//Set a task
+		template<typename F, typename ... Args>
+		void SetTask(F&& f, Args&&... args) {
+			m_task = [
+				f = std::forward<F>(f),
+					args = std::make_tuple(std::forward<Args>(args)...)
+			]{
+				std::apply(f, args);
+			};
+		}
+
 		// Execute the processing task
 		void Execute();
 
@@ -77,16 +88,6 @@ namespace bhd
 			m_input = img;
 		}
 
-		//Execute the processing
-		template<typename F, typename ... Args>
-		void SetTask(F&& f, Args&&... args) {
-			m_task = [
-				f = std::forward<F>(f),
-				args = std::make_tuple(std::forward<Args>(args)...)
-			]{
-				std::apply(f, args);
-			};
-		}
 	};
 
 	//

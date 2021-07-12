@@ -114,8 +114,132 @@ void test_to_data()
 	}
 }
 
+
+namespace details
+{
+	template<char c>
+	struct JsonCloser
+	{
+		cv::FileStorage& file;
+		~JsonCloser() {
+			assert(file.isOpened());
+			file << std::string(1, c);
+		}
+	};
+	using JsonCloserArray = JsonCloser<']'>;
+	using JsonCloserStruct = JsonCloser<'}'>;
+
+
+	struct JsonEndStruct
+	{
+		cv::FileStorage& file;
+		~JsonEndStruct() {
+			assert(file.isOpened());
+			file.endWriteStruct();
+		}
+	};
+
+	struct JsonStorage
+	{
+		cv::FileStorage file;
+		JsonStorage(const std::filesystem::path& path) :
+			file(path.generic_string(), cv::FileStorage::WRITE)
+		{
+			assert(file.isOpened());
+		}
+
+		operator bool() const { file.isOpened(); }
+
+		template<class T>
+		void Data(const std::string& key, T&& data)
+		{
+			assert(file.isOpened());
+			file << key << std::forward<T>(data);
+		}
+
+		JsonCloserArray BeginArray(const std::string& key)
+		{
+			assert(file.isOpened());
+			file << key << "[";
+			return { file };
+		}
+
+		template<class Array>
+		void Array(const std::string& key, const Array& data)
+		{
+			assert(file.isOpened());
+			file.startWriteStruct(key, cv::FileNode::SEQ, {});
+			for (auto& v : data)
+				file << data;
+			file.endWriteStruct();
+		}
+
+		JsonEndStruct BeginStruct(const std::string& key = {})
+		{
+			assert(file.isOpened());
+			file.startWriteStruct(key, cv::FileNode::MAP, {});
+			return{ file };
+		}
+
+		template<class T, typename ...Args>
+		auto NextData(const std::string& key, T&& value, Args&&... args)
+		{
+			Data(key, std::forward<T>(value));
+			if constexpr (sizeof...(args) >= 2)
+				NextData(std::forward<Args>(args)...);
+		}
+
+		template<typename ...Args>
+		void Struct(const std::string& key, Args&&... args)
+		{
+			assert(file.isOpened());
+			file.startWriteStruct(key, cv::FileNode::MAP, {});
+			NextData(std::forward<Args>(args)...);
+			file.endWriteStruct();
+		}
+
+	};
+
+}
+
+
 int main(int argc, char* argv[])
 {
+	{
+		details::JsonStorage json_file("c:/temp/test.json");
+
+		json_file.Data("key1", 10);
+		json_file.Data("key2", "test");
+		{
+			{
+				auto t = json_file.BeginStruct("Struct1");
+				json_file.Data("key1", 10);
+			}
+
+			{
+				auto a = json_file.BeginArray("Array1");
+				{
+					{
+						auto t = json_file.BeginStruct();
+						json_file.Data("key1", 10);
+						json_file.Data("key2", cv::Point(10,12));
+					}
+					{
+						auto t = json_file.BeginStruct();
+						json_file.Data("key1", 10);
+						json_file.Data("key2", "test");
+						json_file.Data("key2", std::vector<int>{1, 2, 3, 4});
+					}
+				}
+			}
+			json_file.Struct( 
+				"StructList",
+				"test_struct list", std::vector<int>{1, 2, 3, 4},
+				"test_struct list2", 10 
+			);
+		}
+	}
+
 	test_to_string();
 	test_to_wstring();
 	test_to_data();

@@ -33,19 +33,19 @@ namespace bhd
 		{
 			m_status = TASK_STATUS_RUNNING;
 			m_pException = {};
+			task_duration_ms = {};
 			m_thread = std::thread([&]
 				{
+					using clock = std::chrono::high_resolution_clock;
+					auto start = clock::now();
 					try {
-						using clock = std::chrono::high_resolution_clock;
-						auto start = clock::now();
 						m_task();
-						auto end = clock::now();
-						task_duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 					}
-					catch (...)
-					{
+					catch (...){
 						m_pException = std::current_exception();
 					}
+					auto end = clock::now();
+					task_duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 					m_status = TASK_STATUS_DONE;
 				});
 		}

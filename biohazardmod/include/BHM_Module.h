@@ -94,6 +94,54 @@ namespace bhd
 			return (m_sAlias.has_value() ? m_sAlias.value() : GetKey()); 
 		}
 
+		//! Return the type index of the module
+		std::type_index TypeIndex() const { return std::type_index(typeid(*this)); }
+
+
+		/// <summary>
+		/// Copy all configurables, all submodules inside a other same module.
+		/// Do nothing if the module key don't match.
+		/// </summary>
+		/// <param name="module">Destination module</param>
+		void CopyTo(IModule& imodule) const
+		{
+			if (imodule.GetKey() != imodule.GetKey())
+				return;
+			//Configurables
+			{
+				assert(m_vConfigurables.size() == imodule.m_vConfigurables.size());
+				for (std::size_t i = 0; i < m_vConfigurables.size(); i++)
+				{
+					assert(m_vConfigurables[i]->GetKey() == imodule.m_vConfigurables[i]->GetKey());
+					assert(m_vConfigurables[i]->TypeIndex() == imodule.m_vConfigurables[i]->TypeIndex());
+					m_vConfigurables[i]->CopyTo(*imodule.m_vConfigurables[i]);
+				}
+			}
+
+			//Recursive on submodule
+			if (!m_vpSubModules.empty())
+			{
+				assert(m_vpSubModules.size() == imodule.m_vpSubModules.size());
+				for (std::size_t i = 0; i < m_vpSubModules.size(); i++)
+				{
+					assert(m_vpSubModules[i]->GetKey() == imodule.m_vpSubModules[i]->GetKey());
+					assert(m_vpSubModules[i]->TypeIndex() == imodule.m_vpSubModules[i]->TypeIndex());
+					m_vpSubModules[i]->CopyTo(*imodule.m_vpSubModules[i]);
+				}
+			}
+		};
+
+		/// <summary>
+		/// lone the module. Create a new instance of the module and copy the state of its configurables.
+		/// </summary>
+		/// <returns>Return a copy of the module</returns>
+		IModule Clone() const
+		{
+			IModule clone;
+			CopyTo(clone);
+			return clone;
+		}
+
 
 		/// <summary>
 		/// Export the configurables/submodule status of the module into a file. If the file can't be exported, return a error.
