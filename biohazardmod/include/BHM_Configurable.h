@@ -166,9 +166,8 @@ namespace bhd
 		data_t m_data = {};
 		std::optional<data_t> m_default = {};
 
-		TDataConfigurable(const key_t & key, const string_t & info, const string_t & blurb) :
-			IConfigurable(key, info, blurb)
-		{		}
+		
+		using IConfigurable::IConfigurable; //inheritance constructor
 
 		template<class Tdata_t>
 		TDataConfigurable(const key_t & key, const string_t & info, const string_t & blurb, Tdata_t&& default_data) :
