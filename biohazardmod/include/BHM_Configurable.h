@@ -166,9 +166,10 @@ namespace bhd
 		data_t m_data = {};
 		std::optional<data_t> m_default = {};
 
-		
-		using IConfigurable::IConfigurable; //inheritance constructor
+		//inheritance constructor
+		using IConfigurable::IConfigurable; 
 
+		//Configurable with data constructor
 		template<class Tdata_t>
 		TDataConfigurable(const key_t & key, const string_t & info, const string_t & blurb, Tdata_t&& default_data) :
 			IConfigurable(key, info, blurb),
@@ -291,15 +292,24 @@ namespace bhd
 			}
 		}
 
-
+		/// <summary>
+		/// Export the data with opencv FileStorage.
+		/// For your own type don't forget to override the operator<<
+		/// </summary>
+		/// <param name="fs">Opencv Filestorage object</param>
 		void write(cv::FileStorage& fs) const override {
 			fs << GetKey() << m_data;
 		}
 
+		/// <summary>
+		/// Import the data with opencv FileStorage.
+		/// For your own type don't forget to override the operator>>
+		/// If file FileNode don't contain the configurable key, do nothing
+		/// </summary>
+		/// <param name="fs">Opencv Filestorage object</param>
 		void read(const cv::FileNode& fs) override {
-			auto keyNode = fs[GetKey()];
-			if(!keyNode.empty())
-				keyNode >> m_data;
+			if (auto key_node = fs[GetKey()]; !key_node.empty())
+				key_node >> m_data;
 		}
 
 	};
@@ -364,6 +374,17 @@ namespace bhd
 	using CPathConfigurable = TDataConfigurable<std::filesystem::path>;
 	using CScalarConfigurable = TDataConfigurable<cv::Scalar>;
 
+	template <typename T>
+	using CVectorConfigurable = TDataConfigurable<std::vector<T>>;
+
+	using CVectorStringConfigurable = CVectorConfigurable<std::string>;
+	using CVectorPathConfigurable = CVectorConfigurable<std::filesystem::path>;
+	using CVectorIntConfigurable = CVectorConfigurable<int>;
+	using CVectorUIntConfigurable = CVectorConfigurable<unsigned int>;
+	using CVectorDoubleConfigurable = CVectorConfigurable<double>;
+	using CVectorFloatConfigurable = CVectorConfigurable<float>;
+	using CVectorCharConfigurable = CVectorConfigurable<char>;
+
 }
 
 inline static
@@ -401,6 +422,26 @@ const cv::FileNode& operator>>(const cv::FileNode & fs, std::filesystem::path & 
 	std::string strpath;
 	fs >> strpath;
 	path = strpath;
+	return fs;
+}
+
+inline static
+cv::FileStorage& operator<<(cv::FileStorage& fs, const std::vector<std::filesystem::path>& vpath)
+{
+	std::vector<std::string> strvpath;
+	strvpath.reserve(vpath.size());
+	for (auto& path : vpath)
+		strvpath.emplace_back(path.generic_string());
+	fs << strvpath;
+	return fs;
+}
+
+inline static
+const cv::FileNode& operator>>(const cv::FileNode& fs, std::vector<std::filesystem::path>& vpath)
+{
+	std::vector<std::string> strvpath;
+	fs >> strvpath;
+	vpath.assign(vpath.begin(), vpath.end());
 	return fs;
 }
 

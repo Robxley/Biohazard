@@ -127,7 +127,7 @@ namespace bhd
 			{};
 
 			template <typename T>
-			static constexpr bool is_serializable_v = has_to_wstring<T>::value || has_wosstream<T>::value || is_constructible_to_wstring<T>::value || is_path<T>::value;
+			static constexpr bool is_wserializable_v = has_to_wstring<T>::value || has_wosstream<T>::value || is_constructible_to_wstring<T>::value || is_path<T>::value;
 
 		}
 

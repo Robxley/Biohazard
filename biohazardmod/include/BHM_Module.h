@@ -45,7 +45,7 @@ namespace bhd
 		std::optional<key_t> m_sAlias;  //! Optional named module.
 
 		configurable_register_t m_vConfigurables;   //! List of configurable pointers
-		module_register_t m_vpSubModules;           //! List of submodules
+		module_register_t m_vpSubModules;           //! List of submodules (as a object, pointer or ref)
 
 		IModule(const IModule&) = default;
 		IModule(IModule&&) = default;
@@ -132,7 +132,7 @@ namespace bhd
 		};
 
 		/// <summary>
-		/// lone the module. Create a new instance of the module and copy the state of its configurables.
+		/// clone the module. Create a new instance of the module and copy the state of its configurables.
 		/// </summary>
 		/// <returns>Return a copy of the module</returns>
 		IModule Clone() const
@@ -160,6 +160,20 @@ namespace bhd
 			catch (std::exception& e) { return e.what(); }
 			catch (...) { return "unknown exception"; }
 			return {};
+		}
+
+		/// <summary>
+		/// Export the configurables/submodule status of the module into a file. If the file can't be exported, return a error.
+		/// </summary>
+		/// <param name="directory">Output directory</param>
+		/// <param name="filename">Module filename</param>
+		/// <returns>Empty if not error, else message error</returns>
+		std::string ExportFile(const std::filesystem::path& directory, const std::filesystem::path& filename)
+		{
+			assert(std::filesystem::exists(directory));
+			assert(filename.has_extension());
+			auto file = directory / filename;
+			return ExportFile(file);
 		}
 
 		/// <summary>
@@ -221,12 +235,23 @@ namespace bhd
 			return stats;
 		}
 
+		/// <summary>
+		/// Register/add a single configurable inside the module
+		/// </summary>
+		/// <param name="configurable">Configurable reference</param>
 		void RegisterConfigurable(IConfigurable & configurable) {
 			m_vConfigurables.emplace_back(&configurable);
 		}
 
+		/// <summary>
+		/// Register a list of configurables inside the module configurable list.
+		/// Ex: 
+		/// RegisterConfigurables(my_double, my_int, my_float);
+		/// </summary>
+		/// <typeparam name="...Args">Any configurable types</typeparam>
+		/// <param name="...configurable_references">Lists of configurables</param>
 		template<typename ... Args>
-		auto RegisterConfigurables(Args&& ...configurable_references) 
+		void RegisterConfigurables(Args&& ...configurable_references)
 		{
 			if constexpr (sizeof...(Args) > 0)
 			{
@@ -235,10 +260,25 @@ namespace bhd
 			}
 		}
 
-		auto RegisterConfigurables(const std::initializer_list<IConfigurable*>& list)
+		/// <summary>
+		/// Register a list of configurables inside the module
+		/// </summary>
+		/// <param name="list">A list of configurable</param>
+		void RegisterConfigurables(const std::initializer_list<IConfigurable*>& list)
 		{
 			m_vConfigurables.reserve(std::size(m_vConfigurables) + std::size(list));
 			m_vConfigurables.insert(std::end(m_vConfigurables), std::begin(list), std::end(list));
+		}
+
+		/// <summary>
+		/// Register a list of configurables inside the module (from a container like std::vector)
+		/// </summary>
+		/// <param name="list">container</param>
+		template<class T>
+		auto RegisterConfigurables(T&& container) -> decltype(std::size(std::declval<T>()), std::begin(std::declval<T>()), std::end(std::declval<T>()), void())
+		{
+			m_vConfigurables.reserve(m_vConfigurables.size() + std::size(container));
+			m_vConfigurables.insert(std::begin(m_vConfigurables), std::begin(container), std::end(container));
 		}
 
 		void RegisterSubModule(IModule& submodule) {
