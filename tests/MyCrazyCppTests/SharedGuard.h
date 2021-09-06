@@ -179,7 +179,7 @@ protected:
 	inline thread_local static std::optional<locker_t*> m_locally_lock;
 };
 
-#if _DEBUG
+
 namespace unit_test
 {
 
@@ -280,4 +280,3 @@ namespace unit_test
 		assert(same_thread_multi_lock() == true);
 	}
 }
-#endif

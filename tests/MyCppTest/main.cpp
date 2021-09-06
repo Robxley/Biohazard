@@ -80,12 +80,12 @@ void test_to_wstring()
 		static_assert(is_constructible_to_wstring<const wchar_t*>::value);
 		//static_assert(is_constructible_to_wstring<std::filesystem::path>::value == false);
 
-		static_assert(is_serializable_v<int>);
-		static_assert(is_serializable_v<test>);
-		static_assert(is_serializable_v<const char*>);
-		static_assert(is_serializable_v<const char[5]>);
-		static_assert(is_serializable_v<std::filesystem::path>);
-		static_assert(is_serializable_v<test2> == false);
+		static_assert(is_wserializable_v<int>);
+		static_assert(is_wserializable_v<test>);
+		static_assert(is_wserializable_v<const char*>);
+		static_assert(is_wserializable_v<const char[5]>);
+		static_assert(is_wserializable_v<std::filesystem::path>);
+		static_assert(is_wserializable_v<test2> == false);
 	}
 
 	{

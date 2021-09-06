@@ -441,7 +441,7 @@ const cv::FileNode& operator>>(const cv::FileNode& fs, std::vector<std::filesyst
 {
 	std::vector<std::string> strvpath;
 	fs >> strvpath;
-	vpath.assign(vpath.begin(), vpath.end());
+	vpath.assign(strvpath.begin(), strvpath.end());
 	return fs;
 }
 
