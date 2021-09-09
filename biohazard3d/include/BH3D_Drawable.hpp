@@ -12,9 +12,9 @@ namespace bh3d
 	{
 	public:
 
-		Mesh m_mesh;											//! Mesh to draw
-		Shader m_shader;										//! Shader used to draw the mesh
-		std::stringstream m_error;								//! If exception/error was occured
+		Mesh m_mesh;				//! Mesh to draw
+		Shader m_shader;			//! Shader used to draw the mesh
+		std::stringstream m_error;	//! If exception/error was occurred
 
 		Drawable() {};
 		virtual ~Drawable() { Clear(); }

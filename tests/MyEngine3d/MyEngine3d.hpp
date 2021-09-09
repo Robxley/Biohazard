@@ -9,18 +9,12 @@
 #include "BH3D_TexturePerlin.hpp"
 #include "BH3D_Observer.hpp"
 
-
-
-
-
 class MyEngine3d : public bh3d::SDLEngine
 {
 
 	glm::vec4 m_glClearColor = { 0.45f, 0.55f, 0.60f, 1.00f };
 	bh3d::SDLImGUI m_imGUI;
-
 	bh3d::Observer m_observer = { *this };
-
 	bh3d::Drawable m_cube;
 public:
 	MyEngine3d(const bh3d::WindowInfo& windowInfo = {}) :
@@ -41,15 +35,14 @@ public:
 		m_observer.Init();
 
 		//Cube
+		bh3d::Texture texture = bh3d::TexturePerlin::CreateRGB(256, 256);
 		bh3d::Cube::AddSubMesh(m_cube.m_mesh);
 		m_cube.m_shader.LoadRaw(bh3d::TinyShader::TEXTURE_VERTEX(), bh3d::TinyShader::TEXTURE_FRAGMENT());
-		bh3d::Texture texture = bh3d::TexturePerlin::CreateRGB(256, 256);
 		m_cube.m_mesh.SetTexture(texture);
 		m_cube.Init();
 	}
 
-	void Update() override
-	{
+	void Update() override  {
 		m_observer.Update();
 	}
 
@@ -58,22 +51,19 @@ public:
 		BH3D_GL_CHECK_ERROR;
 		m_camera.BindScissor(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		m_camera.LookAt();
+		
 		//ImGui Display
 		{
 			m_imGUI.Frame();
-			MyGUI();
+			ImGui::ShowDemoWindow();
 			m_imGUI.Render();
 		}
 
+		//Scene display
 		{
 			m_observer.Draw();
 			m_cube.Draw(m_camera);
 		}
-	}
-
-	void MyGUI()
-	{
-		ImGui::ShowDemoWindow();
 	}
 
 };

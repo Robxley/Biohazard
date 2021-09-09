@@ -107,13 +107,12 @@ namespace bh3d
 	{
 		CreateWindow();		//Create a SDL windows with a opengl context
 		InitOpenGL();		//Init opengl stuff (Some GLad and Opengl default values)
+		Resize();			//Call the resize function once before the first display
 	}
 
 	//Main loop of the opengl application
 	void SDLEngine::Run()
 	{
-		Resize();			//Call the resize function once before the first display
-
 		while (PollEvents())	//Collect overall event (return false when the program have to exist)
 		{
 			Update();				//Event processing and stuff like that
