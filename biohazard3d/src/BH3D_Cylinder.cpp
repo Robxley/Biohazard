@@ -71,6 +71,7 @@ namespace bh3d
 		//Cylinder Base
 
 		std::vector<glm::vec2>  vTexCoords2;
+
 		float offset_z = size.z * 0.5f;
 		std::for_each(vPositions.begin(), vPositions.end(), [&](auto & v) {
 			vTexCoords2.push_back(v);
@@ -126,9 +127,7 @@ namespace bh3d
 		}
 
 #endif
-
-		std::vector<glm::vec3>  vNormals;
-		mesh.AddSubMesh(vFaces, vPositions, vTexCoords2, vNormals);
+		mesh.AddSubMesh(vFaces, vPositions, vTexCoords2);
 
 	}
 
