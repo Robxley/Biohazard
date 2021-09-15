@@ -51,6 +51,12 @@ namespace bh3d
 
 		auto[formated_img, format] = FormatedMatForGL(img);
 
+		//use fast 4-byte alignment (default anyway) if possible
+		glPixelStorei(GL_UNPACK_ALIGNMENT, (img.step & 3) ? 1 : 4);
+
+		//set length of one complete row in data (doesn't need to equal image.cols)
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)(img.step / img.elemSize()));
+
 		auto texture = TextureManager::CreateTextureRGBA(
 			img.cols,
 			img.rows,
