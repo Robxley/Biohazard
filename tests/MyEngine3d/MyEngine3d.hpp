@@ -70,7 +70,7 @@ public:
 
 		bh3d::Texture texture = bh3d::TexturePerlin::CreateRGB(256, 256, 6.0f, 1.0f, true);
 
-		bh3d::Sphere::AddSubMesh(mesh);		//sphere radius 1
+		bh3d::Sphere::AddSubMesh(mesh,1.0f);		//sphere radius 1
 		bh3d::Cube::AddSubMesh(mesh);		//box size 1
 		bh3d::Cube::AddSubMesh(mesh);		//box size 1
 
