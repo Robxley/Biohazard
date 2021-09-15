@@ -62,6 +62,10 @@ namespace bh3d
 			return mesh;	
 		}
 
+		static void AddSubMesh(Mesh& mesh, std::filesystem::path& m_filepath) {
+			LoadSTL(m_filepath, mesh);
+		}
+
 	};
 
 
