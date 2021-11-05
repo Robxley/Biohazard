@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
 # Set project name and version
-project(Biobazard VERSION "0.1.0" LANGUAGES CXX)
+project(Biohazard VERSION "0.1.0" LANGUAGES CXX)
 
 # Set default runtime directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
@@ -54,3 +54,4 @@ add_subdirectory(biohazardmod)
 add_subdirectory(biohazard3d)
 add_subdirectory(biohazardgui)
 add_subdirectory(tests)
+add_subdirectory(hsi)

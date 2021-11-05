@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <charconv>
 #include <type_traits>
+#include <array>
 
 namespace bhd
 {
@@ -66,7 +67,8 @@ namespace bhd
 
 
 		template <class T>
-		std::string to_string(T&& value)
+		std::enable_if_t<details::is_serializable_v<T>, std::string>
+		to_string(T&& value)
 		{
 			using namespace details;
 			if constexpr (is_constructible_to_string<T>::value)
@@ -77,79 +79,103 @@ namespace bhd
 				return std::to_string(std::forward<T>(value));
 			else if constexpr (has_osstream<T>::value)
 				return (std::ostringstream() << value).str();
-			else
-			{
-				static_assert(false, "Not implemented")
-			}
 		}
-	}
 
-	namespace wserialization
-	{
+		namespace type_tokens
+		{
+			inline constexpr const char * default = " ";
+			inline thread_local static auto separator = default;
+			namespace brakets
+			{
+				inline thread_local static bool disable = true;
+				inline thread_local static auto begin = "[";
+				inline thread_local static auto end = "]";
+			}
+			inline static void reset() { separator = default; }
+		};
 
-		// --- to_wstring ---
-		// -----------------
 		namespace details
 		{
-			//to_wstring checking function
-			template <class T>
-			using to_wstring_t = decltype(std::to_wstring(std::declval<T>()));
 
-			template <class T>
-			using to_wstring_void_t = std::void_t<to_wstring_t<T>>;
+			template<typename T>
+			void buffer_to_ostream_with_separator(std::ostream& os, T* buffer, const std::size_t& count)
+			{
+				if (count == 0) return;
+				os << buffer[0];
+				std::for_each(buffer+1, buffer+count, [&](auto& v) {os << type_tokens::separator << v; });
+			}
 
-			template<class, class = void >
-			struct has_to_wstring : std::false_type { };
+			template<auto N, auto I = 0, typename T>
+			void buffer_to_ostream_with_separator(std::ostream& os, T* buffer)
+			{
+				if constexpr (I < N)
+				{
+					if constexpr (I == 0)
+						os << buffer[0];
+					else
+						os << type_tokens::separator << buffer[I];
+					buffer_to_ostream_with_separator<N, I + 1>(os, buffer);
+				}
+			}
 
-			template<class T>
-			struct has_to_wstring<T, to_wstring_void_t<T>> : std::is_same<std::wstring, to_wstring_t<T>> { };
+			template<typename First, typename ... Args>
+			void to_ostream_with_separator(std::ostream& os, First&& first, Args&& ...args)
+			{
+				os << first;
+				((os << type_tokens::separator) << ... << std::forward<Args>(args));
+			}
 
-			//owstringstream checking function
-			template <class T>
-			using to_wosstream_t = decltype((std::wostringstream() << std::declval<T>()).str());
+			template<typename ... Args>
+			std::string to_string_sep(Args&& ...args)
+			{
+				std::stringstream ss;
+				to_ostream_with_separator(ss, std::forward<Args>(args)...);
+				return ss.str();
+			}
 
-			template <class T>
-			using to_wosstream_void_t = std::void_t<to_wosstream_t<T>>;
-
-			template<class, class = void >
-			struct has_wosstream : std::false_type { };
-
-			template<class T>
-			struct has_wosstream<T, to_wosstream_void_t<T>> : std::is_same<std::wstring, to_wosstream_t<T>> { };
-
-			//foo checking
-			template <class T>
-			using is_constructible_to_wstring = std::is_constructible<std::wstring, T>;
-
-			template <typename T>
-			struct is_path :
-				std::is_same<typename std::decay<T>::type, std::filesystem::path>::type
-			{};
-
-			template <typename T>
-			static constexpr bool is_wserializable_v = has_to_wstring<T>::value || has_wosstream<T>::value || is_constructible_to_wstring<T>::value || is_path<T>::value;
-
+			template <class Func>
+			std::string func_to_string_tokens(Func&& func)
+			{
+				std::stringstream ss;
+				if (!type_tokens::brakets::disable)
+				{
+					ss << type_tokens::brakets::begin;
+					std::forward<Func>(func)(ss);
+					ss << type_tokens::brakets::end;
+				}
+				else
+					std::forward<Func>(func)(ss);
+				return ss.str();
+			};
 		}
 
-		template <class T>
-		std::wstring to_wstring(T&& value)
+		template<typename ... Args>
+		std::string to_string_tokens(Args&& ...args)
 		{
-			using namespace details;
-			if constexpr (is_constructible_to_wstring<T>::value)
-				return std::wstring(std::forward<T>(value));
-			else if constexpr (is_path<T>::value)
-				return value.generic_wstring();
-			else if constexpr (has_to_wstring<T>::value)
-				return std::to_wstring(std::forward<T>(value));
-			else if constexpr (has_wosstream<T>::value)
-				return (std::wostringstream() << value).str();
-			else
-			{
-				static_assert(false, "Not implemented")
-			}
+			auto func = [&args...](std::ostream& os) {
+				details::to_ostream_with_separator(os, std::forward<Args>(args)...);
+			};
+			return details::func_to_string_tokens(func);
+		}
+
+		template<auto N, typename T>
+		std::string buffer_to_string_tokens(T * buffer)
+		{
+			auto func = [&](std::ostream& os) {
+				details::buffer_to_ostream_with_separator<N>(os, buffer);
+			};
+			return details::func_to_string_tokens(func);
+		}
+
+		template<typename T>
+		std::string buffer_to_string_tokens(T* buffer, const std::size_t& count)
+		{
+			auto func = [&](std::ostream& os) {
+				details::buffer_to_ostream_with_separator(os, buffer, count);
+			};
+			return details::func_to_string_tokens(func);
 		}
 	}
-
 
 	namespace unserialization
 	{
@@ -160,13 +186,6 @@ namespace bhd
 			-> decltype(std::istringstream(str) >> data, void())
 		{
 			std::istringstream(str) >> data;
-		}
-
-		template <class T>
-		auto to_data(const std::wstring& wstr, T& data)
-			-> decltype(std::wistringstream(wstr) >> data, void())
-		{
-			std::wistringstream(wstr) >> data;
 		}
 
 		inline auto to_data(const std::string& str, std::filesystem::path& data) {

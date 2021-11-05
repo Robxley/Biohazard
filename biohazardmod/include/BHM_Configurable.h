@@ -85,19 +85,8 @@ namespace bhd
 		/// <summary>
 		/// String De-serialization function. Virtual function.
 		/// </summary>
-		/// <returns></returns>
-		virtual std::wstring GetWStringValue()	const = 0;
-
-		/// <summary>
-		/// String De-serialization function. Virtual function.
-		/// </summary>
 		/// <param name="svalue">string serialized value</param>
 		virtual void SetStringValue(const std::string & svalue) = 0;
-
-		/// <summary>
-		/// WString De-serialization function. Virtual function.
-		/// </summary>
-		virtual void SetWStringValue(const std::wstring & svalue) = 0;
 
 		/// <summary>
 		/// Write the configurable using cv::FileStorage format
@@ -244,16 +233,6 @@ namespace bhd
 			}
 		}
 
-		std::wstring GetWStringValue() const override 
-		{
-			if constexpr (std::is_same_v<std::wstring, data_t>){
-				return m_data;
-			}
-			else{
-				return wserialization::to_wstring(m_data);
-			}
-		}
-
 		void SetStringValue(const std::string & svalue) override
 		{
 			if constexpr (
@@ -263,32 +242,9 @@ namespace bhd
 			{
 				m_data = svalue;
 			}
-			else if constexpr (std::is_same_v<std::wstring, data_t>)
-			{
-				assert(0 && "Instead, use SetWStringValue function");
-			}
 			else
 			{
 				unserialization::to_data(svalue, m_data);
-			}
-		}
-
-		void SetWStringValue(const std::wstring & wsvalue) override
-		{
-			if constexpr (
-				std::is_same_v<std::wstring, data_t> ||
-				std::is_same_v<std::filesystem::path, data_t>
-				)
-			{
-				m_data = wsvalue;
-			}
-			else if constexpr (std::is_same_v<std::string, data_t>)
-			{
-				assert(0 && "Instead, use SetStringValue function");
-			}
-			else
-			{
-				unserialization::to_data(wsvalue, m_data);
 			}
 		}
 
@@ -372,6 +328,8 @@ namespace bhd
 	using CIntConfigurable = CNumericConfigurable<int>;
 	using CStringConfigurable = TDataConfigurable<std::string>;
 	using CPathConfigurable = TDataConfigurable<std::filesystem::path>;
+	using CRangeConfigurable = TDataConfigurable<cv::Range>;
+	using CRectConfigurable = TDataConfigurable<cv::Rect>;
 	using CScalarConfigurable = TDataConfigurable<cv::Scalar>;
 
 	template <typename T>
@@ -385,28 +343,6 @@ namespace bhd
 	using CVectorFloatConfigurable = CVectorConfigurable<float>;
 	using CVectorCharConfigurable = CVectorConfigurable<char>;
 
-}
-
-inline static
-cv::FileStorage& operator<<(cv::FileStorage & fs, const std::wstring & wstr)
-{
-	assert(false && "NOT implemented correctly");
-
-	/*auto buffer_size = sizeof(wchar_t) * wstr.size();
-	std::string str(buffer_size, (char)0);
-	std::wcstombs(str.data(), wstr.data(), buffer_size);
-	fs << str;*/
-
-	return fs;
-}
-
-inline static
-const cv::FileNode& operator>>(const cv::FileNode & fs, std::wstring & wstr)
-{
-	std::string str;
-	fs >> str;
-	wstr.assign(std::begin(str), std::end(str));
-	return fs;
 }
 
 inline static
@@ -450,13 +386,6 @@ std::ostream& operator<<(std::ostream& os, const bhd::IConfigurable & configurab
 {
 	os << configurable.GetStringValue();
 	return os;
-}
-
-inline static
-std::wostream& operator<<(std::wostream& wos, const bhd::IConfigurable & configurable)
-{
-	wos << configurable.GetWStringValue();
-	return wos;
 }
 
 //IConfigurable
