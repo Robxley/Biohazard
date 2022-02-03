@@ -49,6 +49,7 @@ namespace bhd
 					m_module.m_task = [&] {
 						cv::Mat tmp;
 						cv::Laplacian(m_module.m_input, m_module.m_output, CV_32F, 5);
+						m_outputWatcher.update(m_module.m_output);
 					};
 				}
 				ImGui::EndMenu();

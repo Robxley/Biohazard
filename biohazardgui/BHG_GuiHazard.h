@@ -50,7 +50,7 @@ namespace bhd
 	};
 
 	/// <summary>
-	/// Default GUI used to manage a image processing module
+	/// Example / Default GUI used to manage a image processing module
 	/// </summary>
 	class GuiModHazard: public GuiHazard
 	{

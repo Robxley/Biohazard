@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <type_traits>
 #include <string>
@@ -139,8 +138,6 @@ void test_jsonstorage()
 
 int main(int argc, char* argv[])
 {
-
-
 	test_to_string();
 	test_to_cvdata();
 	test_jsonstorage();

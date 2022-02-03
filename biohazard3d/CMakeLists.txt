@@ -1,5 +1,18 @@
 # __________________________________________
-# __ Library : biohazard3d - bh3d 
+# __ Library : Biohazard 3d project - bh3d 
+
+project(biohazard3d)
+
+# Set C++ standard 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
+endif()
+
+# __________________________________________
+# 3rd libraries / Packages
 
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
@@ -7,6 +20,9 @@ find_package(GLEW REQUIRED)
 
 FILE(GLOB IMGUI_SOURCEFILES
         ${IMGUI_DIR}/*.cpp)
+
+# __________________________________________
+# library
 
 FILE(GLOB BH3D_SOURCEFILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/BH3D_*.cpp

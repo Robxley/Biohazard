@@ -1,7 +1,8 @@
 ﻿# __________________________________________
-# __ Library : Biohazard module project - bhmod
+# __________________________________________
+# __ Library : Biohazard image project - bhimg
 
-project(biohazardmod)
+project(biohazardimg)
 
 # Set C++ standard 
 set(CMAKE_CXX_STANDARD 17)
@@ -25,18 +26,18 @@ find_package(OpenCV REQUIRED)
 
 # Create toolkit source files list
 FILE(GLOB LOCAL_SOURCEFILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/BHM_*.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/BHIM_*.cpp)
 
 
-add_library(bhmod 
+add_library(bhimg 
 				STATIC 
 					${CMAKE_CURRENT_SOURCE_DIR} 
 					${LOCAL_SOURCEFILES})
 
-target_link_libraries(bhmod 
+target_link_libraries(bhimg 
 						PUBLIC ${OpenCV_LIBS})
 
-target_include_directories(bhmod 
+target_include_directories(bhimg 
 							PUBLIC
-								${CMAKE_CURRENT_SOURCE_DIR}/include
+								${CMAKE_CURRENT_SOURCE_DIR}
 			   					${OpenCV_INCLUDE_DIRS})

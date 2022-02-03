@@ -42,8 +42,9 @@ namespace ImGui
 
 	};
 
-	class MatWatch : public ImGui::ImWatch
+	class MatWatch : public ImWatch
 	{
+
 		inline static std::packaged_task<void()> m_normalization_task;
 		inline static std::function<void()> m_lambda_norm8;
 		inline static std::future<void> m_task_future;
@@ -59,7 +60,6 @@ namespace ImGui
 			m_popup_isopened = false;
 		}
 
-
 		std::optional<MatWatchDisplayInfos> m_normalization;
 	public:
 		cv::ogl::Texture2D m_texture2d;
@@ -68,7 +68,7 @@ namespace ImGui
 
 		MatWatch(const cv::Mat& img):
 			m_texture2d(img, true),
-			ImGui::ImWatch((float)img.cols, (float)img.rows, m_texture2d.texId())
+			ImWatch((float)img.cols, (float)img.rows, m_texture2d.texId())
 		{	}
 
 

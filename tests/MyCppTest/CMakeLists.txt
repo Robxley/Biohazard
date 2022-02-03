@@ -11,7 +11,7 @@ target_include_directories(MyCppTest
 
 target_link_libraries(MyCppTest 
                         PUBLIC 
-                            biobazardmod)
+                            bhmod)
 
 if (WIN32)
     target_compile_options(MyCppTest PRIVATE /W3 /WX)

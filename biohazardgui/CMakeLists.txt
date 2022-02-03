@@ -1,10 +1,26 @@
 # __________________________________________
-# __ guibazard
+# __ Library : Biohazard gui project - bhgui
+
+project(biohazardgui)
+
+# Set C++ standard 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
+endif()
+
+# __________________________________________
+# 3rd libraries / Packages
 
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(GLEW REQUIRED)
+
+# __________________________________________
+# library
 
 # Create toolkit source files list
 FILE(GLOB IMGUI_SOURCEFILES

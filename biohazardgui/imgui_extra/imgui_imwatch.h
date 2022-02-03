@@ -176,10 +176,19 @@ namespace ImGui
 		ImTextureID GetImTextureID() const { return (ImTextureID)(uintptr_t)m_texture; }
 		operator ImTextureID() const { return GetImTextureID(); }
 
+		// Check if the texture is empty
 		bool Empty() const { return m_texture == 0; }
 
+		/// <summary>
+		/// Display the image on the screen with optional comparison
+		/// </summary>
+		/// <param name="compareWith">Optional image list to compare with it</param>
 		void Widget(const std::vector<ImTextureID>& compareWith = {});
 
+		/// <summary>
+		/// Display the image on the screen with optional comparison
+		/// </summary>
+		/// <param name="compareWith">Optional image to compare with it</param>
 		void Widget(const ImWatch& compareWith) {
 			if (!compareWith.Empty())
 				Widget(std::vector<ImTextureID>{ compareWith.GetImTextureID() });
@@ -187,6 +196,10 @@ namespace ImGui
 				Widget();
 		}
 
+		/// <summary>
+		/// Display the image on the screen with optional comparison
+		/// </summary>
+		/// <param name="compareWith">Optional image to compare with it</param>
 		void Widget(const ImWatch * compareWith) {
 			if (compareWith == nullptr)
 				Widget();
@@ -194,6 +207,10 @@ namespace ImGui
 				Widget(*compareWith);
 		}
 
+		/// <summary>
+		/// Display the image on the screen with optional comparison
+		/// </summary>
+		/// <param name="compareWith">Optional image list to compare with it</param>
 		void Widget(const std::vector<ImWatch*>& compareWith) 
 		{
 			std::vector<ImTextureID> compareWithTex;

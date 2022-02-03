@@ -11,7 +11,7 @@ target_include_directories(MyModuleTest
 
 target_link_libraries(MyModuleTest 
                         PUBLIC 
-                            biobazardmod)
+                            bhmod)
 
 if (WIN32)
     target_compile_options(MyModuleTest PRIVATE /W3 /WX)
