@@ -4,8 +4,10 @@
 project(biohazard3d)
 
 # Set C++ standard 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+message(STATUS "Biohazard3d Build options: ${CMAKE_CXX_FLAGS}")
 
 if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
@@ -64,7 +66,7 @@ target_link_libraries(bh3d
 							${GLEW_LIBRARIES}
 							${WIN32_DEPENDENCIES_LIBRARIES})
 if (WIN32)
-	target_compile_options(bh3d PRIVATE /W3 /WX)
+	target_compile_options(bh3d PRIVATE /W3 /WX /utf-8 /Zc:char8_t- /MP)
 else()
 	target_compile_options(bh3d PRIVATE -w)
 endif()

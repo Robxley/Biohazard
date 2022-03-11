@@ -5,8 +5,12 @@
 project(biohazardimg)
 
 # Set C++ standard 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if (WIN32)
+    add_compile_options(/utf-8 /Zc:char8_t-)
+endif()
 
 if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")

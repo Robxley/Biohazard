@@ -12,7 +12,7 @@ namespace bhd
 	//Configurable default types (for quick recompilation needs)
 	namespace configurable_types
 	{
-		using key_t = std::string;
+		using key_t = std::string;			// key_t is not working with std::u8string because opencv is compiled with cv::String as std::string
 		using string_t = std::string;
 	}
 

@@ -20,20 +20,20 @@ struct HSIConfigurables
 
 	CPathConfigurable m_sEggSerieHSI = {
 		"EGG_SERIE_HSI",										// id key
-		"Input spectral image containing a list of eggs",		// info
+		u8"Input spectral image containing a list of eggs",		// info
 		{}	// default value
 	};
 
 	CRangeConfigurable m_sBandRange = {
 		"BAND_RANGE",
-		"Band range. Select a range of bands as [min, max[",
+		u8"Band range. Select a range of bands as [min, max[",
 		cv::Range{}
 	};
 
 	CRectConfigurable m_rRegionOfInterest =
 	{
 		"ROI_RECT",
-		"Region of interest as [x, y, width, height]",
+		u8"Region of interest as [x, y, width, height]",
 		cv::Rect{}
 	};
 

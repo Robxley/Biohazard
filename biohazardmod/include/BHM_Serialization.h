@@ -83,15 +83,15 @@ namespace bhd
 
 		namespace type_tokens
 		{
-			inline constexpr const char * default = " ";
-			inline thread_local static auto separator = default;
+			inline constexpr const char * cs_default = " ";
+			inline thread_local static auto separator = cs_default;
 			namespace brakets
 			{
 				inline thread_local static bool disable = true;
 				inline thread_local static auto begin = "[";
 				inline thread_local static auto end = "]";
 			}
-			inline static void reset() { separator = default; }
+			inline static void reset() { separator = cs_default; }
 		};
 
 		namespace details
@@ -269,7 +269,7 @@ namespace bhd
 		template<typename T>
 		inline void to_data(...)
 		{
-			assert_static(0, "Conversion from string not yet implemented");
+			static_assert(0, "Conversion from string not yet implemented");
 		}
 
 	}

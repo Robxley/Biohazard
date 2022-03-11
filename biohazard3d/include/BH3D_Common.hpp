@@ -49,6 +49,7 @@
 #include <sstream>
 #include <string>
 #include <numeric>
+#include <algorithm>
 
 #include <glm/glm.hpp>
 

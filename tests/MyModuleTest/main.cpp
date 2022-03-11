@@ -17,9 +17,9 @@ struct BilateralConfigurables
 	CIntConfigurable m_iDiameter = {
 		"DIAMETER",					// id key
 
-		"Neighborhood diameter",	// info
+		u8"Neighborhood diameter",	// info
 
-		"Diameter of each pixel neighborhood that is used during filtering."// optional blurb (opencv doc)
+		u8"Diameter of each pixel neighborhood that is used during filtering."// optional blurb (opencv doc)
 		" If it is non-positive, it is computed from sigmaSpace.",
 
 		5	// default value
@@ -28,9 +28,9 @@ struct BilateralConfigurables
 	CDoubleConfigurable m_dSigmaColor = {
 		"SIGMA_COLOR",
 
-		"Filter sigma in the color space",
+		u8"Filter sigma in the color space",
 
-		"A larger value of the parameter means that farther colors within the pixel"
+		u8"A larger value of the parameter means that farther colors within the pixel"
 		" neighborhood (see sigmaSpace) will be mixed together, resulting in larger areas of semi-equal color.",
 
 		15.0
@@ -39,9 +39,9 @@ struct BilateralConfigurables
 	CDoubleConfigurable m_dSigmaSpace = {
 		"SIGMA_SPACE",
 
-		"Filter sigma in the coordinate space",
+		u8"Filter sigma in the coordinate space",
 
-		"A larger value of the parameter means that farther pixels will influence each other as "
+		u8"A larger value of the parameter means that farther pixels will influence each other as "
 		"long as their colors are close enough (see sigmaColor ). When d>0, it specifies the neighborhood "
 		"size regardless of sigmaSpace. Otherwise, d is proportional to sigmaSpace.",
 
@@ -51,9 +51,9 @@ struct BilateralConfigurables
 	CIntConfigurable m_iBorderType = {
 		"BORDER_TYPE",
 
-		"Border mode",
+		u8"Border mode",
 
-		"Border mode used to extrapolate pixels outside of the image",
+		u8"Border mode used to extrapolate pixels outside of the image",
 
 		(int) cv::BorderTypes::BORDER_DEFAULT
 	};
@@ -83,8 +83,8 @@ class BilateralModule : public CModule<BilateralConfigurables>
 	CIntConfigurable m_iMedianKernel =
 	{
 		"MEDIAN_KERNEL",											//KEY
-		"Median kernel",											//info
-		"Median kernel after each bilateral filter application",	//blurb
+		u8"Median kernel",											//info
+		u8"Median kernel after each bilateral filter application",	//blurb
 		5															//default value
 	};
 

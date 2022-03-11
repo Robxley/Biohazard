@@ -49,7 +49,7 @@ namespace bhd
 		template<typename T>
 		void raw_read(std::ifstream& raw_file, T& data)
 		{
-			raw_file.read(reinterpret_cast<char*>(&data), sizeof(T))
+			raw_file.read(reinterpret_cast<char*>(&data), sizeof(T));
 		}
 
 		template<typename T>
