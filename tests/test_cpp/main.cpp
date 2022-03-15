@@ -7,6 +7,7 @@
 #include "BHM_SerializationOpenCV.h"
 #include "BHM_Serialization.h"
 #include "BHM_JsonStorage.h"
+#include "BHM_ThreadPool.h"
 
 void test_to_string()
 {
@@ -135,10 +136,15 @@ void test_jsonstorage()
 
 }
 
+void test_treadpool()
+{
+
+}
 
 int main(int argc, char* argv[])
 {
 	test_to_string();
 	test_to_cvdata();
 	test_jsonstorage();
+	test_treadpool();
 }

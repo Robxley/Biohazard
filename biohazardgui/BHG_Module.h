@@ -78,7 +78,7 @@ namespace bhd
 	{
 	public:
 
-		cv::Mat m_input;	//! Input image of the supra deconvolution
+		cv::Mat m_input;	//! Input image of module task
 		cv::Mat m_output;	//! Output image
 
 		std::string m_param_backup_description;		//! Parameter backup description of the last execution
