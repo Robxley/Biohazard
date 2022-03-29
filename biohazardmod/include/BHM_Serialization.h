@@ -45,23 +45,23 @@ namespace bhd
 
 			//ostringstream checking function
 			template <class T>
-			using to_osstream_t = decltype((std::ostringstream() << std::declval<T>()).str());
+			using to_ostream_t = decltype((std::ostringstream() << std::declval<T>()).str());
 
 			template <class T>
-			using to_osstream_void_t = std::void_t<to_osstream_t<T>>;
+			using to_ostream_void_t = std::void_t<to_ostream_t<T>>;
 
 			template<class, class = void >
-			struct has_osstream : std::false_type { };
+			struct has_ostream : std::false_type { };
 
 			template<class T>
-			struct has_osstream<T, to_osstream_void_t<T>> : std::is_same<std::string, to_osstream_t<T>> { };
+			struct has_ostream<T, to_ostream_void_t<T>> : std::is_same<std::string, to_ostream_t<T>> { };
 
 			//foo checking
 			template <class T>
 			using is_constructible_to_string = std::is_constructible<std::string, T>;
 
 			template <typename T>
-			static constexpr bool is_serializable_v = has_to_string<T>::value || has_osstream<T>::value || is_constructible_to_string<T>::value || is_path<T>::value;
+			static constexpr bool is_serializable_v = has_to_string<T>::value || has_ostream<T>::value || is_constructible_to_string<T>::value || is_path<T>::value;
 
 		}
 
@@ -77,7 +77,7 @@ namespace bhd
 				return value.generic_string();
 			else if constexpr (has_to_string<T>::value)
 				return std::to_string(std::forward<T>(value));
-			else if constexpr (has_osstream<T>::value)
+			else if constexpr (has_ostream<T>::value)
 				return (std::ostringstream() << value).str();
 		}
 
@@ -85,7 +85,7 @@ namespace bhd
 		{
 			inline constexpr const char * cs_default = " ";
 			inline thread_local static auto separator = cs_default;
-			namespace brakets
+			namespace brackets
 			{
 				inline thread_local static bool disable = true;
 				inline thread_local static auto begin = "[";
@@ -137,11 +137,11 @@ namespace bhd
 			std::string func_to_string_tokens(Func&& func)
 			{
 				std::stringstream ss;
-				if (!type_tokens::brakets::disable)
+				if (!type_tokens::brackets::disable)
 				{
-					ss << type_tokens::brakets::begin;
+					ss << type_tokens::brackets::begin;
 					std::forward<Func>(func)(ss);
-					ss << type_tokens::brakets::end;
+					ss << type_tokens::brackets::end;
 				}
 				else
 					std::forward<Func>(func)(ss);
@@ -177,7 +177,7 @@ namespace bhd
 		}
 	}
 
-	namespace unserialization
+	namespace deserialization
 	{
 		
 		//Single object

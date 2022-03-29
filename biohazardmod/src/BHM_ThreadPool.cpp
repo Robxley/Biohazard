@@ -40,7 +40,7 @@ namespace bhd
 	thread_pool::~thread_pool()
 	{
 		{
-			std::unique_lock<std::mutex> lock(m_queue_mutex);
+			const std::lock_guard<std::mutex> lock(m_queue_mutex);
 			m_stop = true;
 		}
 		m_condition.notify_all();

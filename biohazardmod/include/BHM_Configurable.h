@@ -244,7 +244,7 @@ namespace bhd
 			}
 			else
 			{
-				unserialization::to_data(svalue, m_data);
+				deserialization::to_data(svalue, m_data);
 			}
 		}
 

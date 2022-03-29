@@ -24,10 +24,10 @@ void test_to_string()
 		static_assert(has_to_string<const char*>::value == false);
 		static_assert(has_to_string<std::filesystem::path>::value == false);
 
-		static_assert(has_osstream<int>::value);
-		static_assert(has_osstream<test>::value == false);
-		static_assert(has_osstream<const char*>::value);
-		static_assert(has_osstream<std::filesystem::path>::value);
+		static_assert(has_ostream<int>::value);
+		static_assert(has_ostream<test>::value == false);
+		static_assert(has_ostream<const char*>::value);
+		static_assert(has_ostream<std::filesystem::path>::value);
 
 		static_assert(is_constructible_to_string<int>::value == false);
 		static_assert(is_constructible_to_string<test>::value);
@@ -57,43 +57,43 @@ void test_to_cvdata()
 {
 	{
 		cv::Range foo, foo2;
-		bhd::unserialization::to_data("5 15", foo);
+		bhd::deserialization::to_data("5 15", foo);
 		assert(foo == cv::Range(5, 15));
 		bhd::serialization::type_tokens::separator = ";";
-		bhd::serialization::type_tokens::brakets::disable = false;
+		bhd::serialization::type_tokens::brackets::disable = false;
 		auto strfoo = bhd::serialization::to_string(foo);
 		assert(strfoo == "[5;15]");
-		bhd::unserialization::to_data(strfoo, foo2);
+		bhd::deserialization::to_data(strfoo, foo2);
 		assert(foo == foo2);
 
 		bhd::serialization::type_tokens::separator = " ";
-		bhd::serialization::type_tokens::brakets::disable = true;
+		bhd::serialization::type_tokens::brackets::disable = true;
 	}
 
 	{
 		cv::Scalar foo, foo2; 
-		bhd::unserialization::to_data("1 2 3 4", foo);
+		bhd::deserialization::to_data("1 2 3 4", foo);
 		assert(foo == cv::Scalar(1.0, 2.0, 3.0, 4.0));
 		auto strfoo = bhd::serialization::to_string(foo);
-		bhd::unserialization::to_data(strfoo, foo2);
+		bhd::deserialization::to_data(strfoo, foo2);
 		assert(foo == foo2);
 	}
 
 	{
 		cv::Rect foo, foo2;
-		bhd::unserialization::to_data("1 2 3 4", foo);
+		bhd::deserialization::to_data("1 2 3 4", foo);
 		assert(foo == cv::Rect(1, 2, 3, 4));
 		auto strfoo = bhd::serialization::to_string(foo);
-		bhd::unserialization::to_data(strfoo, foo2);
+		bhd::deserialization::to_data(strfoo, foo2);
 		assert(foo == foo2);
 	}
 
 	{
 		cv::Matx32f foo, foo2;
-		bhd::unserialization::to_data("1 2 3 4 5 6", foo);
+		bhd::deserialization::to_data("1 2 3 4 5 6", foo);
 		assert(foo == cv::Matx32f({ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 }));
 		auto strfoo = bhd::serialization::to_string(foo);
-		bhd::unserialization::to_data(strfoo, foo2);
+		bhd::deserialization::to_data(strfoo, foo2);
 		assert(foo == foo2);
 	}
 }
@@ -147,4 +147,5 @@ int main(int argc, char* argv[])
 	test_to_cvdata();
 	test_jsonstorage();
 	test_treadpool();
+	std::cout<<"OK"<<std::endl;
 }

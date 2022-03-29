@@ -33,7 +33,7 @@ namespace bhd
 	{
 		friend class thread_pool;
 		using TRef = details::threaded_task_result<T>::TRef;	//reference on the result T or void
-
+	
 		std::function<void()> m_fct;
 		std::future<T> m_future;
 
@@ -66,16 +66,15 @@ namespace bhd
 		void set(F&& f, Args&&... args)
 		{
 			using result_t = std::invoke_result_t<F, Args...>;
-			using packaged_tr = std::packaged_task<result_t()>;
+			using packaged_result_t = std::packaged_task<result_t()>;
 
-			auto task = packaged_tr(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+			auto task = packaged_result_t(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
 
 			m_future = task.get_future();
 
-			using atomic_task = std::pair<std::atomic_bool, packaged_tr >;
-			auto a_task = std::make_shared<atomic_task>(false, std::move(task));
+			using atomic_task_t = std::pair<std::atomic_bool, packaged_result_t>;
 
-			m_fct = [a_task]() mutable
+			m_fct = [a_task = std::make_shared<atomic_task_t>(false, std::move(task))]() mutable
 			{
 				if (a_task->first.exchange(true) == false)
 					a_task->second();
@@ -128,7 +127,7 @@ namespace bhd
 			if (m_stop)
 				throw std::runtime_error("enqueue on stopped ThreadPool");
 			{
-				std::unique_lock<std::mutex> lock(m_queue_mutex);
+				const std::lock_guard<std::mutex> lock(m_queue_mutex);
 				m_tasks.emplace(task.m_fct);
 			}
 			m_condition.notify_one();

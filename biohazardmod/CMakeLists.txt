@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (WIN32)
-    add_compile_options(/utf-8 /Zc:char8_t-)
+    add_compile_options(/utf-8 /Zc:char8_t- /MP)
 endif()
 
 if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)

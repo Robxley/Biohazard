@@ -17,7 +17,7 @@ namespace bhd
 		}
 	}
 
-	namespace unserialization
+	namespace deserialization
 	{
 		/*inline void	 to_data(const std::string& str, cv::Scalar& data) {
 			to_data(str, &data[0], 4);
