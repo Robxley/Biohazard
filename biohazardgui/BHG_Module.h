@@ -10,6 +10,7 @@
 #include <chrono>
 #include <functional>
 #include <utility>
+#include <optional>
 
 namespace bhd
 {
@@ -34,9 +35,10 @@ namespace bhd
 
 		//Processing task
 		std::function<void()> m_task;
+		std::optional<std::string> m_description;
 
 		//Processing task duration
-		std::chrono::milliseconds task_duration_ms = {};
+		std::chrono::milliseconds m_task_duration_ms = {};
 
 		//Return true if the processing is ready
 		bool IsReady() const {
@@ -45,18 +47,25 @@ namespace bhd
 
 		// Return the task duration
 		auto GetTaskDurationCount() const {
-			return task_duration_ms.count();
+			return m_task_duration_ms.count();
 		}
 		
 		//Set a task
 		template<typename F, typename ... Args>
 		void SetTask(F&& f, Args&&... args) {
+			assert(m_status != TASK_STATUS_RUNNING);
 			m_task = [
 				f = std::forward<F>(f),
-					args = std::make_tuple(std::forward<Args>(args)...)
+				args = std::make_tuple(std::forward<Args>(args)...)
 			]{
 				std::apply(f, args);
 			};
+		}
+
+		template<typename Str, typename F, typename ... Args>
+		void Set(Str&& desc, F&& f, Args&&... args) {
+			m_description = std::forward<Str>(desc);
+			SetTask(std::forward<F>(f), std::forward<Args>(args)...);
 		}
 
 		// Execute the processing task

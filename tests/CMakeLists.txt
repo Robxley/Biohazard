@@ -1,6 +1,7 @@
 add_subdirectory(test_cpp)
 add_subdirectory(test_crazycpp)
 add_subdirectory(test_engine3d)
+add_subdirectory(test_hsiviewer)
 add_subdirectory(test_module)
 add_subdirectory(test_modulegui)
 add_subdirectory(test_moduleimg)

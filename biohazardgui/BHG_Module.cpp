@@ -33,7 +33,7 @@ namespace bhd
 		{
 			m_status = TASK_STATUS_RUNNING;
 			m_pException = {};
-			task_duration_ms = {};
+			m_task_duration_ms = {};
 			m_thread = std::thread([&]
 				{
 					using clock = std::chrono::high_resolution_clock;
@@ -45,7 +45,7 @@ namespace bhd
 						m_pException = std::current_exception();
 					}
 					auto end = clock::now();
-					task_duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+					m_task_duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 					m_status = TASK_STATUS_DONE;
 				});
 		}
@@ -67,6 +67,10 @@ namespace bhd
 		ExceptionWidget();
 
 		constexpr float wspace = 15.0f;
+
+		
+		ImGui::Text((ICON_FA_BIOHAZARD " Module: " + m_description.value_or("No module selected")).c_str());
+		
 
 		//Execution setting
 		{
