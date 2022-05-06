@@ -1,59 +1,9 @@
-#include "BHM_SerializationOpenCV.h"
 #include "BHM_Utils.h"
-#include "BHM_ModuleProc.h"
 #include "BHIM_hsi.h"
 
 #include <iostream>
 
 using namespace bhd;
-
-/// <summary>
-/// Create a simple structure to describe the parameters of the opencv bilateral filter (see cv::bilateralFilter)
-/// Optional: A list function can be add to the structure, and it will be called automatically by CModule<T>. See example of BilateralModule
-/// </summary>
-struct HSIConfigurables
-{
-
-	/// <summary>
-	/// Declaration of Configurable 
-	/// </summary>
-
-	CPathConfigurable m_sEggSerieHSI = {
-		"EGG_SERIE_HSI",										// id key
-		u8"Input spectral image containing a list of eggs",		// info
-		{}	// default value
-	};
-
-	CRangeConfigurable m_sBandRange = {
-		"BAND_RANGE",
-		u8"Band range. Select a range of bands as [min, max[",
-		cv::Range{}
-	};
-
-	CRectConfigurable m_rRegionOfInterest =
-	{
-		"ROI_RECT",
-		u8"Region of interest as [x, y, width, height]",
-		cv::Rect{}
-	};
-
-	/// <summary>
-	/// Create a list of configurables. Auto call by CModule during the initialization if the function exist
-	/// </summary>
-	/// <returns>list of configurables (as a std::vector<IConfigurable*>)std</returns>
-	IModule::configurable_register_t ConfigurableList()
-	{
-		return
-		{
-			&m_sEggSerieHSI,
-			&m_sBandRange,
-			&m_rRegionOfInterest,
-		};
-	}
-
-};
-
-
 
 int main(int argc, char* argv[])
 {
@@ -72,10 +22,20 @@ int main(int argc, char* argv[])
 	hsi.read(m_hsi_header_file, ".img");
 	std::cout << "Time (ms): " << chrono.GetCountSpan() << std::endl;
 
+	std::vector<int> bands;
+	hsi.read_vector("default bands", bands);
+
+	std::vector<float> Wavelength;
+	hsi.read_vector("wavelength", Wavelength);
+
 	hsi_mat img = std::move(hsi);
 
 	auto channels = img.channels(5, 4, 9, 7, 1, 2, 3);
 
+	hsi_writer hsi_w;
+	auto values = std::vector<float>{ 1.458752f,152.44877f,.587455f,.55125f,4855.541f,12554.f,441255.f,25.f };
+	hsi_w.write_vector("blabla", values, 3, 11);
+	hsi_w.write(channels, "test_img.hdr");
 
 	return 0;
 

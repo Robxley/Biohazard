@@ -3,6 +3,7 @@
 # __ Library : Biohazard image project - bhimg
 
 project(biohazardimg)
+message(STATUS "🔶 Project: ${PROJECT_NAME}")
 
 # Set C++ standard 
 set(CMAKE_CXX_STANDARD 20)
@@ -15,6 +16,8 @@ endif()
 if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 endif()
+
+set(BHIMG_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
 
 # __________________________________________
 # 3rd libraries / Packages

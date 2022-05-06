@@ -3,6 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <filesystem>
+#include <span>
 
 // Simple tools to read/write the ENVI format (HyperSpectral Image format)
 //See https://www.l3harrisgeospatial.com/docs/enviheaderfiles.html
@@ -21,16 +22,22 @@ namespace bhd
 		unsigned int m_bands = 0;	//	channels
 		unsigned int m_lines = 0;	//	rows / height
 
-		std::string  m_interleave = {};	//bil
+		std::string  m_interleave = {};	//BIL
 		unsigned int m_data_type = 0;
 		unsigned int m_header_offset = 0;
 		unsigned int m_byte_order = 0;
 		unsigned int m_x_start = 0;
 		unsigned int m_y_start = 0;
-		std::vector<unsigned int> m_default_bands = {};
-		std::vector<float> m_wavelength = {};
 
 		std::map<std::string, std::string> m_header_map;
+
+		void read_vector(const std::string_view& key, std::vector<int>& values) const;
+		void read_vector(const std::string_view& key, std::vector<float>& values) const;
+		void read_vector(const std::string_view& key, std::vector<std::string>& values) const;
+
+		void write_vector(const std::string_view& key, const std::span<int>& values, std::size_t elements_by_row = 0, int align = 0);
+		void write_vector(const std::string_view& key, const std::span<float>& values, std::size_t elements_by_row = 0, int align = 0);
+		void write_vector(const std::string_view& key, const std::span<std::string>& values, std::size_t elements_by_row = 0, int align = 0);
 	};
 
 
@@ -61,7 +68,7 @@ namespace bhd
 		//BIL  interleave
 		void read_band_interlieaved_by_line(std::ifstream& raw_file);
 
-		//Allocate m_vChannels in function of the image size, bands and datatype
+		//Allocate m_vChannels in function of the image size, bands and data type
 		void allocate_channels();
 
 		//Return the opencv type (CV_8U, CV_32F) in function of the HSI data type (m_data_type)
@@ -70,9 +77,18 @@ namespace bhd
 		//Channel images
 		std::vector<cv::Mat> m_vChannels;
 
-		//Limite the lines to read (only work for read_band_interleaved_by_pixel and read_band_interlieaved_by_line)
+		//Limit the lines to read (only work for read_band_interleaved_by_pixel and read_band_interlieaved_by_line)
 		unsigned int m_max_lines = std::numeric_limits<unsigned int>::max();
 
+	};
+
+	class hsi_writer : public hsi_header
+	{
+	public:
+		void write(const std::vector<cv::Mat>& vChannels, const std::filesystem::path& header_file, const std::string& raw_ext = ".dat");
+
+		void write_header(const std::filesystem::path& file);
+		void write_raw(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels);
 	};
 
 	class hsi_mat

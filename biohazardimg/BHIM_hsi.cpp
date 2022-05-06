@@ -4,47 +4,93 @@
 #include <exception>
 #include <iostream>
 #include <algorithm>
+#include <string_view>
 
 namespace bhd
 {
 
-	namespace details
+	namespace details_envi
 	{
-
-		std::map<std::string, std::string> envi_header_description =
+		namespace key
 		{
-			{"samples",				{}},
-			{"bands",				{}},
-			{"lines",				{}},
-			{"interleave",			{}},
-			{"data type",			{}},
-			{"header offset",		{}},
-			{"byte order",			{}},
-			{"x start",				{}},
-			{"y start",				{}},
-			{"default bands",		{}},
-			{"himg",				{}},
-			{"vimg",				{}},
-			{"hroi",				{}},
-			{"vroi",				{}},
-			{"wavelength",			{}},
-		};
-
-		//Envi data type precision
-		std::map<int, int> envi_data_type =
+			namespace
+			{
+				constexpr auto magic = "ENVI";
+				constexpr auto samples = "samples";
+				constexpr auto bands = "bands";
+				constexpr auto lines = "lines";
+				constexpr auto interleave = "interleave";
+				constexpr auto data_type = "data type";
+				constexpr auto header_offset = "header offset";
+				constexpr auto file_type = "file type";
+				constexpr auto byte_order = "byte order";
+				constexpr auto x_start = "x start";
+				constexpr auto y_start = "y start";
+				constexpr auto default_bands = "default bands";
+				constexpr auto himg = "himg";
+				constexpr auto vimg = "vimg";
+				constexpr auto hroi = "hroi";
+				constexpr auto vroi = "vroi";
+				constexpr auto wavelength = "wavelength";
+				constexpr auto description = "description";
+			}
+		}
+		namespace
 		{
-			{1,		CV_8U},
-			{2,		CV_16S},
-			{3,		CV_32S},
-			{4,		CV_32F},
-			{5,		CV_64F},
-			{6,		-1},
-			{9,		-1},
-			{12,	CV_16U},
-			{13,	-1},
-			{14,	-1},
-			{15,	-1}
-		};
+			const std::map<std::string, std::string> header_description =
+			{
+				{key::samples,			{}},
+				{key::bands,			{}},
+				{key::lines,			{}},
+				{key::interleave,		{}},
+				{key::data_type,		{}},
+				{key::header_offset,	{}},
+				{key::byte_order,		{}},
+				{key::file_type,		{}},
+				{key::x_start,			{}},
+				{key::y_start,			{}},
+				{key::default_bands,	{}},
+				{key::himg,				{}},
+				{key::vimg,				{}},
+				{key::hroi,				{}},
+				{key::vroi,				{}},
+				{key::wavelength,		{}},
+				{key::description,		{}},
+			};
+
+			//Envi data type precision
+			int envi_to_cv_data_type(int envi_data_type)
+			{
+				switch (envi_data_type)
+				{
+				case 1:		return CV_8U;
+				case 2:		return CV_16S;
+				case 3:		return CV_32S;
+				case 4:		return CV_32F;
+				case 5:		return CV_64F;
+				case 12:	return CV_16U;
+				default:
+					break;
+				}
+				return -1;
+			}
+
+			int cv_to_envi_data_type(int envi_data_type)
+			{
+				switch (envi_data_type)
+				{
+				case CV_8U:  return 1;
+				case CV_16S: return 2;
+				case CV_32S: return 3;
+				case CV_32F: return 4;
+				case CV_64F: return 5;
+				case CV_16U: return 12;
+				default:
+					break;
+				}
+				return -1;
+			}
+		}
 
 		template<typename T>
 		void raw_read(std::ifstream& raw_file, T& data)
@@ -107,9 +153,12 @@ namespace bhd
 		}
 	}
 
+	// hsi_header functions
+	// -------------------------------------------------------------------
+
 	void hsi_header::read_header(const std::filesystem::path& file)
 	{
-		std::map<std::string, std::string> header_map = details::envi_header_description;
+		m_header_map = details_envi::header_description;
 
 		//Fill header_map with the file
 		{
@@ -122,13 +171,15 @@ namespace bhd
 			while (std::getline(header, line))
 			{
 				std::istringstream iss(line);
-				auto it_egale = line.find_first_of('=');	//Try to find a '=' to read someting
+				auto it_egale = line.find_first_of('=');	//Try to find a '=' to read something
 				if (it_egale == std::string::npos)
 					continue;
 
+				//read the key (string before "=")
 				std::string key = line.substr(0, it_egale);
 				remove_bounding_spaces(key);
 
+				//read the value/array of the key
 				try
 				{
 					auto left_part = line.substr(it_egale + 1);
@@ -145,12 +196,12 @@ namespace bhd
 								array_value += line;
 						}
 
-						if (header_map.find(key) != header_map.end())
-							header_map[key] = std::move(array_value);
+						//if (header_map.find(key) != header_map.end())
+						m_header_map[key] = std::move(array_value);
 					}
-					else if (header_map.find(key) != header_map.end())
+					else //if (header_map.find(key) != header_map.end())
 					{
-						header_map[key] = std::move(left_part);
+						m_header_map[key] = std::move(left_part);
 					}
 				}
 				catch (...)
@@ -162,23 +213,24 @@ namespace bhd
 		}
 
 		//Convert head_map in numerical value
-
 		auto converter = [&](auto& key, auto& var)
 		{
 			std::stringstream ss;
-			ss << header_map.at(key);
+			ss << m_header_map.at(key);
 			ss >> var;
 		};
-
-		converter("samples", m_samples);
-		converter("bands", m_bands);
-		converter("lines", m_lines);
-		converter("interleave", m_interleave);
-		converter("data type", m_data_type);
-		converter("header offset", m_header_offset);
-		converter("byte order", m_byte_order);
-		converter("x start", m_x_start);
-		converter("y start", m_y_start);
+		{
+			using namespace details_envi;
+			converter(key::samples, m_samples);
+			converter(key::bands, m_bands);
+			converter(key::lines, m_lines);
+			converter(key::interleave, m_interleave);
+			converter(key::data_type, m_data_type);
+			converter(key::header_offset, m_header_offset);
+			converter(key::byte_order, m_byte_order);
+			converter(key::x_start, m_x_start);
+			converter(key::y_start, m_y_start);
+		}
 
 
 		//all string in lowercase
@@ -186,8 +238,131 @@ namespace bhd
 
 	}
 
+	namespace details
+	{
+		template< typename T>
+		void read_vector_impl(const std::string& str_vector, std::vector<T> &values, const char* delimiters = "{,}\n ")
+		{
+			if (str_vector.empty())
+				return;
+
+			auto read_value = [&](auto start, auto end)
+			{
+				if (start >= end) return;
+				std::string_view sv(str_vector.begin() + start, str_vector.begin() + end);
+				if (!sv.empty())
+				{
+					if constexpr (std::is_constructible_v<T, decltype(sv.data())>)
+						values.emplace_back(T(sv.data()));
+					else
+					{
+						T value;
+						std::stringstream(sv.data()) >> value;
+						values.emplace_back(std::move(value));
+					}
+				}
+			};
+
+
+			std::size_t start = 0;
+			do {
+				std::size_t found = str_vector.find_first_of(delimiters, start);
+				if (found != std::string::npos)
+				{
+					read_value(start, found);
+				}
+				else
+				{
+					read_value(start, str_vector.size());
+					break;
+				}
+				start = found + 1;
+			} while (true);
+
+		}
+	}
+
+	void hsi_header::read_vector(const std::string_view& key, std::vector<int>& values) const
+	{
+		auto& str_vector = m_header_map.at(key.data());
+		details::read_vector_impl(str_vector, values);
+	}
+
+	void hsi_header::read_vector(const std::string_view& key, std::vector<float>& values) const
+	{
+		auto& str_vector = m_header_map.at(key.data());
+		details::read_vector_impl(str_vector, values);
+	}
+
+	void hsi_header::read_vector(const std::string_view& key, std::vector<std::string>& values) const
+	{
+		auto& str_vector = m_header_map.at(key.data());
+		details::read_vector_impl(str_vector, values);
+	}
+
+
+	namespace details
+	{
+		template< typename T>
+		std::string write_vector_impl(const std::span<T>& values, std::size_t elements_by_row, int align)
+		{
+			std::stringstream ss;
+
+			std::function<std::stringstream& (const T& v)> write_;
+			if (align > 0) {
+				ss << std::right;
+				write_ = [&](auto& v) ->std::stringstream& {	ss << std::setw(align) << v; return ss;	};
+			}
+			else if(align < 0) {
+				ss << std::left;
+				write_ = [&](auto& v) ->std::stringstream& {	ss << std::setw(align) << v; return ss;	};
+			}
+			else {
+				write_ = [&](auto& v) ->std::stringstream& {	ss << v; return ss;	};
+			}
+
+			ss << "{";
+			if (elements_by_row > 0) {
+				ss << "\n";
+				std::size_t count = 0;
+				for (auto& v : std::span(values.begin(), values.end() - 1))
+				{
+					write_(v) << ",";
+					if (++count >= elements_by_row)
+					{
+						ss << std::endl;
+						count = 0;
+					}
+				}
+			}
+			else
+				for (auto& v : std::span(values.begin(), values.end() - 1))
+					write_(v) << ",";
+
+			write_(values.back()) << "}";
+			return std::move(ss.str());
+		}
+	}
+
+	void hsi_header::write_vector(const std::string_view& key, const std::span<int>& values, std::size_t elements_by_row, int align)
+	{
+		m_header_map[std::string(key)] = details::write_vector_impl(values, elements_by_row, align);
+	}
+	void hsi_header::write_vector(const std::string_view& key, const std::span<float>& values, std::size_t elements_by_row, int align)
+	{
+		m_header_map[std::string(key)] = details::write_vector_impl(values, elements_by_row, align);
+	}
+	void hsi_header::write_vector(const std::string_view& key, const std::span<std::string>& values, std::size_t elements_by_row, int align)
+	{
+		m_header_map[std::string(key)] = details::write_vector_impl(values, elements_by_row, align);
+	}
+
+
+
+
+
 	int hsi_reader::get_hsi_cvtype() const {
-		int hsi_type = details::envi_data_type.at(m_data_type);
+		int hsi_type = details_envi::envi_to_cv_data_type(m_data_type);
 		if (hsi_type == -1)
 			throw std::runtime_error("Unsupported data type");
 		return hsi_type;
@@ -303,7 +478,7 @@ namespace bhd
 		if (m_header_offset > 0)
 		{
 			std::vector<char> offset(m_header_offset);
-			details::raw_read(raw_file, offset);
+			details_envi::raw_read(raw_file, offset);
 		}
 
 		if (m_interleave == "bil")
@@ -316,4 +491,99 @@ namespace bhd
 			throw std::runtime_error("Unknown interleave");
 	}
 
+
+	// hsi_header functions
+	// -------------------------------------------------------------------
+
+
+	namespace details
+	{
+		template <typename, typename = void>
+		constexpr bool is_iterable_v{};
+
+		template <typename T>
+		constexpr bool is_iterable_v <T,
+				std::void_t<decltype(std::declval<T>().begin()),decltype(std::declval<T>().end())
+			>
+		> = true;
+	}
+
+
+	void hsi_writer::write(const std::vector<cv::Mat>& vChannels, const std::filesystem::path& header_file, const std::string& raw_ext)
+	{
+		assert(!vChannels.empty());
+		if (vChannels.empty())
+			return;
+
+		m_samples = vChannels.front().cols;
+		m_bands = static_cast<decltype(m_bands)>(vChannels.size());
+		m_lines = vChannels.front().rows;
+		m_interleave = "bil";	//BIL
+		m_data_type = details_envi::cv_to_envi_data_type(vChannels.front().depth());
+
+		write_header(header_file);
+	}
+
+	void hsi_writer::write_header(const std::filesystem::path& file)
+	{
+		std::ofstream header;
+		header.open(file, std::ofstream::out | std::ofstream::trunc);
+		if (!header.is_open())
+			throw std::runtime_error("Can't create the file: " + file.generic_string());
+
+		auto fill_head_map = [&](const auto& key, const auto& data)
+		{
+			using T = decltype(data);
+			if constexpr (details::is_iterable_v<T> && !std::is_constructible_v<std::string, T>)
+			{
+				if (data.empty()) return;
+				std::stringstream ss;
+				ss << "{";
+				bool first = true;
+				for (auto& v : data) {
+					if (first) {
+						ss << v;
+						first = false;
+					}
+					else
+						ss << ", " << v;
+				}
+				ss << "}";
+				m_header_map[key] = ss.str();
+			}
+			else
+				m_header_map[key] = (std::stringstream() << data).str() ;
+		};
+
+		{
+			using namespace details_envi;
+			fill_head_map(key::samples, m_samples);
+			fill_head_map(key::lines, m_lines);
+			fill_head_map(key::bands, m_bands);
+
+			fill_head_map(key::interleave, m_interleave);
+			fill_head_map(key::data_type, m_data_type);
+			fill_head_map(key::header_offset, m_header_offset);
+			fill_head_map(key::byte_order, m_byte_order);
+	
+			fill_head_map(key::x_start, m_x_start);
+			fill_head_map(key::y_start, m_y_start);
+	
+
+			//Custom data
+			header << key::magic << std::endl;
+			for(auto & [key, value] : m_header_map)
+			{
+				header << key << " = " << value << std::endl;
+			}
+		}
+	}
+
+	void hsi_writer::write_raw(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels) 
+	{
+		std::ofstream header;
+		header.open(file, std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+		if (!header.is_open())
+			throw std::runtime_error("Can't create the file: " + file.generic_string());
+	};
 }

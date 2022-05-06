@@ -12,7 +12,7 @@ target_include_directories(MyModuleImg
 
 target_link_libraries(MyModuleImg 
                         PUBLIC 
-                            bhmod bhimg)
+                            bhimg)
 
 if (WIN32)
     target_compile_options(MyModuleImg PRIVATE /W3 /WX)
