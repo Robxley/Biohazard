@@ -518,10 +518,13 @@ namespace bhd
 		m_samples = vChannels.front().cols;
 		m_bands = static_cast<decltype(m_bands)>(vChannels.size());
 		m_lines = vChannels.front().rows;
-		m_interleave = "bil";	//BIL
+		m_interleave = "bsq";	//BIL
 		m_data_type = details_envi::cv_to_envi_data_type(vChannels.front().depth());
 
 		write_header(header_file);
+		auto raw_file = header_file;
+		raw_file.replace_extension(raw_ext);
+		write_raw(raw_file, vChannels);
 	}
 
 	void hsi_writer::write_header(const std::filesystem::path& file)
@@ -585,5 +588,19 @@ namespace bhd
 		header.open(file, std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
 		if (!header.is_open())
 			throw std::runtime_error("Can't create the file: " + file.generic_string());
+		for (auto& channel : vChannels)
+		{
+			if (channel.isContinuous())
+			{
+				std::size_t size = channel.elemSize()* channel.total();
+				header.write(reinterpret_cast<const char*>(channel.ptr()), size);
+			}
+			else
+			{
+				std::size_t size = channel.elemSize() * channel.cols;
+				for (int i = 0; i < channel.rows; i++)
+					header.write(reinterpret_cast<const char*>(channel.ptr(i)), size);
+			}
+		}
 	};
 }

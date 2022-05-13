@@ -32,10 +32,16 @@ int main(int argc, char* argv[])
 
 	auto channels = img.channels(5, 4, 9, 7, 1, 2, 3);
 
+	std::filesystem::path test_img = "test_img.hdr";
 	hsi_writer hsi_w;
+	hsi_w.m_interleave = "BSQ";
 	auto values = std::vector<float>{ 1.458752f,152.44877f,.587455f,.55125f,4855.541f,12554.f,441255.f,25.f };
 	hsi_w.write_vector("blabla", values, 3, 11);
-	hsi_w.write(channels, "test_img.hdr");
+	hsi_w.write(channels, test_img);
+
+
+	hsi_reader hsi2;
+	hsi.read(test_img, ".dat");
 
 	return 0;
 
