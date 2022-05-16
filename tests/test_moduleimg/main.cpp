@@ -64,6 +64,20 @@ int main(int argc, char* argv[])
 		hsi.read(test_img, ".dat");
 	}
 
+
+	//for (auto& c : channels)
+	//	cv::normalize(c, c, 0, 255, cv::NORM_MINMAX, CV_8U);
+
+	for (auto& c : channels)
+	{
+		c.convertTo(c, CV_16U);
+	}
+
+	cv::imwrite("multiimg.tiff", channels);
+
+	std::vector<cv::Mat> multi_c;
+	cv::imreadmulti("multiimg.tiff", multi_c, cv::ImreadModes::IMREAD_UNCHANGED);
+
 	return 0;
 
 }

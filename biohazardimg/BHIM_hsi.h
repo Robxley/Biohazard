@@ -94,17 +94,17 @@ namespace bhd
 		void write_raw_bip(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels);
 	};
 
-	class hsi_mat
+	class hsi_mat : public std::vector<cv::Mat>
 	{
 	public:
 
 		//HSI Channels
-		std::vector<cv::Mat> m_vChannels;
+		std::vector<cv::Mat> & m_vChannels = static_cast<std::vector<cv::Mat> &>(*this);
 
-		hsi_mat(hsi_reader&& reader) : m_vChannels(std::move(reader.m_vChannels))
+		hsi_mat(hsi_reader&& reader) : std::vector<cv::Mat>(std::move(reader.m_vChannels))
 		{	}
 
-		hsi_mat(const hsi_reader& reader) : m_vChannels(reader.m_vChannels)
+		hsi_mat(const hsi_reader& reader) : std::vector<cv::Mat>(reader.m_vChannels)
 		{	}
 
 		hsi_mat& operator=(hsi_reader&& reader) {
@@ -113,7 +113,7 @@ namespace bhd
 		};
 
 		template<typename ...Channels>
-		std::vector<cv::Mat> channels(Channels&&... channels)
+		std::vector<cv::Mat> channels(Channels&&... channels) const
 		{
 			std::vector<cv::Mat> sub_channels;
 			sub_channels.reserve(sizeof...(channels));
@@ -126,6 +126,7 @@ namespace bhd
 			(push_mat(std::forward<Channels>(channels)), ...);
 			return sub_channels;
 		}
+
 
 		template<typename ...Channels>
 		auto& merge(Channels&&... channels)

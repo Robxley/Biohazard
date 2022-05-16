@@ -68,6 +68,8 @@ namespace bhd
 				case 3:		return CV_32S;
 				case 4:		return CV_32F;
 				case 5:		return CV_64F;
+				//case 6:		return CV_32FC2;	//Complex
+				//case 9:		return CV_64FC2;		//Complex
 				case 12:	return CV_16U;
 				default:
 					break;
