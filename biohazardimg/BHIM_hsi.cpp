@@ -518,13 +518,23 @@ namespace bhd
 		m_samples = vChannels.front().cols;
 		m_bands = static_cast<decltype(m_bands)>(vChannels.size());
 		m_lines = vChannels.front().rows;
-		m_interleave = "bsq";	//BIL
 		m_data_type = details_envi::cv_to_envi_data_type(vChannels.front().depth());
 
-		write_header(header_file);
 		auto raw_file = header_file;
 		raw_file.replace_extension(raw_ext);
-		write_raw(raw_file, vChannels);
+
+		if(m_interleave == "bil")
+			write_raw_bil(raw_file, vChannels);
+		else if(m_interleave == "bip")
+			write_raw_bip(raw_file, vChannels);
+		else
+		{
+			//Default as bsq interleave
+			m_interleave = "bsq";
+			write_raw_bsq(raw_file, vChannels);
+		}
+
+		write_header(header_file);
 	}
 
 	void hsi_writer::write_header(const std::filesystem::path& file)
@@ -582,24 +592,92 @@ namespace bhd
 		}
 	}
 
-	void hsi_writer::write_raw(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels) 
+	namespace
 	{
-		std::ofstream header;
-		header.open(file, std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
-		if (!header.is_open())
-			throw std::runtime_error("Can't create the file: " + file.generic_string());
+		auto open_bin_file = [](const auto& file)
+		{
+			std::ofstream bin_file;
+			bin_file.open(file, std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+			if (!bin_file.is_open())
+				throw std::runtime_error("Can't create the file: " + file.generic_string());
+			return bin_file;
+		};
+
+		auto channel_checking = [](const std::vector<cv::Mat>& channels) -> bool
+		{
+			bool flag = true;
+			auto& first = channels.front();
+			for (auto& c : channels) {
+				flag &= (c.type() == first.type() && c.size() == first.size());
+			}
+			return flag;
+		};
+	}
+
+	void hsi_writer::write_raw_bsq(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels) 
+	{
+		assert(!vChannels.empty() && channel_checking(vChannels));
+		if (vChannels.empty() || !channel_checking(vChannels))
+			return;
+
+		std::ofstream bin_file = open_bin_file(file);
+
 		for (auto& channel : vChannels)
 		{
 			if (channel.isContinuous())
 			{
 				std::size_t size = channel.elemSize()* channel.total();
-				header.write(reinterpret_cast<const char*>(channel.ptr()), size);
+				bin_file.write(reinterpret_cast<const char*>(channel.ptr()), size);
 			}
 			else
 			{
 				std::size_t size = channel.elemSize() * channel.cols;
 				for (int i = 0; i < channel.rows; i++)
-					header.write(reinterpret_cast<const char*>(channel.ptr(i)), size);
+					bin_file.write(reinterpret_cast<const char*>(channel.ptr(i)), size);
+			}
+		}
+	};
+
+	void hsi_writer::write_raw_bil(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels)
+	{
+		assert(!vChannels.empty() && channel_checking(vChannels));
+		if (vChannels.empty() || !channel_checking(vChannels))
+			return;
+
+		std::ofstream bin_file = open_bin_file(file);
+		
+		int height = vChannels[0].rows;
+		std::size_t col_size = vChannels[0].elemSize() * vChannels[0].cols;
+
+		for (int i = 0; i < height; i++) 
+		{
+			for (auto& channel : vChannels) 
+			{
+				bin_file.write(reinterpret_cast<const char*>(channel.ptr(i)), col_size);
+			}
+		}
+	};
+
+	void hsi_writer::write_raw_bip(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels)
+	{
+		assert(!vChannels.empty() && channel_checking(vChannels));
+		if (vChannels.empty() || !channel_checking(vChannels))
+			return;
+
+		std::ofstream bin_file = open_bin_file(file);
+
+		int width = vChannels[0].cols;
+		int height = vChannels[0].rows;
+		std::size_t elem_size = vChannels[0].elemSize();
+
+		for (int i = 0; i < height; i++)
+		{
+			for (int j = 0; j < width; j++)
+			{
+				for (auto& channel : vChannels)
+				{
+					bin_file.write(reinterpret_cast<const char*>(channel.ptr(i,j)), elem_size);
+				}
 			}
 		}
 	};

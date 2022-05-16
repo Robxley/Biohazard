@@ -84,11 +84,14 @@ namespace bhd
 
 	class hsi_writer : public hsi_header
 	{
+
 	public:
 		void write(const std::vector<cv::Mat>& vChannels, const std::filesystem::path& header_file, const std::string& raw_ext = ".dat");
 
 		void write_header(const std::filesystem::path& file);
-		void write_raw(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels);
+		void write_raw_bsq(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels);
+		void write_raw_bil(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels);
+		void write_raw_bip(const std::filesystem::path& file, const std::vector<cv::Mat>& vChannels);
 	};
 
 	class hsi_mat
