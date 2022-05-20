@@ -334,7 +334,6 @@ namespace bhd
 
 	template <typename T>
 	using CVectorConfigurable = TDataConfigurable<std::vector<T>>;
-
 	using CVectorStringConfigurable = CVectorConfigurable<std::string>;
 	using CVectorPathConfigurable = CVectorConfigurable<std::filesystem::path>;
 	using CVectorIntConfigurable = CVectorConfigurable<int>;

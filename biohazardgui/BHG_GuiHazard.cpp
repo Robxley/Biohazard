@@ -46,10 +46,10 @@ namespace bhd
 			{
 				if (ImGui::MenuItem("Laplacian"))
 				{
+					m_module.m_description = "Laplacian";
 					m_module.m_task = [&] {
 						cv::Mat tmp;
 						cv::Laplacian(m_module.m_input, m_module.m_output, CV_32F, 5);
-						m_outputWatcher.update(m_module.m_output);
 					};
 				}
 				ImGui::EndMenu();
@@ -71,55 +71,71 @@ namespace bhd
 		}
 	}
 
-	void GuiModHazard::RightPanel_ImgWatcher()
+	void GuiModHazard::RightPanel_TabBar_Processing()
 	{
-
-		ImGui::BeginGroup();
+		ImGui::BeginChild("Image", ImVec2(0, -ImGui::GetFrameHeightWithSpacing() * 2), true);
+		static std::string selectedName = { "None" };
+		if (m_imExplorer.HasSelected())
 		{
-			ImGui::BeginChild("Image", ImVec2(0, -ImGui::GetFrameHeightWithSpacing() * 2), true);
+			selectedName = m_imExplorer.GetSelectedName();
+			m_module.SetInputImage(m_imExplorer.GetSelectedMat());
+			m_inputWatcher.update(m_imExplorer.GetSelectedMat());
+			m_imExplorer.ClearHasSelected();
+		}
 
-			static std::string selectedName = { "None" };
-			if (m_imExplorer.HasSelected())
-			{
-				selectedName = m_imExplorer.GetSelectedName();
-				m_module.SetInputImage(m_imExplorer.GetSelectedMat());
-				m_inputWatcher.update(m_imExplorer.GetSelectedMat());
-				m_imExplorer.ClearHasSelected();
-			}
+		//ImGui::Text("Input image: %s", selectedName.data());
+		m_module.Widget();
+		ImGui::Separator();
+		m_imComparer.Widget();
+		ImGui::EndChild();
 
-			//ImGui::Text("Input image: %s", selectedName.data());
-
-			m_module.Widget();
+		if (!m_outputWatcher.Empty() && !m_module.m_output.empty() && m_module.IsReady())
+		{
+			ImGui::Text("Result Manager");
 			ImGui::Separator();
 
-			m_imComparer.Widget();
-			ImGui::EndChild();
+			auto new_path = [&]() -> std::filesystem::path {
+				auto path = m_imExplorer.GetSelectedPath();
+				auto new_path = path.replace_extension().generic_string() + "_out" + path.extension().generic_string();
+				return new_path;
+			};
 
-			if (!m_outputWatcher.Empty() && !m_module.m_output.empty() && m_module.IsReady())
+			if (ImGui::ButtonHelpMarker(ICON_FA_SHARE_SQUARE ICON_FA_IMAGES, "Send to Image Explorer"))
 			{
-				ImGui::Text("Result Manager");
-				ImGui::Separator();
-
-				auto new_path = [&]() -> std::filesystem::path {
-					auto path = m_imExplorer.GetSelectedPath();
-					auto new_path = path.replace_extension().generic_string() + "_out" + path.extension().generic_string();
-					return new_path;
-				};
-
-				if (ImGui::ButtonHelpMarker(ICON_FA_SHARE_SQUARE ICON_FA_IMAGES, "Send to Image Explorer"))
+				if (m_imExplorer.Import(m_module.m_output.clone(), new_path(), false))
 				{
-					if (m_imExplorer.Import(m_module.m_output.clone(), new_path(), false))
-					{
-						m_imExplorer.GetLast().Description(m_module.m_param_backup_description, false);
-					}
-				}
-				ImGui::SameLine();
-
-				if (ImGui::Button(" Save..."))
-				{
-					m_imExplorer.ExportImageBrowser(m_module.m_output, new_path());
+					m_imExplorer.GetLast().Description(m_module.m_param_backup_description, false);
 				}
 			}
+			ImGui::SameLine();
+
+			if (ImGui::Button(" Save..."))
+			{
+				m_imExplorer.ExportImageBrowser(m_module.m_output, new_path());
+			}
+		}
+	}
+
+
+	void GuiModHazard::RightPanel_ImgWatcher()
+	{
+		ImGui::BeginGroup();
+		{
+			if (ImGui::BeginTabBar("##right_tabbar", ImGuiTabBarFlags_None))
+			{
+				if (ImGui::BeginTabItem("Processing"))
+				{
+					RightPanel_TabBar_Processing();
+					ImGui::EndTabItem();
+				}
+
+				if (ImGui::BeginTabItem("About"))
+				{
+					ImGui::Text("What ?");
+					ImGui::EndTabItem();
+				}
+			}
+			ImGui::EndTabBar();	
 		}
 		ImGui::EndGroup();
 

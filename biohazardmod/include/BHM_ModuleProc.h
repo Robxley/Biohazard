@@ -152,22 +152,4 @@ namespace bhd
 
 	};
 
-
-	template <class TConfigurables>
-	class TImProcModule : public TConfigurables, public CImProcModule
-	{
-	public:
-		template<typename ...Args>
-		TImProcModule(Args&&... args) :
-			CImProcModule(
-				TConfigurables::List(),								//Configurable list
-				"BILATERAL",									    //Key
-				"Bilateral filter",									//Info
-				"Applies the bilateral filter to an image."			//Blurb
-			)
-		{
-
-		}
-	};
-
 }

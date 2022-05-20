@@ -90,5 +90,7 @@ namespace bhd
 		void MainMenuBar();
 		void LeftPanel_ImgExplorer();
 		void RightPanel_ImgWatcher();
+
+		void RightPanel_TabBar_Processing();
 	};
 }
