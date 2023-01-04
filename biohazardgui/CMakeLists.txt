@@ -1,7 +1,8 @@
-# __________________________________________
+﻿# __________________________________________
 # __ Library : Biohazard gui project - bhgui
 
 project(biohazardgui)
+message(STATUS "🔶 Project: ${PROJECT_NAME}")
 
 # Set C++ standard 
 set(CMAKE_CXX_STANDARD 20)

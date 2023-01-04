@@ -45,7 +45,7 @@ namespace bhd
 	{
 	public:
 
-		void read(const std::filesystem::path& header_file, const std::string& raw_ext = ".dat", unsigned int max_lines = std::numeric_limits<unsigned int>::max())
+		void read(const std::filesystem::path& header_file, const std::string& raw_ext = {}, unsigned int max_lines = std::numeric_limits<unsigned int>::max())
 		{
 			m_max_lines = max_lines;
 			read_header(header_file);

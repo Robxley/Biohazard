@@ -1,5 +1,4 @@
 ﻿# __________________________________________
-# __________________________________________
 # __ Library : Biohazard image project - bhimg
 
 project(biohazardimg)

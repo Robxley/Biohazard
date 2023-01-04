@@ -11,16 +11,58 @@ int main(int argc, char* argv[])
 	
 	hsi_reader hsi;
 
-	std::filesystem::path m_hsi_header_file = "E:/Regenaration-hyperspectral-data-main/Cuprite_S1_R188.hdr";
+	std::filesystem::path m_hsi_header_file = {};
+	std::string extension = ".dat";
+
+
 
 	if (argc >= 2)
-		m_hsi_header_file = argv[1];
+	{
+		int i_arg = 0;
+		auto next_arg = [&](auto& var) {
+			if (argc >= ++i_arg) {
+				std::cout << i_arg << " : " << argv[i_arg] << std::endl;
+				var = argv[i_arg];
+			}
+		};
+
+		next_arg(m_hsi_header_file);
+		next_arg(extension);
+		std::cout << "File: " << m_hsi_header_file << std::endl;
+		std::cout << "Extension: " << extension << std::endl;
+	}
+	else
+		m_hsi_header_file = "E:/SXCAN/Oeufs_Camp3_v2/J4/RADIANCE_camp2_nil_2022-04-28_08-40-17_J4_O3_F.hdr";
 
 	bhd::TicTac chrono;
 	std::cout << "Read the file: " << m_hsi_header_file << std::endl;
 	chrono.Tic();
-	hsi.read(m_hsi_header_file, ".img");
+
+	try
+	{
+		hsi.read(m_hsi_header_file, extension);
+	}
+	catch (std::exception& e)
+	{
+		std::cout << "Exception: " << e.what() << std::endl;
+		return 0;
+	}
+
 	std::cout << "Time (ms): " << chrono.GetCountSpan() << std::endl;
+
+	{
+		hsi_mat img = std::move(hsi);
+		std::cout << "Number of channel: " << img.size();
+		for (auto& c : img) {
+			cv::Mat out;
+			cv::normalize(c, out, 0, 255, cv::NORM_MINMAX, CV_8U);
+			cv::imshow("Channel", out);
+			if (cv::waitKey(60) != -1)
+				break;
+		}
+	}
+
+	return 0;
 
 	std::vector<int> bands;
 	hsi.read_vector("default bands", bands);

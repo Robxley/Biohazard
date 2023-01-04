@@ -14,36 +14,86 @@
 
 namespace ImGui
 {
+	/// <summary>
+	/// Structure used to describe a image.
+	/// </summary>
+	class ImFile
+	{
+	public:
+
+		std::filesystem::path m_path;		//! Hard-drive image path
+		std::string m_name;					//! Image name (generally extracted from the path)
+		std::string m_desc;					//! Additional descriptions used in the display widget (like image size, channel number, or any user description).
+
+	private:
+
+		mutable cv::Mat m_screen_view;				//! Opencv image as cv::Mat used to display something to the screen
+		mutable cv::Mat m_icon;						//! Icon image used in widget
+		std::vector<cv::Mat> m_images;				//! Opencv multi images (for example imported by cv::imreadmulti)
+		std::vector<unsigned int> m_channel_views;	//! In case of multiimage - indexes of channel to display on the screen.
+
+	public:
+
+		int channels() const {
+			return m_images.size() == 1 ? m_images.front().channels() : (int)m_images.size();
+		}
+
+		int cols() const {
+			return m_screen_view.cols;
+		}
+
+		int rows() const {
+			return m_screen_view.rows;
+		}
+
+		/// <summary>
+		/// Image screen view. What we see on the screen.
+		/// </summary>
+		/// <returns>opencv image</returns>
+		const cv::Mat& screen_view() const;
+
+		/// <summary>
+		/// Icon used on the screen view
+		/// </summary>
+		/// <returns>icon opencv image<</returns>
+		const cv::Mat& icon_view(int icon_size = 64) const;
+
+		/// <summary>
+		/// Used in the widget as default description generator:
+		///		m_name  (image name)
+		///		[WxH]	(image size)
+		///		channels (image channel number)
+		/// </summary>
+		/// <param name="info">additional info add at the end of the description</param>
+		/// <param name="show_path">Enable/Disable the path in the description.</param>
+		void Description(
+			const std::string& info = {},
+			bool show_path = true
+		);
+
+		auto Viewable(int icon_size = 64) {
+			if (m_images.empty())
+				Import();
+			screen_view();
+			icon_view(icon_size);
+			Description();
+			return *this;
+		}
+
+		bool Import(int cv_flags = cv::IMREAD_UNCHANGED);
+		ImFile& Import(const cv::Mat& image);
+		ImFile& Import(cv::Mat&& image);
+		ImFile& Import(const std::vector<cv::Mat> images);
+		ImFile& Import(std::vector<cv::Mat>&& images);
+
+		bool Export();
+
+	};
+
 
 	class ImExplorer
 	{	
 
-	public:
-
-		/// <summary>
-		/// Structure used to describe a image.
-		/// </summary>
-		struct ImFile
-		{
-			std::filesystem::path m_path;	//! Hard-drive image path
-			std::string m_name;				//! Image name (generally extracted from the path)
-			cv::Mat m_image;				//! Opencv image as cv::Mat
-			cv::Mat m_icon;					//! Icon image used in widget
-			std::string m_desc;				//! Additional descriptions used in the display widget (like image size, channel number, or any user description).
-
-			/// <summary>
-			/// Used in the widget as default description generator:
-			///		m_name  (image name)
-			///		[WxH]	(image size)
-			///		channels (image channel number)
-			/// </summary>
-			/// <param name="info">additional info add at the end of the description</param>
-			/// <param name="show_path">Enable/Disable the path in the description.</param>
-			void Description(
-				const std::string& info = {},
-				bool show_path = true
-			);
-		};
 
 	public:
 
@@ -137,7 +187,7 @@ namespace ImGui
 		/// </summary>
 		/// <returns>Opencv image (cv::Mat) </returns>
 		const cv::Mat & GetSelectedMat() const {
-			return GetSelected().m_image;
+			return GetSelected().screen_view();
 		}
 
 		/// <summary>
@@ -175,7 +225,7 @@ namespace ImGui
 		void SetSelected(std::size_t id) {
 			assert(id < m_vImFileList.size());
 			m_imSelected = id;
-			m_selectedTexture2D = cv::ogl::Texture2D(m_vImFileList[id].m_icon, true);
+			m_selectedTexture2D = cv::ogl::Texture2D(m_vImFileList[id].icon_view(), true);
 			m_hasSelected = true;
 		}
 		

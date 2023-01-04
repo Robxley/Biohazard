@@ -2,6 +2,7 @@
 # __ Library : Biohazard module project - bhmod
 
 project(biohazardmod)
+message(STATUS "🔶 Project: ${PROJECT_NAME}")
 
 # Set C++ standard 
 set(CMAKE_CXX_STANDARD 20)

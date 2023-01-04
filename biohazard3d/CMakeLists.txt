@@ -1,7 +1,8 @@
-# __________________________________________
+﻿# __________________________________________
 # __ Library : Biohazard 3d project - bh3d 
 
 project(biohazard3d)
+message(STATUS "🔶 Project: ${PROJECT_NAME}")
 
 # Set C++ standard 
 set(CMAKE_CXX_STANDARD 20)
@@ -19,6 +20,7 @@ endif()
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 FILE(GLOB IMGUI_SOURCEFILES
         ${IMGUI_DIR}/*.cpp)
@@ -33,7 +35,7 @@ FILE(GLOB BH3D_SOURCEFILES
 		${CMAKE_CURRENT_SOURCE_DIR}/src/std/BH3D_*.cpp)
 
 if(WIN32)
-	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main)
+	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main INTERFACE glm::glm)
 endif()
 
 add_library(bh3d STATIC ${BH3D_SOURCEFILES} ${IMGUI_SOURCEFILES})
