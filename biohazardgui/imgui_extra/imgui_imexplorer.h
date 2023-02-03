@@ -14,6 +14,7 @@
 
 namespace ImGui
 {
+
 	/// <summary>
 	/// Structure used to describe a image.
 	/// </summary>
@@ -44,6 +45,10 @@ namespace ImGui
 
 		int rows() const {
 			return m_screen_view.rows;
+		}
+
+		int depth() const {
+			return m_images.size() == 1 ? m_images.front().channels() : (int)m_images.size();
 		}
 
 		/// <summary>
@@ -85,8 +90,6 @@ namespace ImGui
 		ImFile& Import(cv::Mat&& image);
 		ImFile& Import(const std::vector<cv::Mat> images);
 		ImFile& Import(std::vector<cv::Mat>&& images);
-
-		bool Export();
 
 	};
 
@@ -230,7 +233,6 @@ namespace ImGui
 		}
 		
 
-		
 		/// <summary>
 		/// Select a image in the list with a id checking.
 		/// </summary>
@@ -382,5 +384,5 @@ namespace ImGui
 			m_errorPopupModal.Widget();
 		}
 	};
-
+	
 }

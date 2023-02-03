@@ -32,11 +32,16 @@ namespace bhd
 				{
 					this->m_imExplorer.OpenExportBrowserWithSelected();
 				}
-
 				ImGui::Separator();
 				if (ImGui::MenuItem(ICON_FA_WINDOW_CLOSE " Exit"))
 				{
 					m_exit = !m_exit;
+				}
+				ImGui::Separator();
+				ImGui::Separator();
+				if (ImGui::MenuItem(ICON_FA_FILE_IMPORT " Import something..."))
+				{
+					this->m_FileExplorer.OpenImportBrowser();
 				}
 				ImGui::EndMenu();
 			}
@@ -67,7 +72,7 @@ namespace bhd
 			ImGui::BeginChild("ImgExplorer", ImVec2(200, 0), true);
 			ImGui::TextColored({ 1.0f, 1.0f, 1.0f, 1.0f }, ICON_FA_IMAGES " Image Explorer");
 			m_imExplorer.Widget();
-			//m_FileExplorer.Widget();
+			m_FileExplorer.Widget();
 			ImGui::EndChild();
 		}
 	}

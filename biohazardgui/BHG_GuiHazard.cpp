@@ -69,6 +69,11 @@ namespace bhd
 			m_imExplorer.Widget();
 			ImGui::EndChild();
 		}
+
+		m_test.Widget();
+
+
+
 	}
 
 	void GuiModHazard::RightPanel_TabBar_Processing()

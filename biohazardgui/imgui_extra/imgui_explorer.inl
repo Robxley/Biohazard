@@ -21,10 +21,11 @@ namespace ImGui
 	}
 
 	template<class T>
-	void Explorer<T>::BrowserWidget()
+	void ResourceExplorer<T>::BrowserWidget()
 	{
 		{
-			if (ImGui::ButtonHelpMarker("Import...", "Import a new image"))
+			ImGui::PushID(this);
+			if (ImGui::ButtonHelpMarker("Import...", "Import a new resource"))
 			{
 				OpenImportBrowser();
 			}
@@ -32,13 +33,14 @@ namespace ImGui
 			if (!m_vFileList.empty())
 			{
 				ImGui::SameLine();
-				if (ImGui::ButtonHelpMarker("Export...", "Export the selected image"))
+				if (ImGui::ButtonHelpMarker("Export...", "Export the selected resource"))
 				{
 					OpenExportBrowserWithSelected();
 				}
 			}
 			m_importBrowser.Display();
 			m_exportBrowser.Display();
+			ImGui::PopID();
 		}
 
 		//Browser action
@@ -47,7 +49,7 @@ namespace ImGui
 			auto imPath = m_importBrowser.GetSelected();
 			if (!Import(imPath))
 			{
-				OpenErrorPopup("Unable to import the image: \n" + imPath.generic_string() + "\n\n");
+				OpenErrorPopup("Unable to import the resource: \n" + imPath.generic_string() + "\n\n");
 			}
 			m_importBrowser.ClearSelected();
 		}
@@ -56,7 +58,7 @@ namespace ImGui
 			auto imPath = m_exportBrowser.GetSelected();
 			if (!Export(imPath))
 			{
-				OpenErrorPopup("Unable to export the image: \n" + imPath.generic_string() + "\n\n");
+				OpenErrorPopup("Unable to export the resource: \n" + imPath.generic_string() + "\n\n");
 			}
 			m_exportBrowser.ClearSelected();
 		}
@@ -66,7 +68,7 @@ namespace ImGui
 	}
 
 	template<class T>
-	void Explorer<T>::SelectedFileWidget() const
+	void ResourceExplorer<T>::SelectedFileWidget() const
 	{
 		if (SelectedIsValid())
 		{
@@ -91,7 +93,7 @@ namespace ImGui
 	}
 
 	template<class T>
-	void Explorer<T>::FileListWidget()
+	void ResourceExplorer<T>::FileListWidget()
 	{
 		ImGui::Text("Image list:");
 		std::size_t i = 0;
@@ -135,11 +137,11 @@ namespace ImGui
 
 
 	template <class T>
-	bool Explorer<T>::Import(const std::filesystem::path& path, bool bSelectIt)
+	bool ResourceExplorer<T>::Import(const std::filesystem::path& path, bool bSelectIt)
 	{
 		try
 		{
-			std::optional<T> opt_data = File<T>::import(path);
+			std::optional<T> opt_data = ResourceFile<T>::import_impl(path);
 			if (opt_data.has_value())
 			{
 				return Import(std::move(opt_data.value()), path, bSelectIt);
@@ -157,7 +159,7 @@ namespace ImGui
 	}
 
 	template <class T>
-	bool Explorer<T>::Import(T&& data, const std::filesystem::path& path, bool bSelectIt)
+	bool ResourceExplorer<T>::Import(T&& resource, const std::filesystem::path& path, bool bSelectIt)
 	{
 		try
 		{
@@ -168,7 +170,7 @@ namespace ImGui
 			else
 				name = "image_" + std::to_string(m_vFileList.size());
 
-			cv::Mat icon = File<T>::icon_maker(data);
+			cv::Mat icon = ResourceFile<T>::icon_maker(resource);
 			if (m_imIconSize > 0 && !icon.empty())
 			{
 				float scale = icon.cols > icon.rows ? (float)m_imIconSize / (float)icon.cols : (float)m_imIconSize / (float)icon.rows;
@@ -177,11 +179,11 @@ namespace ImGui
 					cv::normalize(icon, icon, 0, 255, cv::NORM_MINMAX, CV_8U);
 			}
 
-			File<T> file;
+			ResourceFile<T> file;
 			file.m_path = path;
 			file.m_icon = icon;
 			file.m_name = std::move(name);
-			file.m_data = std::forward<T>(data);
+			file.m_resource = std::forward<T>(resource);
 
 			m_vFileList
 				.emplace_back(std::move(file))

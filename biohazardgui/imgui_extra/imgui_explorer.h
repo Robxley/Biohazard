@@ -39,22 +39,32 @@ namespace ImGui
 	};
 
 	template <class T = std::filesystem::path> 
-	struct File : public FileImpl
+	struct ResourceFile : public FileImpl
 	{
 
-
-		std::optional<T> m_data;		//! linked data
-
-		static std::optional<T> import(const std::filesystem::path& path) { return path; }
-		static cv::Mat icon_maker(const T& data) { return cv::Mat(std::vector<uchar>{0,1,1,0}).reshape(0,2).clone(); }
+		std::optional<T> m_resource;		//! linked data
+		static std::optional<T> import_impl(const std::filesystem::path & path) { 
+			if constexpr (std::is_constructible_v<T, std::filesystem::path>)
+				return std::make_optional<T>(path);
+			else
+				return {}; 
+		}
+		static cv::Mat icon_maker(const T& data) { 
+			static uchar n = 255;
+			auto rng = [&]() mutable { n = (n + 13 + 127); return n; };
+			return cv::Mat(std::vector<uchar>{
+				rng(), rng(), rng(), rng(), rng(), rng(), rng(), rng(), rng(), rng(), rng(), rng()
+			}).reshape(3,2).clone();
+		}
 		static cv::Mat icon_maker(const std::optional<T>& data) { return data.has_value() ? icon_maker(data.value()) : cv::Mat(); }
 		static std::string desc_maker() { return m_path.generic_string(); }
-		//static bool export(const std::filesystem::path& path, const T& data) { return true; }
-
+		static bool export_impl(const std::filesystem::path& path, const T& data) { return true; }
 	};
 
+
+
 	template <class T = std::filesystem::path>
-	class Explorer
+	class ResourceExplorer
 	{
 
 	public:
@@ -64,9 +74,9 @@ namespace ImGui
 
 		int m_imIconSize = 64;							//! Max size of the image icon.
 		std::size_t m_selected = 0;						//! Selected file
-		std::vector<File<T>> m_vFileList;				//! file list
+		std::vector<ResourceFile<T>> m_vFileList;		//! file list
 
-		Explorer() :
+		ResourceExplorer() :
 			m_exportBrowser(ImGuiFileBrowserFlags_EnterNewFilename | ImGuiFileBrowserFlags_CreateNewDir)
 		{
 			m_importBrowser.SetTitle(m_import_brower_title);
@@ -151,7 +161,7 @@ namespace ImGui
 		/// </summary>
 		/// <returns>file</returns>
 		const auto& GetSelectedMat() const {
-			return GetSelected().m_data;
+			return GetSelected().m_resource;
 		}
 
 		/// <summary>
@@ -183,7 +193,7 @@ namespace ImGui
 		/// <summary>
 		/// Select a file in the list.
 		/// No check on the id is performed. 
-		/// If you are not sure about the selected id, prefere use SetSelectedSafe
+		/// If you are not sure about the selected id, prefer use SetSelectedSafe
 		/// <param name="id">Image id</param>
 		/// </summary>
 		void SetSelected(std::size_t id) {
@@ -245,7 +255,7 @@ namespace ImGui
 		/// </summary>
 		/// <param name="path">path where the image will be exported</param>
 		/// <returns>true if ok</returns>
-		bool Export(std::filesystem::path path) const;
+		bool Export(std::filesystem::path path) const { return true; }
 
 
 		/// <summary>
@@ -256,7 +266,7 @@ namespace ImGui
 		void ExportBrowser(const std::filesystem::path& path)
 		{
 			auto img_saver = [=](const auto& path) {
-				Explorer::Export(path);
+				ResourceExplorer::Export(path);
 			};
 			m_exportBrowser.Open(path, img_saver);
 		}
@@ -278,7 +288,7 @@ namespace ImGui
 		}
 
 		/// <summary>
-		/// Image explorer widget
+		/// Resource Explorer widget
 		/// </summary>
 		void Widget()
 		{

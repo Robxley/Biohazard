@@ -12,7 +12,7 @@ namespace bhd
 		//ImGui widgets
 		ImGui::FixedWindow m_mainWindow;	//main window
 		ImGui::ImExplorer m_imExplorer;		//Image explorer widget (List of found image)
-		ImGui::Explorer<std::filesystem::path> m_FileExplorer;		//File explorer widget
+		ImGui::ResourceExplorer<std::filesystem::path> m_FileExplorer;		//File explorer widget
 		ImGui::MatWatch m_inputWatcher;		//Image Watcher for input image
 		ImGui::MatWatch m_outputWatcher;	//Image Watcher for output image
 		ImGui::ImComparer m_imComparer = { &m_inputWatcher , &m_outputWatcher }; //Link images watcher with comparer

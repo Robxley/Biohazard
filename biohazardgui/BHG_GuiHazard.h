@@ -7,6 +7,7 @@
 #include "imgui_cv_imwatch.h"
 #include "imgui_imcomparer.h"
 #include "imgui_imexplorer.h"
+#include "imgui_explorer.h"
 
 #include "BHG_Module.h"
 #include "BHG_GuiStyle.h"
@@ -63,6 +64,7 @@ namespace bhd
 		ImGui::MatWatch m_outputWatcher;	//Image Watcher for output image
 		ImGui::ImComparer m_imComparer = { &m_inputWatcher , &m_outputWatcher }; //Link images watcher with comparer
 
+		ImGui::ResourceExplorer<ImGui::ImFile> m_test;
 
 		ModuleGui m_module;
 
@@ -90,7 +92,6 @@ namespace bhd
 		void MainMenuBar();
 		void LeftPanel_ImgExplorer();
 		void RightPanel_ImgWatcher();
-
 		void RightPanel_TabBar_Processing();
 	};
 }

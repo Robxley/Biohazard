@@ -65,6 +65,7 @@ namespace ImGui
 		ssdesc << "Name: " << m_name << std::endl;
 		ssdesc << "Size: " << cols() << 'x' << rows() << std::endl;
 		ssdesc << "Channels: " << channels() << std::endl;
+		ssdesc << "depth: " << channels() << std::endl;
 		if (show_path)
 			ssdesc << "Path: " << m_path.generic_string() << std::endl;
 		if (!info.empty())
@@ -123,6 +124,8 @@ namespace ImGui
 		m_images = std::move(images);
 		return *this;
 	}
+
+	
 
 	bool ImExplorer::Import(const cv::Mat& image, const std::filesystem::path& path, bool bSelectIt)
 	{
@@ -314,5 +317,5 @@ namespace ImGui
 			i++;
 		}
 	}
-
+	
 }
