@@ -46,12 +46,6 @@ namespace bhd
 
 	}
 
-	template<typename T, typename... N>
-	auto make_array(N&&... args) -> std::array<T, sizeof...(args)>
-	{
-		return { std::forward<N>(args)... };
-	}
-	
 	template <typename T>
 	struct object_wrapper
 	{
@@ -120,6 +114,26 @@ namespace bhd
 
 	};
 
+	template <typename T>
+	constexpr size_t get_string_size(const T& arg) {
+		if constexpr (std::is_same_v<std::decay_t<T>, const char*> || std::is_same_v<std::decay_t<T>, char*>) {
+			if constexpr (std::is_array_v<std::decay_t<T>>) {
+				return sizeof(arg) - 1; // Exclude null-terminator
+			}
+			else {
+				return std::strlen(arg);
+			}
+		}
+		else {
+			return arg.size();
+		}
+	}
+
+	template <typename... Args>
+	size_t estimate_string_size(Args&&... args) {
+		return (0 + ... + get_string_size(std::forward<Args>(args)));
+	}
+
 
 	/// <summary>
 	/// Concatenate an argument list into a single string.
@@ -129,15 +143,19 @@ namespace bhd
 	template<typename ...Args>
 	std::string concat_to_string(Args&&... args)
 	{
-		std::stringstream ss;
-		(ss << ... << std::forward<Args>(args));
-		return ss.str();
-	}
-
-	template<typename T>
-	std::enable_if_t<type_traits::is_string_like<T>::value, T> 
-	concat_to_string(T && arg)  {
-		return std::forward<T>(arg);
+		if constexpr ((std::is_convertible_v<Args, std::string> && ...))
+		{
+			std::string result;
+			result.reserve(estimate_string_size(std::forward<Args>(args)...));
+			(result += ... += std::forward<Args>(args));
+			return result;
+		}
+		else
+		{
+			std::stringstream ss;
+			(ss << ... << std::forward<Args>(args));
+			return ss.str();
+		}
 	}
 
 	/// <summary>
