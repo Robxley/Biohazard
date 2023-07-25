@@ -539,7 +539,7 @@ inline void ImGui::FileBrowser::Display()
 
     int escIdx = GetIO().KeyMap[ImGuiKey_Escape];
     if (Button("cancel") || closeFlag_ ||
-        ((flags_ & ImGuiFileBrowserFlags_CloseOnEsc) && IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && escIdx >= 0 && IsKeyPressed(escIdx)))
+        ((flags_ & ImGuiFileBrowserFlags_CloseOnEsc) && IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && escIdx >= 0 && IsKeyPressed((ImGuiKey)escIdx)))
     {
         this->callbackFunc_ = {};
         CloseCurrentPopup();

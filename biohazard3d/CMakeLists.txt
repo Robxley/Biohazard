@@ -21,9 +21,8 @@ find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 
-FILE(GLOB IMGUI_SOURCEFILES
-        ${IMGUI_DIR}/*.cpp)
 
 # __________________________________________
 # library
@@ -35,7 +34,7 @@ FILE(GLOB BH3D_SOURCEFILES
 		${CMAKE_CURRENT_SOURCE_DIR}/src/std/BH3D_*.cpp)
 
 if(WIN32)
-	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main INTERFACE glm::glm)
+	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main imgui::imgui INTERFACE glm::glm)
 endif()
 
 add_library(bh3d STATIC ${BH3D_SOURCEFILES} ${IMGUI_SOURCEFILES})
@@ -51,7 +50,7 @@ target_include_directories(bh3d
 								${CMAKE_CURRENT_SOURCE_DIR}/include/imgui
 								${CMAKE_CURRENT_SOURCE_DIR}/include/cv
 								${CMAKE_CURRENT_SOURCE_DIR}/include/std
-								${IMGUI_DIR}
+								${ICONS_FONT_AWESOME_DIR}
 							SYSTEM PUBLIC
 								${glm_INCLUDE_DIR}
 							PRIVATE

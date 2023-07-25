@@ -39,6 +39,6 @@ using namespace gl;
 #include <glbinding/gl/gl.h>
 using namespace gl;
 #else
-#include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#include <GL/glew.h>  
 #endif
 #endif

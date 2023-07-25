@@ -50,13 +50,13 @@ namespace bhd
 			set(std::forward<F>(f), std::forward<Args>(args)...);
 		}
 
-		threaded_task(threaded_task&& task)
+		threaded_task(threaded_task&& task) noexcept
 		{
 			m_fct = std::move(task.m_fct);
 			m_future = std::move(task.m_future);
 		}
 
-		void operator=(threaded_task&& task)
+		void operator=(threaded_task&& task) noexcept
 		{
 			m_fct = std::move(task.m_fct);
 			m_future = std::move(task.m_future);

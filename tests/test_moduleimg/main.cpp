@@ -62,8 +62,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	return 0;
-
 	std::vector<int> bands;
 	hsi.read_vector("default bands", bands);
 

@@ -18,7 +18,7 @@ namespace ImGui
 		void Widget()
 		{
 			m_winSize = m_pImageWatchRight && !m_pImageWatchRight->Empty() ? 
-				ImVec2((ImGui::GetContentRegionAvailWidth() - ImGui::GetStyle().ItemSpacing.x) * 0.5f, 0.0f) :
+				ImVec2((ImGui::GetContentRegionAvail().x - ImGui::GetStyle().ItemSpacing.x) * 0.5f, 0.0f) :
 				ImVec2(0,0);
 
 			auto WatcherUnit = [&](auto&& name, auto&& pImageWatch, auto&& pCompareWith, auto ...args)

@@ -16,7 +16,7 @@
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 
 #include "imgui.h"
-#include "imgui_impl_sdl.h"
+#include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 #include <cstdio>
 
@@ -25,6 +25,7 @@
 #else
 #include <SDL.h>
 #endif
+
 
 // About Desktop OpenGL function loaders:
 //  Modern desktop OpenGL doesn't have a standard portable header file to load OpenGL function pointers.
@@ -49,7 +50,7 @@ using namespace gl;
 #include <glbinding/gl/gl.h>
 using namespace gl;
 #else
-#include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#include <GL/glew.h>  
 #endif
 
 #if defined(__has_include)
