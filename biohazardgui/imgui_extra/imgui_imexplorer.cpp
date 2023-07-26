@@ -30,16 +30,16 @@ namespace ImGui
 	/// Image screen view. What we see on the screen.
 	/// </summary>
 	/// <returns></returns>
-	const cv::Mat& ImFile::screen_view() const
+	const cv::Mat& ImFile::screen_view(bool update) const
 	{
-		if (m_screen_view.empty() && !m_images.empty())
+		if ((m_screen_view.empty() && !m_images.empty()) || update)
 		{
 			if (m_channel_views.empty())
 				m_screen_view = m_images[0];
 			else if (m_channel_views.size() == 3)
 			{
 				auto get_channel = [&](size_t i) -> const cv::Mat& {
-					auto index = std::max<unsigned int>(m_channel_views[i], static_cast<unsigned int>(m_images.size()) - 1);
+					auto index = std::min<unsigned int>(m_channel_views[i], static_cast<unsigned int>(m_images.size()) - 1);
 					return m_images[index];
 				};
 
@@ -61,16 +61,19 @@ namespace ImGui
 		bool show_path
 	)
 	{
-		std::stringstream ssdesc;
-		ssdesc << "Name: " << m_name << std::endl;
-		ssdesc << "Size: " << cols() << 'x' << rows() << std::endl;
-		ssdesc << "Channels: " << channels() << std::endl;
-		ssdesc << "depth: " << channels() << std::endl;
-		if (show_path)
-			ssdesc << "Path: " << m_path.generic_string() << std::endl;
-		if (!info.empty())
-			ssdesc << info << std::endl;
-		m_desc = ssdesc.str();
+		if (m_desc.empty())
+		{
+			std::stringstream ssdesc;
+			ssdesc << "Name: " << m_name << std::endl;
+			ssdesc << "Size: " << cols() << 'x' << rows() << 'x' << channels() << std::endl;
+			ssdesc << "frames: " << size() << std::endl;
+			ssdesc << "type: " << cvtype2str(type()) << std::endl;
+			if (show_path)
+				ssdesc << "Path: " << m_path.generic_string() << std::endl;
+			if (!info.empty())
+				ssdesc << info << std::endl;
+			m_desc = ssdesc.str();
+		}
 	}
 
 	/// <summary>
@@ -125,7 +128,28 @@ namespace ImGui
 		return *this;
 	}
 
-	
+	bool ImFile::WidgetFrameView()
+	{
+		bool update = false;
+		if (this->size())
+		{
+			int channels = this->m_images.front().channels();
+			{
+				if (channels == 1) {
+					m_channel_views.resize(3);
+					update = ImGui::SliderInt3("view", m_channel_views.data(), 0, static_cast<int>(size()) - 1);
+				}
+				else if (channels == 3) {
+					m_channel_views.resize(1);
+					update = ImGui::SliderInt("view", m_channel_views.data(), 0, static_cast<int>(size()) - 1);
+				}
+			}
+
+			if (update)
+				screen_view(true);
+		}
+		return update;
+	}
 
 	bool ImExplorer::Import(const cv::Mat& image, const std::filesystem::path& path, bool bSelectIt)
 	{
@@ -250,7 +274,7 @@ namespace ImGui
 		WidgetErrorPopupModal();
 	}
 
-	void ImExplorer::SelectedImageWidget() const
+	void ImExplorer::SelectedImageWidget()
 	{
 		if (SelectedIsValid())
 		{
@@ -272,8 +296,20 @@ namespace ImGui
 				ImGui::PopTextWrapPos();
 				ImGui::EndGroup();
 			}
+
+			{
+				ImGui::BeginGroup();
+				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+				auto& selected = this->GetSelected();
+				if (selected.WidgetFrameView())
+					m_hasSelected = true;
+	
+				ImGui::PopTextWrapPos();
+				ImGui::EndGroup();
+			}
 		}
 	}
+
 		
 	void ImExplorer::ImListWidget()
 	{

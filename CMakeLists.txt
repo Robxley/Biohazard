@@ -18,9 +18,6 @@ if (WIN32)
     message(STATUS "Build options: ${CMAKE_CXX_FLAGS}")
 endif()
 
-#set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
-
 # Display build type
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 

@@ -50,6 +50,7 @@ using namespace gl;
 #include <glbinding/gl/gl.h>
 using namespace gl;
 #else
+#define IMGUI_IMPL_OPENGL_LOADER_GLEW
 #include <GL/glew.h>  
 #endif
 

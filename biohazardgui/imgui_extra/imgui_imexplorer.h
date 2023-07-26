@@ -15,6 +15,31 @@
 namespace ImGui
 {
 
+	inline std::string cvtype2str(int type) 
+	{
+		std::string r;
+
+		uchar depth = type & CV_MAT_DEPTH_MASK;
+		uchar chans = 1 + (type >> CV_CN_SHIFT);
+
+		switch (depth) {
+		case CV_8U:  r = "8U"; break;
+		case CV_8S:  r = "8S"; break;
+		case CV_16U: r = "16U"; break;
+		case CV_16S: r = "16S"; break;
+		case CV_32S: r = "32S"; break;
+		case CV_32F: r = "32F"; break;
+		case CV_64F: r = "64F"; break;
+		default:     r = "User"; break;
+		}
+
+		r += "C";
+		r += (chans + '0');
+
+		return r;
+	}
+
+
 	/// <summary>
 	/// Structure used to describe a image.
 	/// </summary>
@@ -31,31 +56,40 @@ namespace ImGui
 		mutable cv::Mat m_screen_view;				//! Opencv image as cv::Mat used to display something to the screen
 		mutable cv::Mat m_icon;						//! Icon image used in widget
 		std::vector<cv::Mat> m_images;				//! Opencv multi images (for example imported by cv::imreadmulti)
-		std::vector<unsigned int> m_channel_views;	//! In case of multiimage - indexes of channel to display on the screen.
+		mutable std::vector<int> m_channel_views;	//! In case of multiimage - indexes of channel to display on the screen.
 
 	public:
 
-		int channels() const {
-			return m_images.size() == 1 ? m_images.front().channels() : (int)m_images.size();
+		auto channels() const {
+			return m_images.empty() ? 0 : (int)m_images.front().channels();
 		}
 
-		int cols() const {
+		auto size() const {
+			return m_images.size();
+		}
+
+		auto cols() const {
 			return m_screen_view.cols;
 		}
 
-		int rows() const {
+		auto rows() const {
 			return m_screen_view.rows;
 		}
 
-		int depth() const {
-			return m_images.size() == 1 ? m_images.front().channels() : (int)m_images.size();
+		auto depth() const {
+			return m_images.empty() ? 0 : (int)m_images.front().elemSize1();
 		}
+
+		auto type() const {
+			return m_images.empty() ? 0 : (int)m_images.front().type();
+		}
+
 
 		/// <summary>
 		/// Image screen view. What we see on the screen.
 		/// </summary>
 		/// <returns>opencv image</returns>
-		const cv::Mat& screen_view() const;
+		const cv::Mat& screen_view(bool update = false) const;
 
 		/// <summary>
 		/// Icon used on the screen view
@@ -90,6 +124,8 @@ namespace ImGui
 		ImFile& Import(cv::Mat&& image);
 		ImFile& Import(const std::vector<cv::Mat> images);
 		ImFile& Import(std::vector<cv::Mat>&& images);
+
+		bool WidgetFrameView();
 
 	};
 
@@ -363,7 +399,7 @@ namespace ImGui
 		/// <summary>
 		/// Selected image widget (show the icon, some image description...)
 		/// </summary>
-		void SelectedImageWidget() const;
+		void SelectedImageWidget();
 
 
 		static constexpr auto m_errorPopupTitle = "Image explorer error"; //! Window title name used to display a error

@@ -2,6 +2,7 @@
 #include "IconsFontAwesome5.h"
 
 #include <sstream>
+#include <format>
 
 namespace ImGui
 {
@@ -95,7 +96,8 @@ namespace ImGui
 	template<class T>
 	void ResourceExplorer<T>::FileListWidget()
 	{
-		ImGui::Text("Image list:");
+		std::string list_count = std::format("List ({}):", m_vFileList.size());
+		ImGui::Text(list_count.data());
 		std::size_t i = 0;
 		std::string i_name;
 		for (auto& file : m_vFileList)

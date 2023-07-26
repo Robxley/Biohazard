@@ -10,6 +10,7 @@
 #include <optional>
 #include <future>
 #include <functional>
+#include <span>
 
 
 namespace ImGui
@@ -207,5 +208,61 @@ namespace ImGui
 
 			this->NearestInterpolation();
 		}
+	};
+
+
+	class MatVectorWatch : public MatWatch
+	{
+	public:
+
+		// image cube / hyperspectral image	
+		std::vector<cv::Mat> m_matVector;
+
+		// Selected vector indexes (gray or [b,g,r] indexes) used to display a image on the screen (can be 1 channels or 3 selected channels)
+		std::vector<std::size_t> m_selected_indexes = { 0 };
+
+		// image display on the screen
+		cv::Mat m_display_img;
+
+		void update(cv::InputArrayOfArrays mv, std::span<std::size_t> selected_indexes = {})
+		{
+			mv.getMatVector(m_matVector);
+			if (selected_indexes.empty())
+				m_selected_indexes = { 0 };
+			else
+				m_selected_indexes.assign(selected_indexes.begin(), selected_indexes.end());
+			m_display_img = {};
+		}
+
+		void update(std::span<std::size_t> selected_indexes = {})
+		{
+			assert(!m_matVector.empty());
+			assert(!selected_indexes.empty());
+
+			m_selected_indexes.assign(selected_indexes.begin(), selected_indexes.end());
+
+			std::for_each(m_selected_indexes.begin(), m_selected_indexes.end(), [&](auto& v) { if (v >= m_matVector.size()) (v = m_matVector.size() - 1); });
+			if (m_selected_indexes.size() == 1)
+			{
+				m_display_img = m_matVector[m_selected_indexes.front()];
+				MatWatch::update(m_display_img);
+				return;
+			}
+
+			if (m_selected_indexes.size() == 2)
+			{
+				auto back = m_selected_indexes.back();
+				m_selected_indexes.resize(3, back);
+			}
+
+			auto select_images = [&](auto&&... si) {
+				return std::vector<cv::Mat>{ m_matVector[m_selected_indexes[si]]...};
+			};
+			cv::merge(select_images(0, 1, 2), m_display_img);
+
+			MatWatch::update(m_display_img);
+		};
+
+
 	};
 }

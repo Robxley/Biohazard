@@ -4,13 +4,6 @@
 project(biohazardgui)
 message(STATUS "🔶 Project: ${PROJECT_NAME}")
 
-# Set C++ standard 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if (WIN32)
-    add_compile_options(/utf-8 /Zc:char8_t-)
-endif()
 
 if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
@@ -40,11 +33,16 @@ FILE(GLOB LOCAL_SOURCEFILES
 # __________________________________________
 # __ Executable
 
+if(NOT DEFINED ICONS_FONT_AWESOME_DIR)
+  set(ICONS_FONT_AWESOME_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../3rd/IconsFontAwesome")
+  message(STATUS "IconsFontAwesome dir: ${ICONS_FONT_AWESOME_DIR}")
+endif()
+
 if(WIN32)
 	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main imgui::imgui)
 endif()
 
-add_library(bhgui STATIC ${LOCAL_SOURCEFILES} ${IMGUI_SOURCEFILES})
+add_library(bhgui STATIC ${LOCAL_SOURCEFILES} ${IMGUI_SOURCEFILES} "imgui_extra/ImFileDialog.cpp" "imgui_extra/ImFileDialog.h")
 
 target_link_libraries(bhgui 
 						PUBLIC 
