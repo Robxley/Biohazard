@@ -94,7 +94,7 @@ namespace bhd
 		m_imComparer.Widget();
 		ImGui::EndChild();
 
-		if (!m_outputWatcher.Empty() && !m_module.m_output.empty() && m_module.IsReady())
+		if (!m_outputWatcher.Empty() && !m_module.m_output.empty() && m_module.IsWaiting())
 		{
 			ImGui::Text("Result Manager");
 			ImGui::Separator();
@@ -109,7 +109,7 @@ namespace bhd
 			{
 				if (m_imExplorer.Import(m_module.m_output.clone(), new_path(), false))
 				{
-					m_imExplorer.GetLast().Description(m_module.m_param_backup_description, false);
+					m_imExplorer.GetLast().Description(m_module.m_description.value_or("No description"), false);
 				}
 			}
 			ImGui::SameLine();

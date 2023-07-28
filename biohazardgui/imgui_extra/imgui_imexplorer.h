@@ -51,8 +51,6 @@ namespace ImGui
 		std::string m_name;					//! Image name (generally extracted from the path)
 		std::string m_desc;					//! Additional descriptions used in the display widget (like image size, channel number, or any user description).
 
-	private:
-
 		mutable cv::Mat m_screen_view;				//! Opencv image as cv::Mat used to display something to the screen
 		mutable cv::Mat m_icon;						//! Icon image used in widget
 		std::vector<cv::Mat> m_images;				//! Opencv multi images (for example imported by cv::imreadmulti)
@@ -82,6 +80,13 @@ namespace ImGui
 
 		auto type() const {
 			return m_images.empty() ? 0 : (int)m_images.front().type();
+		}
+
+		// get images
+		auto get() {
+			if (m_images.empty())
+				this->Import();
+			return m_images;
 		}
 
 

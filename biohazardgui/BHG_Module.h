@@ -21,14 +21,14 @@ namespace bhd
 	{
 		enum TASK_STATUS_
 		{
-			TASK_STATUS_NONE,
-			TASK_STATUS_RUNNING,
-			TASK_STATUS_DONE,
+			TASK_STATUS_WAITING,		//waiting / ready to start
+			TASK_STATUS_RUNNING,		//running
+			TASK_STATUS_DONE,			//job done
 			TASK_STATUS_COUNT,
 		};
 
 		//Processing Status
-		int m_status = TASK_STATUS_NONE;
+		int m_status = TASK_STATUS_WAITING;
 
 		//Exception handle in the processing
 		std::exception_ptr m_pException;
@@ -40,9 +40,9 @@ namespace bhd
 		//Processing task duration
 		std::chrono::milliseconds m_task_duration_ms = {};
 
-		//Return true if the processing is ready
-		bool IsReady() const {
-			return m_status == TASK_STATUS_NONE;
+		//Return true if the processing is waiting a task
+		bool IsWaiting() const {
+			return m_status == TASK_STATUS_WAITING;
 		}
 
 		// Return the task duration
@@ -83,30 +83,14 @@ namespace bhd
 		std::thread m_thread;
 	};
 
-	class ModuleTask : public AsyncTask
-	{
-	public:
-
-		cv::Mat m_input;	//! Input image of module task
-		cv::Mat m_output;	//! Output image
-
-		std::string m_param_backup_description;		//! Parameter backup description of the last execution
-
-		//Set a new image
-		void SetInputImage(const cv::Mat& img) {
-			m_input = img;
-		}
-
-	};
-
-	//
-	class ModuleGui : public ModuleTask
+	class ModuleGui : public AsyncTask
 	{
 
 	public:
 
 		ModuleGui() { }
 
+		std::function<bool()> IsReadyToStart = {};
 		bool m_update = true;
 		bool m_liveUpdate = false;
 
@@ -115,10 +99,10 @@ namespace bhd
 		//Execute the processing on setting update
 		void Execute()
 		{
-			if (m_update && !m_input.empty())
+			if (m_update && (!IsReadyToStart || IsReadyToStart()))
 			{
 				m_update = false;
-				ModuleTask::Execute();
+				AsyncTask::Execute();
 			}
 		}
 

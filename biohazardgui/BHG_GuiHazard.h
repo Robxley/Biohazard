@@ -50,6 +50,18 @@ namespace bhd
 		virtual void DrawGui() { /*Draw what you want*/	};
 	};
 
+
+	struct ModuleImGui : public ModuleGui
+	{
+		cv::Mat m_input;
+		cv::Mat m_output;
+		void SetInputImage(const cv::Mat& input) {
+			if (this->IsWaiting())
+				m_input = input.clone();
+		}
+	};
+
+
 	/// <summary>
 	/// Example / Default GUI used to manage a image processing module
 	/// </summary>
@@ -66,7 +78,7 @@ namespace bhd
 
 		ImGui::ResourceExplorer<ImGui::ImFile> m_test;
 
-		ModuleGui m_module;
+		ModuleImGui m_module;
 
 
 		void Init(const std::filesystem::path& path) {

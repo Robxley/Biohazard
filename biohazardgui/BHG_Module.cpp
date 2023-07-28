@@ -8,7 +8,11 @@ namespace bhd
 	namespace
 	{
 		constexpr auto INPUT_INT_W = 100.0f;
-	
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="eptr"></param>
+		/// <returns></returns>
 		std::string handle_eptr(std::exception_ptr eptr)
 		{
 			std::string eptr_what = {};
@@ -61,22 +65,20 @@ namespace bhd
 				m_errorPopupModal.OpenPopup(error);
 			else if (m_callBackOnStatusDone)
 				m_callBackOnStatusDone();
-			m_status = TASK_STATUS_NONE;
+			m_status = TASK_STATUS_WAITING;
 		}
 
 		ExceptionWidget();
 
 		constexpr float wspace = 15.0f;
 
-		
 		ImGui::Text((ICON_FA_BIOHAZARD " Module: " + m_description.value_or("No module selected")).c_str());
 		
-
 		//Execution setting
 		{
 			ImVec2 buttonSize = { 150.0f, 25.0f };
 
-			if (m_status != TASK_STATUS_NONE)
+			if (m_status != TASK_STATUS_WAITING)
 			{
 				ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
 				ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
@@ -106,7 +108,7 @@ namespace bhd
 			ImGui::SameLine();
 			ImGui::SameLine(0.0f, 15.0f);
 			
-			if (m_status != TASK_STATUS_NONE)
+			if (m_status != TASK_STATUS_WAITING)
 			{
 				ImGui::Text(ICON_FA_STOPWATCH " Execution time:");
 				ImGui::SameLine();

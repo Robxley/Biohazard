@@ -36,7 +36,7 @@ namespace ImGui
 		return b;
 	}
 
-	inline bool ButtonHelpMarker(const char* button, const char* help)
+	inline bool ButtonHelpMarker(auto* button, const char* help)
 	{
 		bool b = ImGui::Button(button);
 		HelpMarker(help, true);
