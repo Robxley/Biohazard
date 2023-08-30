@@ -21,9 +21,9 @@ namespace bhd
 	{
 		enum TASK_STATUS_
 		{
-			TASK_STATUS_WAITING,		//waiting / ready to start
-			TASK_STATUS_RUNNING,		//running
-			TASK_STATUS_DONE,			//job done
+			TASK_STATUS_WAITING,		//waiting a new task / ready to start
+			TASK_STATUS_RUNNING,		//running a task
+			TASK_STATUS_DONE,			//task done
 			TASK_STATUS_COUNT,
 		};
 
@@ -40,7 +40,7 @@ namespace bhd
 		//Processing task duration
 		std::chrono::milliseconds m_task_duration_ms = {};
 
-		//Return true if the processing is waiting a task
+		//Return true if the processing is waiting a task / ready to start
 		bool IsWaiting() const {
 			return m_status == TASK_STATUS_WAITING;
 		}

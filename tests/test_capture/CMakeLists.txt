@@ -1,12 +1,13 @@
 # App - MyModuleCap
 
 # Create toolkit source files list
-FILE(GLOB LOCAL_FILE_SRC *.cpp)
+FILE(GLOB LOCAL_FILE_SRC *.cpp *.h)
 
 add_executable(MyModuleCap ${LOCAL_FILE_SRC})
 
 target_include_directories(MyModuleCap 
                             PUBLIC
+                                ${PROJECT_SOURCE_DIR}
                                 ${PROJECT_SOURCE_DIR}/biohazardgui)
 
 target_link_libraries(MyModuleCap 

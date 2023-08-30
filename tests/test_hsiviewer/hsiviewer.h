@@ -17,7 +17,20 @@ namespace bhd
 		ImGui::MatWatch m_outputWatcher;	//Image Watcher for output image
 		ImGui::ImComparer m_imComparer = { &m_inputWatcher , &m_outputWatcher }; //Link images watcher with comparer
 
-		ModuleGui m_module;
+		struct SimpleModuleGui : public ModuleGui
+		{
+			std::string m_param_backup_description = "SimpleModuleGui";
+			cv::Mat m_input;
+			cv::Mat m_output;
+			bool SetInputImage(const cv::Mat& img) {
+				bool ok = this->IsWaiting();
+				if (ok)
+					m_input = img;
+				return ok;
+			}
+		};
+
+		SimpleModuleGui m_module;
 
 		void Init(const std::filesystem::path& path) 
 		{

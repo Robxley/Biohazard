@@ -101,7 +101,7 @@ namespace bhd
 			m_imComparer.Widget();
 			ImGui::EndChild();
 
-			if (!m_outputWatcher.Empty() && !m_module.m_output.empty() && m_module.IsReady())
+			if (!m_outputWatcher.Empty() && !m_module.m_output.empty() && m_module.IsWaiting())
 			{
 				ImGui::Text("Result Manager");
 				ImGui::Separator();
