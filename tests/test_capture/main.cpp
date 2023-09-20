@@ -13,29 +13,24 @@ int my_gui(auto&& path)
 }
 
 
+
+
+
 int main(int argc, char* argv[])
 {
     WinRecorder test;
-    //test.m_window_title = "Notepad";
 
-    /*test.findWindow();
-    if (!test) 
-    {
-        std::cout << "Windows not found" << std::endl;
-        return 0;
-    }
-
-    std::cout << "Windows recording: " << test.m_window_title << std::endl;
-    */
-
-    auto display = [](cv::Mat& mat, const char* title)
+    auto display = [](cv::Mat& mat, const char* title, float scale = 1.0f)
     {
         try
         {
             if (!mat.empty())
             {
-                cv::Mat smat = mat;
-               // cv::resize(mat, smat, {}, 0.5, 0.5, cv::INTER_AREA);
+                cv::Mat smat;
+                if (scale != 1.0f)
+                    cv::resize(mat, smat, {}, 0.5, 0.5, cv::INTER_AREA);
+                else
+                    smat = mat;
                 if (!smat.empty())
                     cv::imshow(title, smat);
             }
@@ -51,7 +46,7 @@ int main(int argc, char* argv[])
 
         {
             auto mat = test.captureWindow();
-            display(mat, "captureWindow");
+            display(mat, "captureWindow", 0.5f);
         }
 
         {
@@ -61,7 +56,7 @@ int main(int argc, char* argv[])
 
         {
             auto mat = test.screenshootWithTarget();
-            display(mat, "screenshootWithTarget");
+            display(mat, "screenshootWithTarget", 0.5f);
         }
 
 

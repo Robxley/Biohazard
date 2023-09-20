@@ -202,7 +202,10 @@ namespace bhd
 				else if constexpr (std::is_floating_point_v<T>)
 					return std::array{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9','-', '.' };
 				else
-					static_assert(0, "Unsupported type");
+				{
+					//static_assert(0, "Unsupported type");
+					assert(0 && "Unsupported type");
+				}
 			}
 		};
 
@@ -269,7 +272,8 @@ namespace bhd
 		template<typename T>
 		inline void to_data(...)
 		{
-			static_assert(0, "Conversion from string not yet implemented");
+			assert(0 && "Conversion from string not yet implemented");
+			//static_assert(0, "Conversion from string not yet implemented");
 		}
 
 	}

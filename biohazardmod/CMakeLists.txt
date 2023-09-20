@@ -23,7 +23,7 @@ endif()
 find_package(Threads REQUIRED)
 
 # OpenCV
-find_package(OpenCV REQUIRED)
+find_package(OpenCV CONFIG REQUIRED)
 
 # __________________________________________
 # library

@@ -155,12 +155,15 @@ void ScreenshootWithTarget(HWND hwnd_target, cv::Mat& screenshot)
         //if (IsWindowVisible(hwnd_target) == FALSE)
         //    return;
 
+
         //get hdc of desktop
         HDC hdc = GetDC(HWND_DESKTOP);
         HDC memdc = CreateCompatibleDC(hdc);
 
         RECT crc;
-        GetClientRect(hwnd_target, &crc);
+        if (GetClientRect(hwnd_target, &crc) == 0)
+            std::cout << "GetClientRect" << std::endl;
+
 
         int w = crc.right - crc.left;
         int h = crc.bottom - crc.top;
@@ -168,8 +171,22 @@ void ScreenshootWithTarget(HWND hwnd_target, cv::Mat& screenshot)
         HBITMAP hbitmap = CreateCompatibleBitmap(hdc, w, h);
         HGDIOBJ oldbmp = SelectObject(memdc, hbitmap);
 
-        ClientToScreen(hwnd_target, reinterpret_cast<POINT*>(&crc.left)); // convert top-left
-        ClientToScreen(hwnd_target, reinterpret_cast<POINT*>(&crc.right)); // convert bottom-right
+        POINT ptClientUL;              // client upper left corner 
+        POINT ptClientLR;              // client lower right corner
+
+        ptClientUL.x = crc.left;
+        ptClientUL.y = crc.top;
+
+        ptClientLR.x = crc.right + 1;
+        ptClientLR.y = crc.bottom + 1;
+
+        ClientToScreen(hwnd_target, &ptClientUL); // convert upper-left
+        ClientToScreen(hwnd_target, &ptClientLR); // convert bottom-right
+
+
+        SetRect(&crc, ptClientUL.x, ptClientUL.y,
+            ptClientLR.x, ptClientLR.y);
+
         BitBlt(memdc, 0, 0, w, h, hdc, crc.left, crc.top, SRCCOPY);
         SelectObject(memdc, oldbmp);
         DeleteDC(memdc);

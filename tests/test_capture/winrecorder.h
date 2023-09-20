@@ -7,6 +7,7 @@
 
 class WinRecorder
 {
+    inline static const DPI_AWARENESS_CONTEXT m_dpi_awaress = [] { return SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE); }();
 public:
     WinRecorder() = default;
     ~WinRecorder() {
