@@ -2,6 +2,7 @@
 #include "BHG_GuiHazard.h"
 #include <iostream>
 #include "winrecorder.h"
+#include "inputrecorder.h"
 
 int my_gui(auto&& path)
 {
@@ -19,6 +20,10 @@ int my_gui(auto&& path)
 int main(int argc, char* argv[])
 {
     WinRecorder test;
+
+    KeyLogger keylogger = {"keylogger.txt"};
+
+    keylogger.record();
 
     auto display = [](cv::Mat& mat, const char* title, float scale = 1.0f)
     {
