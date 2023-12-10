@@ -112,6 +112,10 @@ void CaptureWindow(HWND targetWindow, cv::Mat& screenshot) {
     if (IsWindowVisible(targetWindow) == FALSE)
         return;
 
+
+    auto target_dpi_awarenes_context = GetWindowDpiAwarenessContext(targetWindow);
+    auto previous_dpi_awareness_context = SetThreadDpiAwarenessContext(target_dpi_awarenes_context);
+
     RECT windowRect;
     GetClientRect(targetWindow, &windowRect);
     int width = windowRect.right - windowRect.left;
@@ -146,15 +150,27 @@ void CaptureWindow(HWND targetWindow, cv::Mat& screenshot) {
     {
         screenshot.create(512, 125, CV_8UC4);
     }
+
+    if (previous_dpi_awareness_context)
+        SetThreadDpiAwarenessContext(previous_dpi_awareness_context);
 }
 
-void ScreenshootWithTarget(HWND hwnd_target, cv::Mat& screenshot) 
+
+
+void ScreenshotWithTarget(HWND hwnd_target, cv::Mat& screenshot, int dpi = DPI_MODE::DPI_FOR_SYSTEM)
 {
     try
     {
-        //if (IsWindowVisible(hwnd_target) == FALSE)
-        //    return;
+        const auto DPI_DEFAULT = 96.0f;
 
+        if (dpi == DPI_MODE::DPI_FOR_SYSTEM)
+            dpi = GetDpiForSystem();
+        else if (dpi == DPI_MODE::DPI_FOR_WINDOW)
+            dpi = GetDpiForWindow(hwnd_target);
+        
+   
+        float dpi_factor = dpi / DPI_DEFAULT;
+        auto dpi_corr = [&](const auto& v) {return dpi <= DPI_MODE::DPI_IGNORE ? v : static_cast<int>(ceil(v * dpi_factor)); };
 
         //get hdc of desktop
         HDC hdc = GetDC(HWND_DESKTOP);
@@ -165,8 +181,8 @@ void ScreenshootWithTarget(HWND hwnd_target, cv::Mat& screenshot)
             std::cout << "GetClientRect" << std::endl;
 
 
-        int w = crc.right - crc.left;
-        int h = crc.bottom - crc.top;
+        int w = (crc.right - crc.left);
+        int h = (crc.bottom - crc.top);
 
         HBITMAP hbitmap = CreateCompatibleBitmap(hdc, w, h);
         HGDIOBJ oldbmp = SelectObject(memdc, hbitmap);
@@ -174,11 +190,11 @@ void ScreenshootWithTarget(HWND hwnd_target, cv::Mat& screenshot)
         POINT ptClientUL;              // client upper left corner 
         POINT ptClientLR;              // client lower right corner
 
-        ptClientUL.x = crc.left;
-        ptClientUL.y = crc.top;
+        ptClientUL.x = (crc.left);
+        ptClientUL.y = (crc.top);
 
-        ptClientLR.x = crc.right + 1;
-        ptClientLR.y = crc.bottom + 1;
+        ptClientLR.x = (crc.right + 1);
+        ptClientLR.y = (crc.bottom + 1);
 
         ClientToScreen(hwnd_target, &ptClientUL); // convert upper-left
         ClientToScreen(hwnd_target, &ptClientLR); // convert bottom-right
@@ -198,6 +214,7 @@ void ScreenshootWithTarget(HWND hwnd_target, cv::Mat& screenshot)
 
         DeleteObject(hbitmap);
         ReleaseDC(HWND_DESKTOP, hdc);
+
     }
     catch (...)
     {
@@ -205,6 +222,24 @@ void ScreenshootWithTarget(HWND hwnd_target, cv::Mat& screenshot)
     }
 }
 
+void ScreenshotWithTargetDpiAwareness(HWND hwnd_target, cv::Mat& screenshot)
+{
+    try
+    {
+
+        auto target_dpi_awarenes_context = GetWindowDpiAwarenessContext(hwnd_target);
+        auto previous_dpi_awareness_context = SetThreadDpiAwarenessContext(target_dpi_awarenes_context);
+
+        ScreenshotWithTarget(hwnd_target, screenshot, DPI_MODE::DPI_IGNORE);
+
+        if (previous_dpi_awareness_context)
+            SetThreadDpiAwarenessContext(previous_dpi_awareness_context);
+    }
+    catch (...)
+    {
+        std::cout << "Exception in capture !" << std::endl;
+    }
+}
 
 cv::Mat WinRecorder::captureWindow(const std::string& window_title)
 {
@@ -225,13 +260,14 @@ cv::Mat WinRecorder::captureWindow(const std::string& window_title)
     return m_buffer;
 }
 
-cv::Mat WinRecorder::screenshoot()
+cv::Mat WinRecorder::screenshot()
 {
     Screenshot(m_buffer);
     return m_buffer;
 }
 
-cv::Mat WinRecorder::screenshootWithTarget(const std::string& window_title)
+
+cv::Mat WinRecorder::screenshotWithTarget(const std::string& window_title, int dpi)
 {
     if (m_window_title.empty())
     {
@@ -245,7 +281,12 @@ cv::Mat WinRecorder::screenshootWithTarget(const std::string& window_title)
     {
         return cv::Mat();
     }
-    ScreenshootWithTarget(m_hwnd, m_buffer);
+
+    if (dpi == DPI_MODE::AWARENESS_CONTEXT)
+        ScreenshotWithTargetDpiAwareness(m_hwnd, m_buffer);
+    else
+        ScreenshotWithTarget(m_hwnd, m_buffer, dpi);
+
 
     return m_buffer;
 }

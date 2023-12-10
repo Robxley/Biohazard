@@ -5,9 +5,22 @@
 #include <opencv2/opencv.hpp>
 #include <Windows.h>
 
+namespace
+{
+    enum DPI_MODE
+    {
+        DPI_IGNORE,
+        DPI_FOR_WINDOW,
+        DPI_FOR_SYSTEM,
+        AWARENESS_CONTEXT,
+        DPI_MODE_COUNT
+    };
+    
+}
+
 class WinRecorder
 {
-    inline static const DPI_AWARENESS_CONTEXT m_dpi_awaress = [] { return SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE); }();
+   
 public:
     WinRecorder() = default;
     ~WinRecorder() {
@@ -16,14 +29,16 @@ public:
 
     std::string m_window_title;
 
+    int m_mode = DPI_MODE::AWARENESS_CONTEXT;
+
     operator bool() {
         return m_hwnd != nullptr;
     }
 
     bool findWindow(const std::string& window_title = {});
     cv::Mat captureWindow(const std::string& window_title = {});
-    cv::Mat screenshoot();
-    cv::Mat screenshootWithTarget(const std::string& window_title = {});
+    cv::Mat screenshot();
+    cv::Mat screenshotWithTarget(const std::string& window_title = {}, int dpi = -1);
 
 private:
 

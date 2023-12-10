@@ -16,6 +16,9 @@ target_link_libraries(MyModuleCap
                             user32)
 
 if(WIN32)
+    if(MSVC)
+        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    endif()
     target_link_libraries(MyModuleCap 
                             PUBLIC 
                                 bhgui 

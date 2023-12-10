@@ -44,7 +44,7 @@ namespace bh3d
 	/// <param name="internalFormat">Intenal format of the buffer or texture</param>
 	/// <param name="colorAttachmentPosition">Color attachment position in case the internal format are RGB/RGBA type</param>
 	/// <returns></returns>
-	inline GLenum Format2Attachment(GLenum internalFormat, int colorAttachmentPosition = 0)
+	inline constexpr GLenum Format2Attachment(GLenum internalFormat, int colorAttachmentPosition = 0)
 	{
 		switch (internalFormat)
 		{
@@ -123,7 +123,7 @@ namespace bh3d
 		/// Check if the render storage is valid (means Storage2D() function has be called)
 		/// </summary>
 		/// <returns>True/false</returns>
-		bool IsValid() { return m_id > 0; }
+		bool IsValid() const { return m_id > 0; }
 
 		/// <summary>
 		/// Allocate/Reallocate a texture/buffer as render storage.
@@ -149,7 +149,7 @@ namespace bh3d
 		/// <summary>
 		/// Frame buffer attachment
 		/// </summary>
-		virtual void FrameBufferAttachment() = 0;
+		virtual void FrameBufferAttachment() const = 0;
 
 		/// <summary>
 		/// Allocate/Reallocate a buffer/texture as render storage.
@@ -172,10 +172,10 @@ namespace bh3d
 		}
 
 		//Bind the buffer/texture
-		virtual void Enable() = 0;
+		virtual void Enable() const = 0;
 
 		//Unbind the buffer/texture
-		virtual void Disable() = 0;
+		virtual void Disable() const = 0;
 
 		//Delete the buffer/texture
 		virtual void Delete() = 0;
@@ -193,7 +193,7 @@ namespace bh3d
 	class TextureStorage : public RenderStorage
 	{
 	private:
-		GLenum Target() { return m_multisample > 0 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D; };
+		GLenum Target() const { return m_multisample > 0 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D; };
 
 	public:
 		/// <summary>
@@ -266,20 +266,20 @@ namespace bh3d
 		/// <summary>
 		/// Frame buffer attachment
 		/// </summary>
-		void FrameBufferAttachment() override {
+		void FrameBufferAttachment() const override {
 			BH3D_GL_CHECK_ERROR;
 			GLenum attachment = Format2Attachment(m_format, 0);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, m_target, m_id, 0);
 		}
 
 		//Bind the texture
-		void Enable() override {
+		void Enable() const override {
 			assert(m_id > 0 && m_target != 0);
 			glBindTexture(m_target, m_id);
 		}
 
 		//Unbind the texture
-		void Disable() override {
+		void Disable() const override {
 			glBindTexture(m_target, 0);
 		}
 
@@ -311,7 +311,7 @@ namespace bh3d
 	/// </summary>
 	class BufferStorage : public RenderStorage
 	{
-		constexpr GLenum Target() { return GL_RENDERBUFFER; };
+		constexpr GLenum Target() const { return GL_RENDERBUFFER; };
 	public:
 
 		/// <summary>
@@ -327,7 +327,7 @@ namespace bh3d
 		static std::tuple<GLuint, GLenum> CreateStorage2D(GLsizei width, GLsizei height, GLenum format = GL_DEPTH_COMPONENT24, GLsizei multisample = 0, GLuint buffer = 0);
 
 		//Default constructor
-		BufferStorage(){
+		BufferStorage() {
 			m_format = GL_DEPTH_COMPONENT24;
 			m_target = Target();
 		}
@@ -387,7 +387,7 @@ namespace bh3d
 		/// <summary>
 		/// Frame buffer attachment
 		/// </summary>
-		void FrameBufferAttachment() {
+		void FrameBufferAttachment() const {
 			BH3D_GL_CHECK_ERROR;
 			GLenum attachment = Format2Attachment(m_format, 0);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, m_id);
@@ -396,7 +396,7 @@ namespace bh3d
 		/// <summary>
 		/// Bind the render buffer
 		/// </summary>
-		void Enable() {
+		void Enable() const {
 			assert(m_id > 0);
 			glBindRenderbuffer(m_target, m_id);
 		}
@@ -404,7 +404,7 @@ namespace bh3d
 		/// <summary>
 		/// Unbind the render buffer
 		/// </summary>
-		void Disable() {
+		void Disable() const {
 			glBindRenderbuffer(m_target, 0);
 		}
 
@@ -493,7 +493,7 @@ namespace bh3d
 		}
 
 		//Bind the frame buffer
-		void Enable() {
+		void Enable() const {
 			glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferID);
 		}
 
@@ -505,7 +505,7 @@ namespace bh3d
 		/// <summary>
 		/// Bind the viewport with the buffer size (-> glViewport(0, 0, m_width, m_height))
 		/// </summary>
-		void Viewport() {
+		void Viewport() const {
 			glViewport(0, 0, m_width, m_height);
 		}
 
@@ -514,7 +514,7 @@ namespace bh3d
 		/// <summary>
 		/// Bind the framebuffer and set the viewport with the buffer size(-> glViewport(0, 0, m_width, m_height))
 		/// </summary>
-		void EnableViewport()
+		void EnableViewport() const
 		{
 			Enable();
 			Viewport();
@@ -537,7 +537,7 @@ namespace bh3d
 		/// Get the buffer color id or the texture color id in function of the color storage mod.
 		/// </summary>
 		/// <returns>Buffer color id</returns>
-		GLuint GetColorId() {
+		GLuint GetColorId() const {
 			return m_colorStorage.m_id;
 		}
 
@@ -547,7 +547,7 @@ namespace bh3d
 		TDepthStorage m_depthStorage;
 
 	private:
-		bool CheckFrameBufferStatus()
+		bool CheckFrameBufferStatus() const
 		{
 			// Always check that our framebuffer is ok
 			if (auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER); status != GL_FRAMEBUFFER_COMPLETE)
