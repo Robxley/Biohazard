@@ -36,6 +36,7 @@
 //Only use this define to check opengl error
 #define BH3D_GL_CHECK_ERROR 			assert(glGenBuffers && "Opengl context have to be created before calling Opengl function"); bh3d::GLCheckError::LogMsgFileFuncLine(__FILE__,__func__,__LINE__)
 
+
 #include <string>
 
 namespace bh3d
@@ -61,6 +62,7 @@ namespace bh3d
 		static std::fstream & GetLogDebugGL();
 		static void InitGLDebugMsg();
 	};
+
 }
 #else
 #define BH3D_GL_CHECK_ERROR

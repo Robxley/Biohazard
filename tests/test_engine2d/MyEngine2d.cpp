@@ -17,6 +17,35 @@ void MyEngine2d::Init()
 
 	m_chessBoard.Create(0, 0, 5, 5);
 
+	
+
+	int pointCount = 10;
+
+	auto randv3 = [](auto min, auto max) {
+		return glm::linearRand(glm::vec3(min), glm::vec3(max));
+	};
+	std::vector<glm::vec3> positions(pointCount);
+	for (auto& p : positions) {
+		p = randv3(-1.0f,1.0f);
+	}
+
+	std::vector<glm::vec4> colors(pointCount);
+	for (auto& c : colors) {
+		c = glm::vec4(randv3(0.0f, 1.0f), 1.0f);
+	}
+
+	m_pointCloud.Create(positions, colors);
+	m_pointCloud.Update(positions, colors);
+	m_pointCloud.LoadShader();
+
+	bh3d::BufferData test;
+	test.Create(16);
+	test.Unbind();
+	test.Delete();
+
+	bh3d::VertexAttribVec3<0> vect;
+
+	auto bufferData = vect.BufferData(positions);
 }
 
 
@@ -40,13 +69,16 @@ void MyEngine2d::Display()
 {
 	BH3D_GL_CHECK_ERROR;
 
-	auto project = glm::ortho(0.0f, 1.0f, 0.0f, 1.0f);
+	auto project = glm::ortho(0.0f, 1.0f, 0.0f, 1.0f, -1.0f, 1.0f);
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
+	glPointSize(30.0f);
+
 	m_scene.Draw([&] {
 		m_chessBoard.Draw();
+		m_pointCloud.Draw(glm::mat4(1.0f));
 	});
 
 	//ImGui Display

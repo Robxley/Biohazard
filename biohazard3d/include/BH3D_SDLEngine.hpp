@@ -3,6 +3,7 @@
 #include <any>
 #include <type_traits>
 
+#include "BH3D_Config.hpp"
 #include "BH3D_Camera.hpp"
 #include "BH3D_Event.hpp"
 #include "BH3D_TinyEngine.hpp"

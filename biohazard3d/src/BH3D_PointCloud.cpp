@@ -153,5 +153,4 @@ namespace bh3d
 		m_vertex_array = 0;
 		m_vertex_count = 0;
 	}
-
 }

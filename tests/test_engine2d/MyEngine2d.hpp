@@ -1,12 +1,6 @@
 #pragma once
 
-#include "BH3D_SDLEngine.hpp"
-#include "BH3D_SDLImGUI.hpp"
-#include "BH3D_GLCheckError.hpp"
-#include "BH3D_TexturePerlin.hpp"
-#include "BH3D_FBO.hpp"
-#include "BH3D_Viewport.hpp"
-#include "BH3D_Drawable.hpp"
+#include "BH3D_Engine.hpp"
 
 #include "ChessBoard2d.hpp"
 #include "MainGui.hpp"
@@ -46,6 +40,11 @@ struct FrameBufferScene
 	}
 };
 
+struct PointCloud2d : public bh3d::PointCloud
+{
+
+};
+
 
 class MyEngine2d : public bh3d::SDLEngine
 {
@@ -56,10 +55,14 @@ class MyEngine2d : public bh3d::SDLEngine
 	int m_scene_width = 512.0f;
 	int m_scene_height = 512.0f;
 
+
 	FrameBufferScene m_scene;
 	MainGui m_mainGui;
 
+
+	//Object
 	ChessBoard2d m_chessBoard;
+	bh3d::PointCloud m_pointCloud;
 
 public:
 	MyEngine2d(const bh3d::WindowInfo& windowInfo = {}) :

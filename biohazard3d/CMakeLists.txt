@@ -23,6 +23,17 @@ find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
+# __________________________________________
+# Auto Generating BH3D_Engine.hpp
+set(BH3D_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+file(GLOB_RECURSE BH3D_FILES "${BH3D_INCLUDE_DIR}/BH3D_*.hpp")
+
+# BH3D_Engine.hpp
+file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/BH3D_Engine.hpp "#pragma once\n")
+foreach(BH3D_FILE ${BH3D_FILES})
+    file(RELATIVE_PATH REL_PATH ${BH3D_INCLUDE_DIR} ${BH3D_FILE})
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/BH3D_Engine.hpp "#include \"${REL_PATH}\"\n")
+endforeach()
 
 # __________________________________________
 # library
@@ -46,6 +57,7 @@ set_target_properties(bh3d PROPERTIES
 
 target_include_directories(bh3d
 							PUBLIC
+								${CMAKE_CURRENT_SOURCE_DIR}
 								${CMAKE_CURRENT_SOURCE_DIR}/include
 								${CMAKE_CURRENT_SOURCE_DIR}/include/imgui
 								${CMAKE_CURRENT_SOURCE_DIR}/include/cv

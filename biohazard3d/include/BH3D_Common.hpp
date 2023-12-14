@@ -50,20 +50,10 @@
 #include <string>
 #include <numeric>
 #include <algorithm>
-
 #include <glm/glm.hpp>
 
 namespace bh3d
 {
-	/*! Everything is fine ( return function ) */
-	constexpr int BH3D_OK = 1;
-
-	/*! Something bad has happened ( return function ) */
-	constexpr int  BH3D_ERROR = 0;
-
-	/*! Close the engine */
-	constexpr int  BH3D_EXIT = 0;
-
 
 	template<typename TObject>
 	class vobject

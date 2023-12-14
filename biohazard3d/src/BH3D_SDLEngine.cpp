@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 
 #include "BH3D_Common.hpp"
+#include "BH3D_Config.hpp"
 #include "BH3D_SDLEngine.hpp"
 
 namespace bh3d

@@ -28,7 +28,7 @@
 
 #include "BH3D_File.hpp"
 #include "BH3D_Logger.hpp"
-#include "BH3D_Common.hpp"
+#include "BH3D_Config.hpp"
 
 
 #ifdef __ANDROID__

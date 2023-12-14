@@ -7,13 +7,19 @@
 
 class ChessBoard2d
 {
-
-
 	enum UNIFORM_LOCATION
 	{
 		ONE_COLOR = 0,
 		TWO_COLOR,
 		SIZE_AND_ANGLE
+	};
+
+
+	enum CHESS_BOARD_TYPE
+	{
+		HORIZ_VERT,
+		ANGLE,
+		ANGLE_ANTIALIASING
 	};
 
 public:
@@ -49,13 +55,13 @@ public:
 		m_vertex_count = 0;
 	}
 
-	void Create(float x, float y, float width, float height)
+	void Create(float x, float y, float width, float height, int type = CHESS_BOARD_TYPE::ANGLE_ANTIALIASING)
 	{
 
 		//Destroy the existing point cloud
 		Destroy();
 
-		m_shader.LoadRaw(this->VERTEX_SHADER(), this->FRAGMENT_SHADER_ANTIALIASING());
+		m_shader.LoadRaw(this->VERTEX_SHADER(), this->FragmentShader(type));
 
 		std::vector<glm::vec3> vPositions = {
 			{ -1.0f, -1.0f, 0.0f },	// top right
@@ -114,13 +120,27 @@ public:
 		m_shader.Disable();
 	}
 
-
 	void Widget()
 	{
 		ImGui::ColorPicker3("One", &m_color_one[0]);
 		ImGui::ColorPicker3("Two", &m_color_two[0]);
 		ImGui::DragFloat2("Size", &m_size_and_angle[0]);
 		ImGui::DragFloat("Rad", &m_size_and_angle[2]);
+	}
+
+
+	static inline constexpr const char* FragmentShader(int type = CHESS_BOARD_TYPE::ANGLE_ANTIALIASING)
+	{
+		switch (type)
+		{
+		case 0:
+			return FRAGMENT_SHADER_SAMPLE();
+		case 1:
+			return VERTEX_SHADER();
+		default:
+			return FRAGMENT_SHADER_ANTIALIASING();
+			break;
+		}
 	}
 
 	static inline constexpr const char* VERTEX_SHADER() {
@@ -139,6 +159,29 @@ public:
 					vert_color = in_Color;					// forward color vertex				
 				}																													
 			)";
+	}
+	static inline constexpr const char* FRAGMENT_SHADER_SAMPLE()
+	{
+		return
+			R"(
+			#version 460 core
+
+			out vec4 FragColor;
+
+			layout(location = 0) uniform vec4 color_one;
+			layout(location = 1) uniform vec4 color_two;
+			layout(location = 2) uniform vec3 size_and_angle;
+
+			void main()
+			{
+				// Calculate normalized coordinates
+				vec2 normalizedCoords = gl_FragCoord.xy / size_and_angle.xy;
+
+				// Calculate checkerboard pattern
+				bool isDark = mod(floor(normalizedCoords.x) + floor(normalizedCoords.y), 2.0) == 0.0;
+				FragColor = isDark ? color_one  :  color_two;
+			}
+		)";
 	}
 
 	static inline constexpr const char* FRAGMENT_SHADER()

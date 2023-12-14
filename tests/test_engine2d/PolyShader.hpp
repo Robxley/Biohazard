@@ -8,7 +8,7 @@
 namespace PolyShader
 {
 
-	namespace Circle
+	namespace Circle2d
 	{
 
 		struct Vertex

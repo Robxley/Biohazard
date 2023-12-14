@@ -33,24 +33,6 @@
 namespace bh3d
 {
 
-	//Default attribute name
-	const std::string&  GetDefaultAttribName(ATTRIB_INDEX index) {
-		static const std::vector<std::string> LIST_NAMES = {
-			BH3D_ATTRIB_NAME_LIST
-		};
-		assert((int)index < LIST_NAMES.size());
-		return LIST_NAMES[(int)index];
-	}
-
-	//default uniform name
-	const std::string&  GetDefaultUniformName(UNIFORM_INDEX index) {
-		static const std::vector<std::string> LIST_NAMES = {
-			BH3D_UNIFORM_NAME_LIST
-		};
-		assert((int)index < LIST_NAMES.size());
-		return LIST_NAMES[(int)index];
-	}
-
 	template<typename TVertex>
 	static void SetGenericVertexAttrib(ATTRIB_INDEX index, const TVertex & vertex) {
 		glVertexAttrib4fv((GLuint)index, (const GLfloat*)&vertex);
@@ -198,8 +180,8 @@ namespace bh3d
 	{
 		assert(defaultUniform.size() == (int) bh3d::UNIFORM_INDEX::N_NUMBER);
 		for (int uniform_index = (int) bh3d::UNIFORM_INDEX::PROJECTION; uniform_index < (int) bh3d::UNIFORM_INDEX::N_NUMBER; uniform_index++) {
-			const auto & uniform_name = BH3D_UNIFORM_NAME(uniform_index);
-			defaultUniform[uniform_index] = glGetUniformLocation(m_programID, (const GLchar *)uniform_name.c_str());
+			auto uniform_name = BH3D_UNIFORM_NAME(uniform_index);
+			defaultUniform[uniform_index] = glGetUniformLocation(m_programID, (const GLchar *)uniform_name);
 		}
 
 	}
