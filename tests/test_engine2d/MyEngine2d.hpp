@@ -4,6 +4,7 @@
 
 #include "ChessBoard2d.hpp"
 #include "MainGui.hpp"
+#include "GenericPointCloud.hpp"
 
 struct FrameBufferScene
 {
@@ -40,12 +41,6 @@ struct FrameBufferScene
 	}
 };
 
-struct PointCloud2d : public bh3d::PointCloud
-{
-
-};
-
-
 class MyEngine2d : public bh3d::SDLEngine
 {
 
@@ -63,6 +58,8 @@ class MyEngine2d : public bh3d::SDLEngine
 	//Object
 	ChessBoard2d m_chessBoard;
 	bh3d::PointCloud m_pointCloud;
+	bh3d::GenericPointCloud<> m_genericPointCloud;
+	bh3d::VertexArrays m_va;
 
 public:
 	MyEngine2d(const bh3d::WindowInfo& windowInfo = {}) :

@@ -55,9 +55,9 @@ using namespace gl;
 #endif
 
 #if defined(__has_include)
-#if __has_include("IconsFontAwesome5.h")
+#if __has_include("IconsFontAwesome6.h")
 #define BH3D_ICONS_FONT_AWESOME
-#include "IconsFontAwesome5.h"
+#include "IconsFontAwesome6.h"
 #include <filesystem>
 #endif
 #endif
@@ -230,7 +230,7 @@ namespace ImGui
 
 			// Start the Dear ImGui frame
 			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplSDL2_NewFrame(m_window);
+			ImGui_ImplSDL2_NewFrame();
 			ImGui::NewFrame();
 
 			if (!func())

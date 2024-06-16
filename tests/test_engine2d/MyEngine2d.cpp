@@ -38,14 +38,16 @@ void MyEngine2d::Init()
 	m_pointCloud.Update(positions, colors);
 	m_pointCloud.LoadShader();
 
-	bh3d::BufferData test;
-	test.Create(16);
-	test.Unbind();
-	test.Delete();
+	m_genericPointCloud.Create(positions, colors);
+	//m_genericPointCloud.Create(1, colors, 0, positions);
+	//m_genericPointCloud.Update(positions, colors);
+	m_genericPointCloud.LoadShader();
 
-	bh3d::VertexAttribVec3<0> vect;
+	m_va.Create(
+		positions,
+		colors
+	);
 
-	auto bufferData = vect.BufferData(positions);
 }
 
 
@@ -78,7 +80,12 @@ void MyEngine2d::Display()
 
 	m_scene.Draw([&] {
 		m_chessBoard.Draw();
-		m_pointCloud.Draw(glm::mat4(1.0f));
+		//m_pointCloud.Draw(glm::mat4(1.0f));
+		//m_pointCloud.m_shader(glm::mat4(1.0f));
+		//m_va.Draw(GL_POINTS);
+		//m_pointCloud.Draw(glm::mat4(1.0f));
+		m_genericPointCloud.Draw(glm::mat4(1.0f));
+		
 	});
 
 	//ImGui Display

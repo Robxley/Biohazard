@@ -3,7 +3,7 @@
 
 # Create toolkit source files list
 FILE(GLOB LOCAL_FILE_SRC *.cpp)
-find_package(imgui CONFIG REQUIRED)
+
 add_executable(MyEngine2D ${LOCAL_FILE_SRC})
 
 target_include_directories(MyEngine2D 
@@ -15,7 +15,7 @@ target_include_directories(MyEngine2D
                                 ${PROJECT_SOURCE_DIR}/biohazard3d/include
                                 ${PROJECT_SOURCE_DIR}/biohazardgui/include)
 
-target_link_libraries(MyEngine2D PRIVATE bh3d bhgui imgui::imgui)
+target_link_libraries(MyEngine2D PRIVATE bh3d bhgui)
 
 if (WIN32)
     target_compile_options(MyEngine2D PRIVATE /W3 /WX)

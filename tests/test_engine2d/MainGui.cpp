@@ -31,7 +31,7 @@ void MainGui::MainMenuBar()
 			}
 
 			ImGui::Separator();
-			if (ImGui::MenuItem(ICON_FA_WINDOW_CLOSE " Exit"))
+			if (ImGui::MenuItem(ICON_FA_RECTANGLE_XMARK " Exit"))
 			{
 
 			}

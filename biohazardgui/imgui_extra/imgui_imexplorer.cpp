@@ -1,6 +1,4 @@
 #include "imgui_imexplorer.h"
-#include "IconsFontAwesome5.h"
-
 #include <sstream>
 
 namespace ImGui

@@ -92,7 +92,7 @@ namespace bh3d
 		assert(m_SDL_Windows_GL_Context->m_SDL_Window != nullptr);			//!
 
 		// Start the Dear ImGui frame
-		ImGui_ImplSDL2_NewFrame(m_SDL_Windows_GL_Context->m_SDL_Window);
+		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
 	}
 

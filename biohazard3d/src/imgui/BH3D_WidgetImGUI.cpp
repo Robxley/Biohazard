@@ -1,5 +1,6 @@
 #include "BH3D_WidgetImgGUI.hpp"
 #include "BH3D_imgui_widgets.hpp"
+#include <IconsFontAwesome6.h>
 
 namespace bh3d
 {
@@ -132,13 +133,13 @@ namespace bh3d
 				updated = true;
 			}
 
-			if (ImGui::Button(ICON_FA_SEARCH_PLUS " Zoom in", ImVec2(100, 25)))
+			if (ImGui::Button(ICON_FA_MAGNIFYING_GLASS_PLUS " Zoom in", ImVec2(100, 25)))
 			{
 				camera.m_angle_fov += zoom_step;
 				updated = true;
 			}
 			ImGui::SameLine(120);
-			if (ImGui::Button(ICON_FA_SEARCH_MINUS " Zoom out", ImVec2(100, 25)))
+			if (ImGui::Button(ICON_FA_MAGNIFYING_GLASS_MINUS " Zoom out", ImVec2(100, 25)))
 			{
 				camera.m_angle_fov -= zoom_step;
 				updated = true;

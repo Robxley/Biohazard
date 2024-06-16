@@ -2,7 +2,7 @@
 #pragma once
 
 #include "imgui.h"
-#include "IconsFontAwesome5.h"
+#include "IconsFontAwesome6.h"
 #include "BH3D_Camera.hpp"
 
 #include <glm/gtc/constants.hpp>

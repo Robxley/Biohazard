@@ -21,7 +21,6 @@ find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
-find_package(imgui CONFIG REQUIRED)
 
 # __________________________________________
 # Auto Generating BH3D_Engine.hpp
@@ -45,7 +44,7 @@ FILE(GLOB BH3D_SOURCEFILES
 		${CMAKE_CURRENT_SOURCE_DIR}/src/std/BH3D_*.cpp)
 
 if(WIN32)
-	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main imgui::imgui INTERFACE glm::glm)
+	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main INTERFACE glm::glm)
 endif()
 
 add_library(bh3d STATIC ${BH3D_SOURCEFILES} ${IMGUI_SOURCEFILES})
@@ -63,23 +62,24 @@ target_include_directories(bh3d
 								${CMAKE_CURRENT_SOURCE_DIR}/include/cv
 								${CMAKE_CURRENT_SOURCE_DIR}/include/std
 								${ICONS_FONT_AWESOME_DIR}
-							SYSTEM PUBLIC
-								${glm_INCLUDE_DIR}
-							PRIVATE
+								${IMGUI_DIR}
+								${IMGUI_DIR}/backends
 								${OPENGL_INCLUDE_DIRS}
 							   	${SDL2_INCLUDE_DIRS}
 							   	${OpenCV_INCLUDE_DIRS}
-								${GLEW_INCLUDE_DIRS})
+								${GLEW_INCLUDE_DIRS}
+							SYSTEM PUBLIC
+								${glm_INCLUDE_DIR})
 
 target_link_libraries(bh3d
-						PRIVATE 
+						PUBLIC 
 							${OpenCV_LIBS}
 							${SDL2_LIBRARIES}
 							${OPENGL_LIBRARIES}
 							${GLEW_LIBRARIES}
 							${WIN32_DEPENDENCIES_LIBRARIES})
 if (WIN32)
-	target_compile_options(bh3d PRIVATE /W3 /WX /utf-8 /Zc:char8_t- /MP)
+	target_compile_options(bh3d PUBLIC /W3 /WX /utf-8 /Zc:char8_t- /MP)
 else()
-	target_compile_options(bh3d PRIVATE -w)
+	target_compile_options(bh3d PUBLIC -w)
 endif()

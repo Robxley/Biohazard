@@ -3,7 +3,7 @@
 #include "imgui_internal.h"
 #include <string>
 #include <functional>
-#include "IconsFontAwesome5.h"
+#include <IconsFontAwesome6.h>
 
 namespace ImGui
 {
@@ -112,7 +112,7 @@ namespace ImGui
 	struct ErrorPopupModal : public TextPopupModal
 	{
 		template<class T>
-		ErrorPopupModal(T&& title) : TextPopupModal(std::forward<T>(title), ICON_FA_EXCLAMATION_TRIANGLE " ") {};
+		ErrorPopupModal(T&& title) : TextPopupModal(std::forward<T>(title), ICON_FA_TRIANGLE_EXCLAMATION " ") {};
 		ErrorPopupModal() = default;
 	};
 

@@ -3,7 +3,7 @@
 #include "imgui_imwatch.h"
 #include "imgui_rotate_widget.h"
 #include "imgui_extra_widgets.h"
-#include <IconsFontAwesome5.h>
+
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/opengl.hpp>
@@ -154,7 +154,7 @@ namespace ImGui
 						else
 						{
 							ImGui::Text("Normalization is running..."); ImGui::SameLine();
-							ImGui::RotateText(1.5f, ICON_FA_COG);
+							ImGui::RotateText(1.5f, ICON_FA_GEAR);
 						}
 					}
 

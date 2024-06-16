@@ -82,12 +82,12 @@ namespace bhd
 			{
 				ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
 				ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-				ImGui::Button(ICON_FA_RUNNING " Running...", buttonSize);
+				ImGui::Button(ICON_FA_PERSON_RUNNING " Running...", buttonSize);
 				ImGui::PopItemFlag();
 				ImGui::PopStyleVar();
 			}
 			else if (m_liveUpdate == false) {
-				if (ImGui::Button(ICON_FA_PLAY_CIRCLE " Start", buttonSize)) {
+				if (ImGui::Button(ICON_FA_CIRCLE_PLAY " Start", buttonSize)) {
 					m_update = true;
 					Execute();
 				}
@@ -96,7 +96,7 @@ namespace bhd
 			{
 				ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
 				ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-				ImGui::Button(ICON_FA_REDO_ALT " Waiting...", buttonSize);
+				ImGui::Button(ICON_FA_ROTATE_RIGHT " Waiting...", buttonSize);
 				ImGui::PopItemFlag();
 				ImGui::PopStyleVar();
 				Execute();
@@ -112,7 +112,7 @@ namespace bhd
 			{
 				ImGui::Text(ICON_FA_STOPWATCH " Execution time:");
 				ImGui::SameLine();
-				ImGui::RotateText(1.5f, ICON_FA_COG);
+				ImGui::RotateText(1.5f, ICON_FA_GEAR);
 			}
 			else
 			{

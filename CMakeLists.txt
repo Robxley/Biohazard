@@ -47,9 +47,28 @@ message(STATUS "Third dependency directory: ${3RD_DIR}")
 #set(spdlog_INCLUDE_DIR ${3RD_DIR}/spdlog/include)		# spdlog - Fast C++ logging library
 #set(json_INCLUDE_DIR ${3RD_DIR}/json/include)			# JSON for modern C++ library
 #set(glm_INCLUDE_DIR ${3RD_DIR}/glm/include)		    # glm - OpenGL Mathematics
-#set(IMGUI_DIR ${3RD_DIR}/imgui)						# ImGui - Dear ImGui
-set(ICONS_FONT_AWESOME_DIR ${3RD_DIR}/IconsFontAwesome)						# Incons Font Awesome
 
+set(IMGUI_DIR ${3RD_DIR}/imgui)						    # ImGui - Dear ImGui
+message(STATUS "Imgui Directory: ${IMGUI_DIR}")
+
+set(ICONS_FONT_AWESOME_DIR ${3RD_DIR}/IconsFontAwesome)	# Incons Font Awesome
+message(STATUS "IconsFontAwesome: ${ICONS_FONT_AWESOME_DIR}")
+
+# __________________________________________
+# __ IMGUI Backends
+# Create toolkit source files list
+SET(IMGUI_SOURCEFILES
+		${IMGUI_DIR}/imgui.cpp
+		${IMGUI_DIR}/imgui_demo.cpp 
+		${IMGUI_DIR}/imgui_draw.cpp
+		${IMGUI_DIR}/imgui_widgets.cpp
+		${IMGUI_DIR}/imgui_tables.cpp
+		${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+		${IMGUI_DIR}/backends/imgui_impl_sdl2.cpp
+		${IMGUI_DIR}/misc/cpp/imgui_stdlib.cpp
+)
+
+set(IMGUI_INCLUDE_DIRS ${IMGUI_DIR} ${IMGUI_DIR}/backends ${IMGUI_DIR}/misc/cpp)
 
 # __________________________________________
 # __ Subdirectories

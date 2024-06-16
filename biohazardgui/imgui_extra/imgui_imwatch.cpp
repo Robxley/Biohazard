@@ -1,6 +1,5 @@
 #include "imgui_imwatch.h"
 #include "imgui_extra_widgets.h"
-#include "IconsFontAwesome5.h"
 #include <sstream>
 
 

@@ -4,7 +4,6 @@
 #include "imgui_internal.h"
 #include "imgui_cv_imwatch.h"
 #include "imgui_extra_widgets.h"
-#include "IconsFontAwesome5.h"
 
 #include <cassert>
 #include <chrono>

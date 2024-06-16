@@ -16,14 +16,16 @@ find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(imgui CONFIG REQUIRED)
+#find_package(imgui CONFIG REQUIRED)
 # __________________________________________
 # library
 #set(${IMGUI_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/3rd/imgui)
+include_directories(${IMGUI_INCLUDE_DIRS})
 
 # Create toolkit source files list
-FILE(GLOB IMGUI_SOURCEFILES
-		${CMAKE_CURRENT_SOURCE_DIR}/imgui_extra/*.cpp)
+FILE(GLOB IMGUI_EXTRA_SOURCEFILES
+		${CMAKE_CURRENT_SOURCE_DIR}/imgui_extra/*.cpp
+)
 
 # Create toolkit source files list
 FILE(GLOB LOCAL_SOURCEFILES
@@ -39,14 +41,13 @@ if(NOT DEFINED ICONS_FONT_AWESOME_DIR)
 endif()
 
 if(WIN32)
-	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main imgui::imgui)
+	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main)
 endif()
 
-add_library(bhgui STATIC ${LOCAL_SOURCEFILES} ${IMGUI_SOURCEFILES} "imgui_extra/ImFileDialog.cpp" "imgui_extra/ImFileDialog.h")
+add_library(bhgui STATIC ${LOCAL_SOURCEFILES} ${IMGUI_SOURCEFILES} ${IMGUI_EXTRA_SOURCEFILES})
 
 target_link_libraries(bhgui 
-						PUBLIC 
-							imgui::imgui
+						PUBLIC
 							${OpenCV_LIBS} 
 							${SDL2_LIBRARIES}
 							${WIN32_DEPENDENCIES_LIBRARIES})
@@ -60,4 +61,5 @@ target_include_directories(bhgui
 							PUBLIC
 			   					${OpenCV_INCLUDE_DIRS}
 								${ICONS_FONT_AWESOME_DIR}
-								${CMAKE_CURRENT_SOURCE_DIR}/imgui_extra)
+								${CMAKE_CURRENT_SOURCE_DIR}/imgui_extra
+								${IMGUI_INCLUDE_DIRS})
