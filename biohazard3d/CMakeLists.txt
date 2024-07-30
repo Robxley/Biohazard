@@ -47,6 +47,8 @@ if(WIN32)
 	set(WIN32_DEPENDENCIES_LIBRARIES GLEW::GLEW SDL2::SDL2 SDL2::SDL2main INTERFACE glm::glm)
 endif()
 
+add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
+
 add_library(bh3d STATIC ${BH3D_SOURCEFILES} ${IMGUI_SOURCEFILES})
 
 set_target_properties(bh3d PROPERTIES

@@ -91,7 +91,13 @@ namespace bh3d
 		{
 			assert(m_shader.IsValid() && "Create a shader / Call LoadShader");
 			m_shader(projection_modelview_transform);
-			Draw(GL_POINTS, first, count);
+
+			BH3D_GL_CHECK_ERROR;
+			assert(IsValid() && "Allocate the buffer before updating - Call CreateCameraTrajectoryVBO");
+			assert(first >= 0);
+			assert(first + count <= m_vertex_count);
+			glBindVertexArray(m_vertex_array);
+			glDrawArrays(GL_POINTS, first, count);
 		}
 
 		bool LoadShader()

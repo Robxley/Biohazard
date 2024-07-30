@@ -30,7 +30,7 @@ namespace ImGui
 	/// <returns></returns>
 	const cv::Mat& ImFile::screen_view(bool update) const
 	{
-		if ((m_screen_view.empty() && !m_images.empty()) || update)
+		if ((m_screen_view.empty() && (!m_images.empty()) && m_images[0].empty()) || update)
 		{
 			if (m_channel_views.empty())
 				m_screen_view = m_images[0];
@@ -92,7 +92,9 @@ namespace ImGui
 			if (auto is_not_ok = !cv::imreadmulti(path, m_images, cv_flags); is_not_ok)
 			{
 				m_images.clear();
-				m_images.emplace_back(cv::imread(path, cv_flags));
+				auto img = cv::imread(path, cv_flags);
+				if (!img.empty())
+					m_images.emplace_back(cv::imread(path, cv_flags));
 			}
 		}
 		catch (...)
@@ -104,6 +106,7 @@ namespace ImGui
 
 	ImFile& ImFile::Import(const cv::Mat & image)
 	{
+		assert(!image.empty());
 		m_images.clear();
 		m_images.push_back(image);
 		return *this;
@@ -111,6 +114,7 @@ namespace ImGui
 
 	ImFile& ImFile::Import(cv::Mat&& image)
 	{
+		assert(!image.empty());
 		m_images.clear();
 		m_images.emplace_back(std::move(image));
 		return *this;
@@ -329,9 +333,10 @@ namespace ImGui
 					auto& icon = imgFile.icon_view();
 					if (m_imHovered != i) //Update the icon in GPU memory if necessary
 					{
-						m_iconTexture2D = cv::ogl::Texture2D(icon, true);
+						m_iconTexture2D = icon.empty() ? cv::ogl::Texture2D() : cv::ogl::Texture2D(icon, true);
 						m_imHovered = i;
 					}
+					if (!m_iconTexture2D.empty())
 					{
 						ImGui::BeginGroup();
 						ImGui::Image((ImTextureID)(uintptr_t)m_iconTexture2D.texId(), ImVec2((float)icon.cols, (float)icon.rows));

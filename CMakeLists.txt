@@ -57,6 +57,22 @@ message(STATUS "IconsFontAwesome: ${ICONS_FONT_AWESOME_DIR}")
 # __________________________________________
 # __ IMGUI Backends
 # Create toolkit source files list
+
+if(NOT EXISTS ${IMGUI_DIR})
+    message(STATUS "Directory ${IMGUI_DIR} does not exist. Cloning from GitHub...")
+
+    execute_process(
+        COMMAND git clone --branch docking https://github.com/ocornut/imgui.git ${IMGUI_DIR}
+        WORKING_DIRECTORY ${3RD_DIR}
+    )
+
+    if(NOT EXISTS ${IMGUI_DIR})
+        message(FATAL_ERROR "Failed to clone ImGui repository.")
+    endif()
+else()
+    message(STATUS "Directory ${IMGUI_DIR} already exists.")
+endif()
+
 SET(IMGUI_SOURCEFILES
 		${IMGUI_DIR}/imgui.cpp
 		${IMGUI_DIR}/imgui_demo.cpp 

@@ -385,7 +385,7 @@ inline void ImGui::FileBrowser::Display()
         PushID(secIdx);
         if(secIdx > 0)
             SameLine();
-        if(SmallButton(sec.u8string().c_str()))
+        if(SmallButton(sec.string().c_str()))
             newPwdLastSecIdx = secIdx;
         PopID();
         ++secIdx;
@@ -629,7 +629,7 @@ inline void ImGui::FileBrowser::SetPwdUncatched(const std::filesystem::path &pwd
         rcd.extension = p.path().filename().extension().string();
 
 #ifndef IMGUI_IMPL_ICONS_FONT_AWESOME
-        rcd.showName = (rcd.isDir ? "[D] " : "[F] ") + p.path().filename().u8string();
+        rcd.showName = (rcd.isDir ? "[D] " : "[F] ") + p.path().filename().string();
 #else
         rcd.showName = (rcd.isDir ? ICON_FA_FOLDER " " : ICON_FA_FILE " ") + p.path().filename().u8string();
 #endif

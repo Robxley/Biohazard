@@ -269,7 +269,8 @@ namespace ImGui
 		void SetSelected(std::size_t id) {
 			assert(id < m_vImFileList.size());
 			m_imSelected = id;
-			m_selectedTexture2D = cv::ogl::Texture2D(m_vImFileList[id].icon_view(), true);
+			auto& icon_view = m_vImFileList[id].icon_view();
+			m_selectedTexture2D = icon_view.empty() ? cv::ogl::Texture2D{} : cv::ogl::Texture2D(icon_view, true);
 			m_hasSelected = true;
 		}
 		

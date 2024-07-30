@@ -236,13 +236,13 @@ namespace bh3d
 		Shader(Shader&& shader) noexcept { *this = std::move(shader); }
 		Shader& operator=(Shader &&other);
 
-		void operator()(const glm::mat4 & projection_modelview_transform) {
+		void operator()(const glm::mat4 & projection_modelview_transform) const {
 			assert(IsValid());
 			Enable();
 			SendProjectionModelviewTransform(projection_modelview_transform);
 		}
 
-		void operator()(const glm::mat4 & projection, const glm::mat4 & modelview, const glm::mat4 & transform) {
+		void operator()(const glm::mat4 & projection, const glm::mat4 & modelview, const glm::mat4 & transform) const {
 			assert(IsValid());
 			Enable();
 			SendProjection(projection);
