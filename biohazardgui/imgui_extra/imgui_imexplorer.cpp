@@ -30,14 +30,17 @@ namespace ImGui
 	/// <returns></returns>
 	const cv::Mat& ImFile::screen_view(bool update) const
 	{
-		if ((m_screen_view.empty() && (!m_images.empty()) && m_images[0].empty()) || update)
+		if (this->empty())
+			return m_screen_view;
+		
+		if (m_screen_view.empty() || update)
 		{
 			if (m_channel_views.empty())
 				m_screen_view = m_images[0];
 			else if (m_channel_views.size() == 3)
 			{
 				auto get_channel = [&](size_t i) -> const cv::Mat& {
-					auto index = std::min<unsigned int>(m_channel_views[i], static_cast<unsigned int>(m_images.size()) - 1);
+					auto index = std::clamp(m_channel_views[i], 0, static_cast<int>(m_images.size()), std::less{});
 					return m_images[index];
 				};
 
@@ -130,23 +133,26 @@ namespace ImGui
 		return *this;
 	}
 
-	bool ImFile::WidgetFrameView()
+	bool ImFile::FrameViewWidget()
 	{
 		bool update = false;
-		if (this->size())
+		if (int channels = this->channels() ; channels > 0)
 		{
-			int channels = this->m_images.front().channels();
-			{
-				if (channels == 1) {
-					m_channel_views.resize(3);
-					update = ImGui::SliderInt3("view", m_channel_views.data(), 0, static_cast<int>(size()) - 1);
-				}
-				else if (channels == 3) {
+			if (channels == 1) {
+				m_channel_views.resize(3, m_channel_views.empty() ? 0 : m_channel_views.front());
+				update |= ImGui::Checkbox("grayscale", &m_grayscale_view);
+				if (!m_grayscale_view)
+					update |= ImGui::SliderInt3("view", m_channel_views.data(), 0, static_cast<int>(size()) - 1);
+				else
+				{
 					m_channel_views.resize(1);
-					update = ImGui::SliderInt("view", m_channel_views.data(), 0, static_cast<int>(size()) - 1);
+					update |= ImGui::SliderInt("view", m_channel_views.data(), 0, static_cast<int>(size()) - 1);
 				}
 			}
-
+			else if (channels == 3 || channels == 4) {
+				m_channel_views.resize(1);
+				update |= ImGui::SliderInt("view", m_channel_views.data(), 0, static_cast<int>(size()) - 1);
+			}
 			if (update)
 				screen_view(true);
 		}
@@ -276,7 +282,7 @@ namespace ImGui
 		WidgetErrorPopupModal();
 	}
 
-	void ImExplorer::SelectedImageWidget()
+	void ImExplorer::SelectedImageWidget(bool show_icon, bool show_desc, bool show_frame)
 	{
 		if (SelectedIsValid())
 		{
@@ -284,34 +290,35 @@ namespace ImGui
 			ImGui::Separator();
 
 			auto& icon = selected.icon_view();
-			if (!icon.empty())
+			if (show_icon && !icon.empty())
 			{
 				ImGui::BeginGroup();
 				ImGui::Image((ImTextureID)(uintptr_t)m_selectedTexture2D.texId(), ImVec2((float)icon.cols, (float)icon.rows));
 				ImGui::EndGroup();
 			}
 			
+			if (show_desc)
 			{
 				ImGui::BeginGroup();
-				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+				//ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 				ImGui::TextUnformatted(selected.m_desc.data());
-				ImGui::PopTextWrapPos();
+				ImGui::TextLink(selected.m_path.generic_string().c_str());
+				//ImGui::PopTextWrapPos();
 				ImGui::EndGroup();
 			}
 
+			if(show_frame)
 			{
 				ImGui::BeginGroup();
-				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+				//ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 				auto& selected = this->GetSelected();
-				if (selected.WidgetFrameView())
+				if (selected.FrameViewWidget())
 					m_hasSelected = true;
-	
-				ImGui::PopTextWrapPos();
+				//#ImGui::PopTextWrapPos();
 				ImGui::EndGroup();
 			}
 		}
 	}
-
 		
 	void ImExplorer::ImListWidget()
 	{

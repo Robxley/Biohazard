@@ -56,7 +56,13 @@ namespace ImGui
 		std::vector<cv::Mat> m_images;				//! Opencv multi images (for example imported by cv::imreadmulti)
 		mutable std::vector<int> m_channel_views;	//! In case of multiimage - indexes of channel to display on the screen.
 
+		bool m_grayscale_view = false;				//! Force to display the image in grayscale color
+
 	public:
+
+		auto empty() const {
+			return m_images.empty() || m_images.front().empty();
+		}
 
 		auto channels() const {
 			return m_images.empty() ? 0 : (int)m_images.front().channels();
@@ -112,7 +118,7 @@ namespace ImGui
 		/// <param name="show_path">Enable/Disable the path in the description.</param>
 		void Description(
 			const std::string& info = {},
-			bool show_path = true
+			bool show_path = false
 		);
 
 		auto Viewable(int icon_size = 64) {
@@ -130,14 +136,13 @@ namespace ImGui
 		ImFile& Import(const std::vector<cv::Mat> images);
 		ImFile& Import(std::vector<cv::Mat>&& images);
 
-		bool WidgetFrameView();
+		bool FrameViewWidget();
 
 	};
 
 
 	class ImExplorer
 	{	
-
 
 	public:
 
@@ -379,19 +384,6 @@ namespace ImGui
 			SelectedImageWidget();
 		}
 
-	private:
-
-		ErrorPopupModal m_errorPopupModal = { "Image explorer error" };	 //! Popup modal window used to display error
-		FileBrowser m_importBrowser;				//! Browser used to import a image from the hard-drive.
-		FileBrowser m_exportBrowser;				//! Browser used to export a image on the hard-drive.
-
-		cv::ogl::Texture2D m_iconTexture2D;			//! Opengl icon texture of the hovered image in the list.
-		cv::ogl::Texture2D m_selectedTexture2D;		//! Opengl icon texture of the selected image (under the list with some description in the widget).
-
-		std::size_t m_imHovered = std::numeric_limits<std::size_t>::max();	//! The id of the hovered image.  
-		bool m_hasSelected = false;					//! flag if a new image has been selected (in any way: mouse, shortcut, import etc ...)
-
-
 		/// <summary>
 		/// Browser widget.
 		/// </summary>
@@ -405,8 +397,20 @@ namespace ImGui
 		/// <summary>
 		/// Selected image widget (show the icon, some image description...)
 		/// </summary>
-		void SelectedImageWidget();
+		void SelectedImageWidget(bool show_icon = true, bool show_desc = true, bool show_frame = true);
 
+
+	private:
+
+		ErrorPopupModal m_errorPopupModal = { "Image explorer error" };	 //! Popup modal window used to display error
+		FileBrowser m_importBrowser;				//! Browser used to import a image from the hard-drive.
+		FileBrowser m_exportBrowser;				//! Browser used to export a image on the hard-drive.
+
+		cv::ogl::Texture2D m_iconTexture2D;			//! Opengl icon texture of the hovered image in the list.
+		cv::ogl::Texture2D m_selectedTexture2D;		//! Opengl icon texture of the selected image (under the list with some description in the widget).
+
+		std::size_t m_imHovered = std::numeric_limits<std::size_t>::max();	//! The id of the hovered image.  
+		bool m_hasSelected = false;					//! flag if a new image has been selected (in any way: mouse, shortcut, import etc ...)
 
 		static constexpr auto m_errorPopupTitle = "Image explorer error"; //! Window title name used to display a error
 

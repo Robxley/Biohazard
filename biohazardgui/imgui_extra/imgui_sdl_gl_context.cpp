@@ -183,9 +183,17 @@ namespace ImGui
 		//ImGui::StyleColorsLight();
 		//ImGui::StyleColorsClassic();
 
+		//auto defaultSetClipboardTextFn = io.SetClipboardTextFn;
+		//auto defaultGetClipboardTextFn = io.GetClipboardTextFn;
+		//auto defaultClipboardUserData = io.ClipboardUserData;
+
 		// Setup Platform/Renderer backends
 		ImGui_ImplSDL2_InitForOpenGL(m_window, m_gl_context);
 		ImGui_ImplOpenGL3_Init(glsl_version);
+
+		//io.SetClipboardTextFn = defaultSetClipboardTextFn;
+		//io.GetClipboardTextFn = defaultGetClipboardTextFn;
+		//io.ClipboardUserData = defaultClipboardUserData;
 
 		// Load Fonts
 		// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
